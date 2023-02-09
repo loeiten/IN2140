@@ -1,0 +1,35 @@
+---
+repos:
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v4.4.0
+        hooks:
+        -   id: check-yaml
+        -   id: check-merge-conflict
+        -   id: debug-statements
+        -   id: end-of-file-fixer
+        -   id: mixed-line-ending
+        -   id: trailing-whitespace
+        -   id: check-added-large-files
+    - repo: https://github.com/pocc/pre-commit-hooks
+      rev: v1.3.5
+      # Must include this directory in files as .git is in parent
+      hooks:
+          - id: clang-format
+            args: [
+                -i,  # Fix inplace
+                -style=Google
+            ]
+          - id: clang-tidy
+            args:
+              - "-p=build/"
+          - id: cppcheck
+            args:
+              - "--inline-suppr"  # Enable inline suppression
+          - id: cpplint
+            args: ["--filter=-legal/copyright,-build/include_order,-whitespace/comments"]
+          # NOTE: This project has external dependencies which means that
+          #       include-what-you-use needs a path to the include files for the
+          #       dependencies
+          #       One could add these manually with -I
+          #       However, all of these are already present in the CMake build
+          #       Hence, we will use CMake for this check
