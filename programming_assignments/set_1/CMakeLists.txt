@@ -7,3 +7,4 @@ make_executable(${source_files})
 
 # Test
 do_test(assignment_1 1 "Hello World" "Input: Hello World\n")
+do_test(assignment_1 2 "" "Usage: ./assignment_1 STR\n")

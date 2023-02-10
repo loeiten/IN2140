@@ -26,7 +26,7 @@ repos:
             args:
               - "--inline-suppr"  # Enable inline suppression
           - id: cpplint
-            args: ["--filter=-legal/copyright,-build/include_order,-whitespace/comments"]
+            args: ["--filter=-legal/copyright,-build/include_order,-whitespace/comments,-readability/casting"]
           # NOTE: This project has external dependencies which means that
           #       include-what-you-use needs a path to the include files for the
           #       dependencies

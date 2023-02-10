@@ -22,6 +22,7 @@ set(CMAKE_C_STANDARD_REQUIRED True)
 
 # Turn on compile commands
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_BUILD_TYPE "Debug")
 
 # Specify verbose output
 # You can also get the commands called by
