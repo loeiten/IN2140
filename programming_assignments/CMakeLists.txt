@@ -1,1 +1,1 @@
-add_subdirectory(assignment_1)
+add_subdirectory(set_1)

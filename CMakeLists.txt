@@ -44,16 +44,27 @@ endif()
 # enable_testing()
 include(CTest)
 
+function(make_executable source_files)
+   foreach(file ${source_files})
+      get_filename_component(file_stem ${file} NAME_WE)
+      add_executable(${file_stem} ${file})
+  endforeach(file ${source_files})
+endfunction(make_executable)
+
 # Define a function to check the output of a test
-function(do_test name target input expected)
-   add_test(NAME ${name} COMMAND sh -c "echo ${input} | ./${target}")
+function(do_test name test_no arguments expected)
+   # Find path relative to this
+   file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})
+   string(REPLACE "/" "_" rel_path ${rel_path})
+   set(full_name ${rel_path}_${name}_${test_no})
+   add_test(NAME ${full_name} COMMAND ./${name} ${arguments})
    # The output must match this regex for the test to pass
    # For other properties check
    # https://cmake.org/cmake/help/latest/manual/cmake-properties.7.html#test-properties
-   set_tests_properties(${name}
+   set_tests_properties(${full_name}
    PROPERTIES PASS_REGULAR_EXPRESSION "^${expected}$"
    )
-endfunction(do_named_test)
+endfunction(do_test)
 
 # Enable sanitizers
 if(ADDRESS_SANITIZE)
