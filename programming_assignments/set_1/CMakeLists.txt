@@ -1,14 +1,33 @@
-SET(source_files
+set(source_files
     assignment_1.c
+    assignment_2.c
+)
+
+set(link_with_utils
+    assignment_1
+    assignment_2
 )
 
 # Create executables
-make_executable(${source_files})
+make_executable(SOURCE ${source_files})
+
+# Link with libraries
+link_executable(TARGETS ${link_with_utils} LIB utils)
 
 # Test
-do_test(assignment_1 1 "Hello World" "Input: Hello World\n")
-do_test(assignment_1 2 "" "Usage: ./assignment_1 STR\n")
-do_test(assignment_1 3 "0" "Number: 0\n")
-do_test(assignment_1 4 "-1" "Input: -1\n")
-do_test(assignment_1 5 "987" "Number: 987\n")
-do_test(assignment_1 6 "987ab" "Input: 987ab\n")
+# assignment_1
+do_test(NAME assignment_1 NO 1 ARGS "Hello World" EXPECTED "Input: Hello World\n")
+do_test(NAME assignment_1 NO 2 ARGS "" EXPECTED "Usage: ./assignment_1 STR\n")
+do_test(NAME assignment_1 NO 3 ARGS "0" EXPECTED "Number: 0\n")
+do_test(NAME assignment_1 NO 4 ARGS "-1" EXPECTED "Input: -1\n")
+do_test(NAME assignment_1 NO 5 ARGS "987" EXPECTED "Number: 987\n")
+do_test(NAME assignment_1 NO 6 ARGS "987ab" EXPECTED "Input: 987ab\n")
+
+# assignment_2
+do_test(NAME assignment_2 NO 1 ARGS "Hello World" "0" EXPECTED "Position 0 in 'Hello World' is H\n")
+do_test(NAME assignment_2 NO 2 ARGS "Hello World" "1" EXPECTED "Position 1 in 'Hello World' is e\n")
+do_test(NAME assignment_2 NO 3 ARGS "Hello World" "5" EXPECTED "Position 5 in 'Hello World' is  \n")
+do_test(NAME assignment_2 NO 4 ARGS "Hello World" "10" EXPECTED "Position 10 in 'Hello World' is d\n")
+do_test(NAME assignment_2 NO 5 ARGS "Hello World" "11" EXPECTED "Error when finding position 11 of 'Hello World' with length 11\n")
+do_test(NAME assignment_2 NO 6 ARGS "Hello World" "-1" EXPECTED "Could not capture the position from -1\n")
+do_test(NAME assignment_2 NO 7 ARGS "Hello World" "a" EXPECTED "Could not capture the position from a\n")

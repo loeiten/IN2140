@@ -38,32 +38,95 @@ option(MEMORY_SANITIZE "Use memory sanitizer" OFF)
 option(THREAD_SANITIZE "Use thread sanitizer" OFF)
 
 if(IWYU)
-   set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE "include-what-you-use;-Xiwyu;--error;-Xiwyu;--mapping_file=${CMAKE_CURRENT_LIST_DIR}/.linters/iwyu.imp")
+   set(CMAKE_C_INCLUDE_WHAT_YOU_USE "include-what-you-use;-Xiwyu;--error;-Xiwyu;--mapping_file=${CMAKE_CURRENT_LIST_DIR}/.linters/iwyu.imp")
 endif()
 
 # include(CTest) automatically calls enable_testing()
 # enable_testing()
 include(CTest)
 
-function(make_executable source_files)
-   foreach(file ${source_files})
+# Make executables
+function(make_executable)
+   # For details of function parameters, see
+   # https://stackoverflow.com/questions/23327687/how-to-write-a-cmake-function-with-more-than-one-parameter-groups
+   cmake_parse_arguments(
+       EXE_ARGS  # Prefix of output variables
+       ""        # List of names of the boolean arguments (only defined ones will be true)
+       ""        # List of names of mono-valued arguments
+       "SOURCE"  # List of names of multi-valued arguments (output variables are lists)
+       ${ARGN}   # Arguments of the function to parse, here we take the all original ones
+   )
+   # NOTE: If unparsed arguments remains here, they can be found in the
+   #       variable EXE_ARGS_UNPARSED_ARGUMENTS
+   foreach(file ${EXE_ARGS_SOURCE})
       get_filename_component(file_stem ${file} NAME_WE)
       add_executable(${file_stem} ${file})
-  endforeach(file ${source_files})
+  endforeach(file ${EXE_ARGS_SOURCE})
 endfunction(make_executable)
 
+# Link executables
+function(link_executable)
+   # For details of function parameters, see
+   # https://stackoverflow.com/questions/23327687/how-to-write-a-cmake-function-with-more-than-one-parameter-groups
+   cmake_parse_arguments(
+       LINK_ARGS # Prefix of output variables
+       ""        # List of names of the boolean arguments (only defined ones will be true)
+       "LIB"     # List of names of mono-valued arguments
+       "TARGETS" # List of names of multi-valued arguments (output variables are lists)
+       ${ARGN}   # Arguments of the function to parse, here we take the all original ones
+   )
+   # NOTE: If unparsed arguments remains here, they can be found in the
+   #       variable LINK_ARGS_UNPARSED_ARGUMENTS
+   if(NOT LINK_ARGS_LIB)
+       message(FATAL_ERROR "You must provide a lib to link with")
+   endif(NOT LINK_ARGS_LIB)
+
+   # Notice that linking happens after adding the executable
+   # https://stackoverflow.com/a/39600062/2786884
+   # Difference PUBLIC, PRIVATE and INTERFACE:
+   # https://leimao.github.io/blog/CMake-Public-Private-Interface/
+   # https://kubasejdak.com/modern-cmake-is-like-inheritance
+   # NOTE: The location of LINK_ARGS_LIB is inferred
+   foreach(executable ${LINK_ARGS_TARGETS})
+      target_link_libraries(${executable} PRIVATE ${LINK_ARGS_LIB})
+   endforeach(executable ${LINK_ARGS_TARGETS})
+endfunction(link_executable)
+
 # Define a function to check the output of a test
-function(do_test name test_no arguments expected)
+function(do_test)
+   # For details of function parameters, see
+   # https://stackoverflow.com/questions/23327687/how-to-write-a-cmake-function-with-more-than-one-parameter-groups
+   cmake_parse_arguments(
+       TEST_ARGS            # Prefix of output variables
+       ""                   # List of names of the boolean arguments (only defined ones will be true)
+       "NAME;NO;EXPECTED"   # List of names of mono-valued arguments
+       "ARGS"               # List of names of multi-valued arguments (output variables are lists)
+       ${ARGN}              # Arguments of the function to parse, here we take the all original ones
+   )
+   # NOTE: If unparsed arguments remains here, they can be found in the
+   #       variable TEST_ARGS_UNPARSED_ARGUMENTS
+
+   # Error handling
+   if(NOT TEST_ARGS_NAME)
+       message(FATAL_ERROR "You must provide a name to the executable")
+   endif(NOT TEST_ARGS_NAME)
+   if(NOT TEST_ARGS_NO)
+       message(FATAL_ERROR "You must provide a test number")
+   endif(NOT TEST_ARGS_NO)
+   if(NOT TEST_ARGS_EXPECTED)
+       message(FATAL_ERROR "You must provide an expected outcome")
+   endif(NOT TEST_ARGS_EXPECTED)
+
    # Find path relative to this
    file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})
    string(REPLACE "/" "_" rel_path ${rel_path})
-   set(full_name ${rel_path}_${name}_${test_no})
-   add_test(NAME ${full_name} COMMAND ./${name} ${arguments})
+   set(full_name ${rel_path}_${TEST_ARGS_NAME}_${TEST_ARGS_NO})
+   add_test(NAME ${full_name} COMMAND ./${TEST_ARGS_NAME} ${TEST_ARGS_ARGS})
    # The output must match this regex for the test to pass
    # For other properties check
    # https://cmake.org/cmake/help/latest/manual/cmake-properties.7.html#test-properties
    set_tests_properties(${full_name}
-   PROPERTIES PASS_REGULAR_EXPRESSION "^${expected}$"
+   PROPERTIES PASS_REGULAR_EXPRESSION "^${TEST_ARGS_EXPECTED}$"
    )
 endfunction(do_test)
 
@@ -85,4 +148,5 @@ if(THREAD_SANITIZE)
    add_link_options(-fsanitize=thread)
 endif()
 
+add_subdirectory(utils)
 add_subdirectory(programming_assignments)
