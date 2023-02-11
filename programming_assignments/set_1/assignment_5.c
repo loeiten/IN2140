@@ -2,7 +2,7 @@
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 
-int isHex(unsigned char c) {
+int isHex(const unsigned char c) {
   if (((c >= '0') && (c <= '9')) ||  // Number
       ((c >= 'a') && (c <= 'f')) ||  // Lower case
       ((c >= 'A') && (c <= 'F'))     // Upper case
@@ -12,7 +12,7 @@ int isHex(unsigned char c) {
   return 0;
 }
 
-int hexVal(unsigned char c) {
+int hexVal(const unsigned char c) {
   if (isHex(c)) {
     if ((c >= '0') && (c <= '9')) {
       return c - '0';

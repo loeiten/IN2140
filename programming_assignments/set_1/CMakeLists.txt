@@ -4,6 +4,7 @@ set(source_files
     assignment_3.c
     assignment_4.c
     assignment_5.c
+    assignment_6.c
 )
 
 set(link_with_utils
@@ -62,3 +63,6 @@ do_test(NAME assignment_5 NO 11 ARGS "C" EXPECTED "12\n")
 do_test(NAME assignment_5 NO 12 ARGS "F" EXPECTED "15\n")
 do_test(NAME assignment_5 NO 13 ARGS "g" EXPECTED "ERROR: 'g' is not a valid hex-value\n-1\n")
 do_test(NAME assignment_5 NO 14 ARGS "G" EXPECTED "ERROR: 'G' is not a valid hex-value\n-1\n")
+
+# assignment_6
+do_test(NAME assignment_6 NO 1 ARGS "" EXPECTED "strcmpx\\(\"Abc\", \"Ab\"\\) gives -1\nstrcmpx\\(\"Abc\", \"Abc\"\\) gives 0\nstrcmpx\\(\"Abc\", \"Abcd\"\\) gives 1\nstrcmpx\\(\"Abd\", \"Abc\"\\) gives 1\nstrcmpx\\(\"Abc\", \"Abd\"\\) gives -1\nstrcmpx\\(\"abc\", \"Abc\"\\) gives 1\nstrcmpx\\(\"Abc\", \"abc\"\\) gives -1\n")
