@@ -1,6 +1,7 @@
 set(source_files
     assignment_1.c
     assignment_2.c
+    assignment_3.c
 )
 
 set(link_with_utils
@@ -31,3 +32,6 @@ do_test(NAME assignment_2 NO 4 ARGS "Hello World" "10" EXPECTED "Position 10 in 
 do_test(NAME assignment_2 NO 5 ARGS "Hello World" "11" EXPECTED "Error when finding position 11 of 'Hello World' with length 11\n")
 do_test(NAME assignment_2 NO 6 ARGS "Hello World" "-1" EXPECTED "Could not capture the position from -1\n")
 do_test(NAME assignment_2 NO 7 ARGS "Hello World" "a" EXPECTED "Could not capture the position from a\n")
+
+# assignment_3
+do_test(NAME assignment_3 NO 1 ARGS "" EXPECTED "Overflow detected when using short\n20000 \\+ 20000 = -25536\n9223372036854775806 \\+ 1 = 9223372036854775807\n")

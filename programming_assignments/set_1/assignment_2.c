@@ -33,8 +33,8 @@ int main(int argc, char** argv) {
 
   char c = strgetc(argv[1], pos);
   if (c == 0) {
-    printf("Error when finding position %s of '%s' with length %d\n", argv[2],
-           argv[1], (int)strlen(argv[1]));
+    printf("Error when finding position %s of '%s' with length %lu\n", argv[2],
+           argv[1], (unsigned long)strlen(argv[1]));
     return EXIT_FAILURE;
   }
 
