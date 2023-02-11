@@ -27,3 +27,9 @@ repos:
               - "--inline-suppr"  # Enable inline suppression
           - id: cpplint
             args: ["--filter=-legal/copyright,-build/include_order,-whitespace/comments,-readability/casting"]
+          - id: include-what-you-use
+            args:
+               - "-Xiwyu"
+               - "--error"
+               - "-Xiwyu"
+               - "--mapping_file=.linters/iwyu.imp"
