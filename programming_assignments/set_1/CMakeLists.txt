@@ -2,6 +2,7 @@ set(source_files
     assignment_1.c
     assignment_2.c
     assignment_3.c
+    assignment_4.c
 )
 
 set(link_with_utils
@@ -35,3 +36,12 @@ do_test(NAME assignment_2 NO 7 ARGS "Hello World" "a" EXPECTED "Could not captur
 
 # assignment_3
 do_test(NAME assignment_3 NO 1 ARGS "" EXPECTED "Overflow detected when using short\n20000 \\+ 20000 = -25536\n9223372036854775806 \\+ 1 = 9223372036854775807\n")
+
+# assignment_4
+do_test(NAME assignment_4 NO 1 ARGS "foo" "foo" EXPECTED "Strings are the same\n")
+do_test(NAME assignment_4 NO 3 ARGS "foo" "fo" EXPECTED "Strings are NOT the same\n")
+do_test(NAME assignment_4 NO 4 ARGS "foo" "fo " EXPECTED "Strings are NOT the same\n")
+do_test(NAME assignment_4 NO 5 ARGS "foo" "bar" EXPECTED "Strings are NOT the same\n")
+do_test(NAME assignment_4 NO 6 ARGS "Hello World" "Hello World" EXPECTED "Strings are the same\n")
+do_test(NAME assignment_4 NO 7 ARGS "Hello World" "Hello Worl" EXPECTED "Strings are NOT the same\n")
+do_test(NAME assignment_4 NO 8 ARGS "Hello World" "hello world" EXPECTED "Strings are NOT the same\n")
