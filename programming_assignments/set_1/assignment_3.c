@@ -8,7 +8,7 @@ int main() {
   short sum = a + b;
 
   if ((sum < a) || (sum < b)) {  // cppcheck-suppress knownConditionTrueFalse
-    printf("Overflow detected when using short\n");
+    printf("WARNING: Overflow detected when using short\n");
   }
 
   printf("%d + %d = %d\n", a, b, sum);
@@ -21,7 +21,7 @@ int main() {
    * long lSum = lA + lB;
 
    * if ((lSum < lA) || (lSum < lB)) {
-   *   printf("Overflow detected when using long\n");
+   *   printf("WARNING: Overflow detected when using long\n");
    * }
 
    * printf("%ld + %ld = %ld\n", lA, lB, lSum);
@@ -33,7 +33,7 @@ int main() {
 
   if ((lSum2 < lA2) ||
       (lSum2 < lB2)) {  // cppcheck-suppress knownConditionTrueFalse
-    printf("Overflow detected when using long\n");
+    printf("WARNING: Overflow detected when using long\n");
   }
 
   printf("%ld + %ld = %ld\n", lA2, lB2, lSum2);

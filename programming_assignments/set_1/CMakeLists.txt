@@ -3,6 +3,7 @@ set(source_files
     assignment_2.c
     assignment_3.c
     assignment_4.c
+    assignment_5.c
 )
 
 set(link_with_utils
@@ -35,7 +36,7 @@ do_test(NAME assignment_2 NO 6 ARGS "Hello World" "-1" EXPECTED "Could not captu
 do_test(NAME assignment_2 NO 7 ARGS "Hello World" "a" EXPECTED "Could not capture the position from a\n")
 
 # assignment_3
-do_test(NAME assignment_3 NO 1 ARGS "" EXPECTED "Overflow detected when using short\n20000 \\+ 20000 = -25536\n9223372036854775806 \\+ 1 = 9223372036854775807\n")
+do_test(NAME assignment_3 NO 1 ARGS "" EXPECTED "WARNING: Overflow detected when using short\n20000 \\+ 20000 = -25536\n9223372036854775806 \\+ 1 = 9223372036854775807\n")
 
 # assignment_4
 do_test(NAME assignment_4 NO 1 ARGS "foo" "foo" EXPECTED "Strings are the same\n")
@@ -45,3 +46,19 @@ do_test(NAME assignment_4 NO 5 ARGS "foo" "bar" EXPECTED "Strings are NOT the sa
 do_test(NAME assignment_4 NO 6 ARGS "Hello World" "Hello World" EXPECTED "Strings are the same\n")
 do_test(NAME assignment_4 NO 7 ARGS "Hello World" "Hello Worl" EXPECTED "Strings are NOT the same\n")
 do_test(NAME assignment_4 NO 8 ARGS "Hello World" "hello world" EXPECTED "Strings are NOT the same\n")
+
+# assignment_5
+do_test(NAME assignment_5 NO 1 ARGS "0" EXPECTED "0\n")
+do_test(NAME assignment_5 NO 2 ARGS "1" EXPECTED "1\n")
+do_test(NAME assignment_5 NO 3 ARGS "2" EXPECTED "2\n")
+do_test(NAME assignment_5 NO 4 ARGS "9" EXPECTED "9\n")
+do_test(NAME assignment_5 NO 5 ARGS "a" EXPECTED "10\n")
+do_test(NAME assignment_5 NO 6 ARGS "b" EXPECTED "11\n")
+do_test(NAME assignment_5 NO 7 ARGS "c" EXPECTED "12\n")
+do_test(NAME assignment_5 NO 8 ARGS "f" EXPECTED "15\n")
+do_test(NAME assignment_5 NO 9 ARGS "A" EXPECTED "10\n")
+do_test(NAME assignment_5 NO 10 ARGS "B" EXPECTED "11\n")
+do_test(NAME assignment_5 NO 11 ARGS "C" EXPECTED "12\n")
+do_test(NAME assignment_5 NO 12 ARGS "F" EXPECTED "15\n")
+do_test(NAME assignment_5 NO 13 ARGS "g" EXPECTED "ERROR: 'g' is not a valid hex-value\n-1\n")
+do_test(NAME assignment_5 NO 14 ARGS "G" EXPECTED "ERROR: 'G' is not a valid hex-value\n-1\n")
