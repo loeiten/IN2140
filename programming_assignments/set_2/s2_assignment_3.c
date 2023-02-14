@@ -10,48 +10,50 @@ void count(FILE* fp, const char* word, int* hits, int* words) {
   int matchIndex = 0;
 
   // Reset counters
-  hits = 0;
-  words = 0;
+  *hits = 0;
+  *words = 0;
 
   // Definition: A word boundary is whatever is not a alphanumerical character
   // https://en.cppreference.com/w/c/string/byte/isalnum
 
   // Read character by character
-  int c = getc(fp);
-
-  // Skip initial whitespaces
-  while (!isalnum(c)) {
-    c = getc(fp);
-  }
+  int c = fgetc(fp);
 
   while (c != EOF) {
     // Deal with non-alphanumerical characters
-    if (!isalnum(c)) {
-      // Count the current as a word
-      ++words;
-      if (matchIndex == (wordLen - 1)) {
-        // Count the match
-        ++hits;
-      }
-      // Skip consecutive non-alnum characters
-      while (!isalnum(c)) {
-        c = getc(fp);
-      }
-      // Reset the word length and the match index
-      matchIndex = 0;
+    // Skip consecutive non-alnum characters
+    while (!isalnum(c) && (c != EOF)) {
+      c = fgetc(fp);
+    }
+
+    // Exit if we hit EOF
+    if (c == EOF) {
+      break;
     }
 
     // Deal with alphanumerical characters
-    if (isalnum(c)) {
-      if (c == word[matchIndex]) {
+    // Find matches
+    while (isalnum(c) && (c != EOF)) {
+      if ((matchIndex < wordLen) && (c == word[matchIndex])) {
         ++matchIndex;
+        c = fgetc(fp);
       } else {
-        matchIndex = 0;
+        // No chance to find match, skip the rest
+        while (isalnum(c) && (c != EOF)) {
+          c = fgetc(fp);
+        }
       }
     }
 
-    // Update the character
-    c = getc(fp);
+    // Count the word
+    ++(*words);
+
+    if (matchIndex == wordLen) {
+      // Count the match
+      ++(*hits);
+    }
+    // Reset the match index
+    matchIndex = 0;
   }
 
   return;
