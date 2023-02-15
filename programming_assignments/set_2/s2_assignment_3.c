@@ -1,7 +1,7 @@
-#include <ctype.h>
+#include <ctype.h>   // for isalnum
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for printf
-#include <stdlib.h>  // for atoi, EXIT_FAILURE, EXIT_SUCCESS
+#include <stdio.h>   // for fgetc, printf, EOF, fclose, fopen, FILE, NULL
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strlen
 
 void count(FILE* fp, const char* word, int* hits, int* words) {

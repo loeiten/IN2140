@@ -2,6 +2,7 @@ set(source_files
     s2_assignment_1.c
     s2_assignment_2.c
     s2_assignment_3.c
+    s2_assignment_4.c
 )
 
 # Create executables
@@ -33,3 +34,9 @@ do_test(NAME s2_assignment_3 NO 6 ARGS "mauris" "s2_assignment_3_4.txt" EXPECTED
 do_test(NAME s2_assignment_3 NO 7 ARGS "Mauris" "s2_assignment_3_4.txt" EXPECTED "1/482\n")
 do_test(NAME s2_assignment_3 NO 8 ARGS "dolor" "s2_assignment_3_4.txt" EXPECTED "5/482\n")
 do_test(NAME s2_assignment_3 NO 9 ARGS "do" "do_not_exist.txt" EXPECTED "do_not_exist.txt not found\n")
+
+# assignment_4
+set(file_name my_file.txt)
+set(name my_name)
+set(age 30)
+do_test(NAME s2_assignment_4 NO 1 ARGS ${name} ${age} ${file_name} EXPECTED "Hello ${name}, you are ${age} years old.\n")
