@@ -3,6 +3,9 @@
 add_library(utils SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/string_helpers.c
 )
+add_library(person SHARED
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/person.c
+)
 
 # NOTE: It's also possible to do interface libraries like so
 # add_library(my_big_bunch_of_libs INTERFACE)
@@ -12,5 +15,8 @@ add_library(utils SHARED
 # Anybody linking to `utils` needs to include the current include directory
 # INTERFACE means things that consumers require, but producers doesn't
 target_include_directories(utils
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_include_directories(person
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )

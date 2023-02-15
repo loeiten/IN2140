@@ -10,11 +10,16 @@ set(link_with_utils
     s2_assignment_5
 )
 
+set(link_with_person
+    s2_assignment_5
+)
+
 # Create executables
 make_executable(SOURCE ${source_files})
 
 # Link with libraries
 link_executable(TARGETS ${link_with_utils} LIB utils)
+link_executable(TARGETS ${link_with_person} LIB person)
 
 # Test
 # assignment_1
