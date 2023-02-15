@@ -64,14 +64,14 @@ int main(int argc, char** argv) {
   const int age = atoi(argv[2]);
   const char* path = argv[3];
 
-  int exit_failure = writeFile(name, age, path);
-  if (exit_failure) {
+  int exitFailure = writeFile(name, age, path);
+  if (exitFailure) {
     printf("Failed writing to %s", path);
     return EXIT_FAILURE;
   }
 
-  exit_failure = readAndPrintFile(path);
-  if (exit_failure) {
+  exitFailure = readAndPrintFile(path);
+  if (exitFailure) {
     printf("Failed reading from %s", path);
     return EXIT_FAILURE;
   }

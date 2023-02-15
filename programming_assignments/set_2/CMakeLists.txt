@@ -3,10 +3,18 @@ set(source_files
     s2_assignment_2.c
     s2_assignment_3.c
     s2_assignment_4.c
+    s2_assignment_5.c
+)
+
+set(link_with_utils
+    s2_assignment_5
 )
 
 # Create executables
 make_executable(SOURCE ${source_files})
+
+# Link with libraries
+link_executable(TARGETS ${link_with_utils} LIB utils)
 
 # Test
 # assignment_1
@@ -36,7 +44,10 @@ do_test(NAME s2_assignment_3 NO 8 ARGS "dolor" "s2_assignment_3_4.txt" EXPECTED 
 do_test(NAME s2_assignment_3 NO 9 ARGS "do" "do_not_exist.txt" EXPECTED "do_not_exist.txt not found\n")
 
 # assignment_4
-set(file_name my_file.txt)
-set(name my_name)
-set(age 30)
-do_test(NAME s2_assignment_4 NO 1 ARGS ${name} ${age} ${file_name} EXPECTED "Hello ${name}, you are ${age} years old.\n")
+do_test(NAME s2_assignment_4 NO 1 ARGS "my_name" "30" "my_file.txt" EXPECTED "Hello my_name, you are 30 years old.\n")
+
+# assignment_5
+do_test(NAME s2_assignment_5 NO 1 ARGS "Bob" "5" EXPECTED "Name: Bob, age: 5\n")
+do_test(NAME s2_assignment_5 NO 2 ARGS "Bob" "5" "Alice" "6" EXPECTED "Name: Bob, age: 5\nName: Alice, age: 6\n")
+do_test(NAME s2_assignment_5 NO 3 ARGS "null" "-1" EXPECTED "Failed to capture the age from '-1'\n")
+do_test(NAME s2_assignment_5 NO 4 ARGS "Bob" "5" "Alice" EXPECTED "Name: Bob, age: 5\nNot enough arguments given\n")
