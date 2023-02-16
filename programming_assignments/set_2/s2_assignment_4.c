@@ -2,6 +2,8 @@
 #include <stdio.h>   // for printf, fclose, fopen, NULL, ferror, fputs, fread
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, malloc
 
+#define BUFFER_SIZE 1024
+
 int writeFile(const char* name, const int age, const char* path) {
   // Open the file for writing
   FILE* fpw;
@@ -34,15 +36,15 @@ int writeFile(const char* name, const int age, const char* path) {
 int readAndPrintFile(const char* path) {
   // Based on:
   // https://stackoverflow.com/a/3463793/2786884
-  char buffer[1024];
+  char buffer[BUFFER_SIZE];
   FILE* fpr = fopen(path, "r");
   if (fpr == NULL) {
     return EXIT_FAILURE;
   }
-  int nRead = fread(buffer, sizeof(char), sizeof(buffer), fpr);
+  int nRead = fread(buffer, sizeof(char), BUFFER_SIZE, fpr);
   while (nRead > 0) {
     fwrite(buffer, sizeof(char), nRead, stdout);
-    nRead = fread(buffer, sizeof(char), sizeof(buffer), fpr);
+    nRead = fread(buffer, sizeof(char), BUFFER_SIZE, fpr);
   }
   if (ferror(fpr)) {
     fclose(fpr);

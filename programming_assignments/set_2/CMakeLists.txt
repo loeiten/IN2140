@@ -71,4 +71,4 @@ foreach(file ${files})
 endforeach(file ${files})
 # Run test
 do_test(NAME s2_assignment_6 NO 1 ARGS "s2_assignment_6.csv" EXPECTED "Name: Alice, age: 25\nName: Bob, age: 26\nName: Carol, age: 30\nName: Dan, age: 28\nName: Eve, age: 17\nName: Frank, age: 50\n")
-do_test(NAME s2_assignment_6 NO 1 ARGS "s2_assignment_6.csv" "s2_assignment_6_remove.txt" "s2_assignment_6_add.txt" EXPECTED "Name: Bob, age: 26\nName: Carol, age: 30\nName: Erin, age: 28\nName: Vanna, age: 20\n")
+do_test(NAME s2_assignment_6 NO 2 ARGS "s2_assignment_6.csv" "s2_assignment_6_remove.txt" "s2_assignment_6_add.txt" EXPECTED "Name: Bob, age: 26\nName: Carol, age: 30\nName: Erin, age: 28\nName: Vanna, age: 20\n")
