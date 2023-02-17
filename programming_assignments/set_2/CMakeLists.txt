@@ -4,6 +4,7 @@ set(source_files
     s2_assignment_3.c
     s2_assignment_4.c
     s2_assignment_5.c
+    s2_assignment_6.c
 )
 
 set(link_with_utils
@@ -12,6 +13,7 @@ set(link_with_utils
 
 set(link_with_person
     s2_assignment_5
+    s2_assignment_6
 )
 
 # Create executables

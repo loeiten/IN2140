@@ -28,7 +28,11 @@ int hexVal(const unsigned char c) {
 
 int main(int argc, char** argv) {
   if (argc != 2) {
-    // NOTE: Base does only work for UNIX systems
+    // NOTE: Base is from POSIX.1-2008, not the C-standard, see
+    // https://www.unix.com/man-page/posix/3p/basename/
+    // for specification and
+    // https://github.com/coreutils/coreutils/blob/master/src/basename.c
+    // for possible implementation
     printf("Usage: ./%s CHAR\n", basename(argv[0]));
     return EXIT_FAILURE;
   }

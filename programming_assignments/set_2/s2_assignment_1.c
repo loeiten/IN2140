@@ -6,7 +6,11 @@ void sum(const int a, const int b, int* result) { *result = a + b; }
 
 int main(int argc, char** argv) {
   if (argc != 3) {
-    // NOTE: Base does only work for UNIX systems
+    // NOTE: Base is from POSIX.1-2008, not the C-standard, see
+    // https://www.unix.com/man-page/posix/3p/basename/
+    // for specification and
+    // https://github.com/coreutils/coreutils/blob/master/src/basename.c
+    // for possible implementation
     printf("Usage: ./%s INT INT\n", basename(argv[0]));
     return EXIT_FAILURE;
   }
