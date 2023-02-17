@@ -1,6 +1,5 @@
 #include <libgen.h>  // for basename
-#include <stddef.h>
-#include <stdio.h>   // for printf, snprintf
+#include <stdio.h>   // for printf, snprintf, FILE
 #include <stdlib.h>  // for EXIT_SUCCESS, malloc, EXIT_FAILURE
 #include <string.h>  // for strlen
 
@@ -146,6 +145,7 @@ int readRegister(const char* registerPath, struct Person** personArray,
   // Read entries and store it to the personArray
   exitFailure = readEntries(registerPath, *personArray, *personArrayLen);
   if (exitFailure) {
+    free(*personArray);
     printf("Failed to obtain the entries from %s", registerPath);
     return EXIT_FAILURE;
   }
@@ -186,9 +186,24 @@ int main(int argc, char** argv) {
   int personArrayLen;
   int exitFailure = readRegister(registerPath, &personArray, &personArrayLen);
   if (exitFailure) {
-    printf("Failed to read the register");
+    free(registerPath);
+    printf("Failed to read the register from %s", registerPath);
     return EXIT_FAILURE;
   }
+
+  // Read whom to remove
+  if (argc >= 3) {
+    // Remove from the register
+  }
+
+  // Read whom to add
+  if (argc >= 4) {
+    // Add to the register
+  }
+
+  // Store the register to a "dirty" file
+
+  // Read the register from the "dirty" file
 
   // Print the register
   for (int i = 0; i < personArrayLen; ++i) {
@@ -197,6 +212,7 @@ int main(int argc, char** argv) {
 
   // Free memory
   free(personArray);
+  free(registerPath);
 
   return EXIT_SUCCESS;
 }

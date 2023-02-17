@@ -2,6 +2,7 @@
 # We can here specify whether we'd like a static, shared or module library
 add_library(utils SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/string_helpers.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/file_operations.c
 )
 add_library(person SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/person.c

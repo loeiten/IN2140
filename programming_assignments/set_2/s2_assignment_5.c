@@ -32,6 +32,7 @@ int main(int argc, char** argv) {
     ++i;
     if (i == argc) {
       printf("Not enough arguments given\n");
+      free(name);
       return EXIT_FAILURE;
     }
 
@@ -39,6 +40,7 @@ int main(int argc, char** argv) {
     int exitFailure = getInt(argv[i], &age);
     if (exitFailure) {
       printf("Failed to capture the age from '%s'", argv[i]);
+      free(name);
       return EXIT_FAILURE;
     }
 
