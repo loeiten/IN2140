@@ -3,81 +3,17 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, malloc, EXIT_FAILURE
 #include <string.h>  // for strlen
 
+#include "../../utils/include/file_operations.h"
 #include "../../utils/include/person.h"
 
-#define BUFFER_SIZE 65536  // 2^16
-
-int getNumberOfLines(const char* path, int* lines) {
-  // Based on https://stackoverflow.com/a/70708991/2786884
+int readRemoveEntries(const char* path, char** removePersonArray,
+                      const int removePersonLen) {
   FILE* fp = fopen(path, "r");
   if (fp == NULL) {
     printf("%s not found", path);
     return EXIT_FAILURE;
   }
 
-  char buffer[BUFFER_SIZE];
-  *lines = 0;
-
-  int nRead = 1;  // Set to 1 to trigger the while loop
-  while (nRead > 0) {
-    nRead = fread(buffer, sizeof(char), BUFFER_SIZE, fp);
-    for (int i = 0; i < nRead; ++i) {
-      if (buffer[i] == '\n') {
-        ++(*lines);
-      }
-    }
-  }
-  if (ferror(fp)) {
-    fclose(fp);
-    return EXIT_FAILURE;
-  }
-
-  fclose(fp);
-  return EXIT_SUCCESS;
-}
-
-// NOTE: We are changing the pointer so we take a pointer to the pointer as an
-//       input
-int getNameAge(char* line, char** name, int* age) {
-  // Find the length of the string and the length until comma
-  int lineLen = strlen(line);
-  int i = 0;
-  for (; i < lineLen; ++i) {
-    if (line[i] == ',') {
-      break;
-    }
-  }
-
-  if ((i == 0) || (i == lineLen)) {
-    printf("Failed to split %s into 'name' and 'age", line);
-    return EXIT_FAILURE;
-  }
-
-  // Increment i once to go from index to counter
-  ++i;
-
-  // Capture the name
-  // +1 for the /0 char
-  *name = (char*)malloc((i + 1) * sizeof(char));
-  snprintf(*name, i, "%s", line);
-
-  // Capture the age
-  char* ageStr = &(line[i]);
-  *age = atoi(ageStr);
-
-  return EXIT_SUCCESS;
-}
-
-int readEntries(const char* path, struct Person* personArray,
-                int personArrayLen) {
-  FILE* fp = fopen(path, "r");
-  if (fp == NULL) {
-    printf("%s not found", path);
-    return EXIT_FAILURE;
-  }
-
-  // NOTE: getline is POSIX, not C-standard
-  // https://stackoverflow.com/a/3501681/2786884
   char* line = NULL;
   size_t len = 0;
   ssize_t nBytes;  // ssize_t is when the output can be negative
@@ -87,70 +23,175 @@ int readEntries(const char* path, struct Person* personArray,
   // for specification, and
   // https://github.com/NetBSD/src/blob/trunk/tools/compat/getline.c
   // for possible implementation
-  // Read the header
-  for (int i = 0; i < 2; ++i) {
+  // Read the entries
+  for (int i = 0; i < removePersonLen; ++i) {
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
       printf("Failed to read line %d of %s", i, path);
       return EXIT_FAILURE;
     }
+    snprintf(removePersonArray[i], MAX_NAME_LEN, "%s", line);
   }
 
+  free(line);
+  fclose(fp);
+  return EXIT_SUCCESS;
+}
+
+// NOTE: We change the personArray, hence we must pass a pointer to the array
+void removeFromFile(const char* path, struct Person** personArray,
+                    const int personArrayLen) {
+  // Get number of lines
+  int removePersonLen;
+  int exitFailure = getNumberOfLines(path, &removePersonLen);
+  if (exitFailure != 0) {
+    printf("Failed to obtain the number of lines of %s", path);
+    free(personArray);
+    exit(EXIT_FAILURE);
+  }
+
+  // Allocate array to remove names
+  char** removePersonArray = (char**)malloc(removePersonLen * sizeof(char*));
+  for (int i = 0; i < removePersonLen; ++i) {
+    removePersonArray[i] = malloc((MAX_NAME_LEN + 1) * sizeof(char));
+  }
+
+  // Fill the removePersonArray
+  exitFailure = readRemoveEntries(path, removePersonArray, removePersonLen);
+  if (exitFailure != 0) {
+    printf("Failed to read remove entries");
+    for (int i = 0; i < removePersonLen; ++i) {
+      free(removePersonArray[i]);
+    }
+    free(removePersonArray);
+    free(personArray);
+    exit(EXIT_FAILURE);
+  }
+
+  // Remove the entries (rather set them to "null" and -1)
+  // NOTE: In an ideal world we would search the personArray as a hash-map to
+  //       have constant time look-up
+  //       Instead we will have O(n) time look-up for each person we're removing
+  for (int removeIdx = 0; removeIdx < removePersonLen; ++removeIdx) {
+    for (int personIdx = 0; personIdx < personArrayLen; ++personIdx) {
+      char name[MAX_NAME_LEN];
+      exitFailure = getName(personArray[personIdx], name);
+      if (exitFailure != 0) {
+        printf("Failed to get person number %d", personIdx);
+        for (int i = 0; i < removePersonLen; ++i) {
+          free(removePersonArray[i]);
+        }
+        free(removePersonArray);
+        free(personArray);
+        exit(EXIT_FAILURE);
+      }
+      if (strcmp(removePersonArray[removeIdx], name) == 0) {
+        exitFailure = setName(personArray[personIdx], "null");
+        if (exitFailure) {
+          printf("Failed to set name for person number %d", personIdx);
+          for (int i = 0; i < removePersonLen; ++i) {
+            free(removePersonArray[i]);
+          }
+          free(removePersonArray);
+          free(personArray);
+          exit(EXIT_FAILURE);
+        }
+        exitFailure = setAge(personArray[personIdx], -1);
+        if (exitFailure) {
+          printf("Failed to set age for person number %d", personIdx);
+          for (int i = 0; i < removePersonLen; ++i) {
+            free(removePersonArray[i]);
+          }
+          free(personArray);
+          free(removePersonArray);
+          exit(EXIT_FAILURE);
+        }
+      }
+    }
+  }
+
+  // Free memory
+  for (int i = 0; i < removePersonLen; ++i) {
+    free(removePersonArray[i]);
+  }
+  free(removePersonArray);
+}
+
+void addFromFile(const char* path, struct Person** personArray,
+                 int* personArrayLen, struct Person** extendedPersonArray,
+                 int* extendedPersonArrayLen) {
+  // Get number of lines
+  int lines;
+  int exitFailure = getNumberOfLines(path, &lines);
+  if (exitFailure) {
+    printf("Failed to obtain the number of lines of %s", path);
+    exit(EXIT_FAILURE);
+  }
+  *extendedPersonArrayLen = (*personArrayLen) + lines;
+
+  // Re-allocate memory to take the additions into account
+  (*extendedPersonArray) =
+      (struct Person*)realloc(personArray, *personArrayLen);
+
+  // Extend with the file
+  FILE* fp = fopen(path, "r");
+  if (fp == NULL) {
+    printf("Failed to open %s", path);
+    exit(EXIT_FAILURE);
+  }
+
+  char* line = NULL;
+  size_t len = 0;
+  ssize_t nBytes;  // ssize_t is when the output can be negative
+
   // Read the entries
-  for (int i = 0; i < personArrayLen; ++i) {
+  for (int i = 0; i < lines; ++i) {
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
-      printf("Failed to read line %d of %s", i + 2, path);
-      return EXIT_FAILURE;
+      printf("Failed to entry %d of %s", i, path);
+      exit(EXIT_FAILURE);
     }
     char* curName;
     int curAge;
     // NOTE: We are changing curName, so we call using the address of curName
-    int exitFailure = getNameAge(line, &curName, &curAge);
+    int exitFailure = strToNameAge(line, &curName, &curAge);
     if (exitFailure) {
       printf("Failed to get entry %d of %s", i, path);
-      return EXIT_FAILURE;
+      exit(EXIT_FAILURE);
     }
-    exitFailure = createPerson(curName, curAge, &personArray[i]);
+    exitFailure = createPerson(curName, curAge,
+                               extendedPersonArray[i + (*personArrayLen - 1)]);
     free(curName);
     if (exitFailure) {
-      return EXIT_FAILURE;
+      exit(EXIT_FAILURE);
     }
   }
 
   free(line);
 
   fclose(fp);
-  return EXIT_SUCCESS;
+  return;
 }
 
-// NOTE: We change the personArray, hence we must pass a pointer to the array
-int readRegister(const char* registerPath, struct Person** personArray,
-                 int* personArrayLen) {
-  // Get number of lines
-  int lines;
-  int exitFailure = getNumberOfLines(registerPath, &lines);
-  if (exitFailure) {
-    printf("Failed to obtain the number of lines of %s", registerPath);
-    return EXIT_FAILURE;
+void storeToDirtyFile(char* originalPath, char* dirtyPath,
+                      struct Person* personArray, const int personArrayLen) {
+  // Obtain the dirty name
+
+  // We concatenate the string in order to write everything at once
+  // We do this as we have to convert the age to a string anyways, see
+  // https://stackoverflow.com/a/32819876/2786884
+  const char* format = "%s_dirty.csv";
+  int length = snprintf(NULL, 0, format, basename(originalPath));
+  dirtyPath = (char*)malloc((length + 1) * sizeof(char));
+  snprintf(dirtyPath, 0, format, basename(originalPath));
+
+  int exitFailure = storeRegister(dirtyPath, personArray, personArrayLen);
+  if (exitFailure != 0) {
+    printf("Failed to write to %s", dirtyPath);
+    free(personArray);
+    free(dirtyPath);
+    exit(EXIT_FAILURE);
   }
-
-  // Get number of entries (subtract 2 due to header)
-  (*personArrayLen) = lines - 2;
-
-  // Allocate array to the personArray
-  *personArray =
-      (struct Person*)malloc((*personArrayLen) * sizeof(struct Person));
-
-  // Read entries and store it to the personArray
-  exitFailure = readEntries(registerPath, *personArray, *personArrayLen);
-  if (exitFailure) {
-    free(*personArray);
-    printf("Failed to obtain the entries from %s", registerPath);
-    return EXIT_FAILURE;
-  }
-
-  return EXIT_SUCCESS;
 }
 
 int main(int argc, char** argv) {
@@ -176,43 +217,48 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  // Obtain the registerPath
-  int strBufferLen = strlen(argv[1]) + 1;
-  char* registerPath = (char*)malloc(strBufferLen * sizeof(char));
-  snprintf(registerPath, strBufferLen, "%s", argv[1]);
-
-  // Read register
+  // Read the original register
   struct Person* personArray = NULL;
   int personArrayLen;
-  int exitFailure = readRegister(registerPath, &personArray, &personArrayLen);
-  if (exitFailure) {
-    free(registerPath);
-    printf("Failed to read the register from %s", registerPath);
-    return EXIT_FAILURE;
-  }
+  readRegister(argv[1], &personArray, &personArrayLen);
 
   // Read whom to remove
   if (argc >= 3) {
-    // Remove from the register
+    // Remove from a file
+    removeFromFile(argv[2], &personArray, personArrayLen);
   }
 
   // Read whom to add
+  int extendedPersonArrayLen;
+  struct Person* extendedPersonArray = NULL;
   if (argc >= 4) {
     // Add to the register
+    addFromFile(argv[3], &personArray, &personArrayLen, &extendedPersonArray,
+                &extendedPersonArrayLen);
+  } else {
+    extendedPersonArrayLen = personArrayLen;
+    extendedPersonArray = personArray;
   }
 
   // Store the register to a "dirty" file
+  char* dirtyPath = NULL;
+  storeToDirtyFile(argv[1], dirtyPath, extendedPersonArray,
+                   extendedPersonArrayLen);
 
   // Read the register from the "dirty" file
+  free(extendedPersonArray);
+  struct Person* newPersonArray = NULL;
+  int newPersonArrayLen;
+  readRegister(dirtyPath, &newPersonArray, &newPersonArrayLen);
 
   // Print the register
-  for (int i = 0; i < personArrayLen; ++i) {
-    printPerson(&personArray[i]);
+  for (int i = 0; i < newPersonArrayLen; ++i) {
+    printPerson(&newPersonArray[i]);
   }
 
   // Free memory
-  free(personArray);
-  free(registerPath);
+  free(newPersonArray);
+  free(dirtyPath);
 
   return EXIT_SUCCESS;
 }

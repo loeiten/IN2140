@@ -4,7 +4,7 @@
 #include <stdio.h>   // for printf, FILE
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 
-#define BUFFER_SIZE 4069
+#define BUFFER_SIZE 65536  // 2^16
 
 int copyFile(const char* src, const char* dst) {
   // Based on
@@ -34,5 +34,35 @@ int copyFile(const char* src, const char* dst) {
   fclose(rStream);
   fclose(wStream);
 
+  return EXIT_SUCCESS;
+}
+
+int getNumberOfLines(const char* path, int* lines) {
+  // Based on https://stackoverflow.com/a/70708991/2786884
+  // NOTE: Could instead use getline
+  FILE* fp = fopen(path, "r");
+  if (fp == NULL) {
+    printf("Failed to open %s", path);
+    return EXIT_FAILURE;
+  }
+
+  char buffer[BUFFER_SIZE];
+  *lines = 0;
+
+  int nRead = 1;  // Set to 1 to trigger the while loop
+  while (nRead > 0) {
+    nRead = fread(buffer, sizeof(char), BUFFER_SIZE, fp);
+    for (int i = 0; i < nRead; ++i) {
+      if (buffer[i] == '\n') {
+        ++(*lines);
+      }
+    }
+  }
+  if (ferror(fp)) {
+    fclose(fp);
+    return EXIT_FAILURE;
+  }
+
+  fclose(fp);
   return EXIT_SUCCESS;
 }

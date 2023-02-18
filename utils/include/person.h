@@ -21,5 +21,12 @@ int getAge(struct Person* person, int* age);
 
 int createPerson(const char* name, int age, struct Person* person);
 int printPerson(struct Person* person);
+int personToStr(const struct Person* person, char* str);
+
+int strToNameAge(char* str, char** name, int* age);
+int readRegister(const char* path, struct Person** personArray,
+                 int* personArrayLen);
+int storeRegister(const char* path, const struct Person* personArray,
+                  int personArrayLen);
 
 #endif  // UTILS_INCLUDE_PERSON_H_

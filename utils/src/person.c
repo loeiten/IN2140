@@ -4,6 +4,8 @@
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, malloc
 #include <string.h>  // for strlen, strncpy, strcmp
 
+#include "../include/file_operations.h"
+
 int setName(struct Person* person, const char* name) {
   if (person == NULL) {
     printf("Tried to write to null-pointer\n");
@@ -103,5 +105,160 @@ int printPerson(struct Person* person) {
   snprintf(str, length + 1, format, name, age);
   printf("%s", str);
   free(str);
+  return EXIT_SUCCESS;
+}
+
+int personToStr(struct Person* person, char* str) {
+  char name[MAX_NAME_LEN];
+  int exitFailure = getName(person, name);
+  if (exitFailure) {
+    return EXIT_FAILURE;
+  }
+  int age;
+  exitFailure = getAge(person, &age);
+  if (exitFailure) {
+    return EXIT_FAILURE;
+  }
+  const char* format = "%s,%d\n";
+  int length = snprintf(NULL, 0, format, name, age);
+  str = malloc(length + 1);
+  snprintf(str, length + 1, format, name, age);
+  return EXIT_SUCCESS;
+}
+
+int readRegisterEntries(const char* path, struct Person* personArray,
+                        int personArrayLen) {
+  FILE* fp = fopen(path, "r");
+  if (fp == NULL) {
+    printf("Failed to open %s", path);
+    return EXIT_FAILURE;
+  }
+
+  char* line = NULL;
+  size_t len = 0;
+  ssize_t nBytes;  // ssize_t is when the output can be negative
+
+  // NOTE: getline is from POSIX.1-2008, not the C-standard, see
+  // https://pubs.opengroup.org/onlinepubs/9699919799/functions/getline.html
+  // for specification, and
+  // https://github.com/NetBSD/src/blob/trunk/tools/compat/getline.c
+  // for possible implementation
+  // Read the header
+  for (int i = 0; i < 2; ++i) {
+    nBytes = getline(&line, &len, fp);
+    if (nBytes == -1) {
+      printf("Failed to read line %d of %s", i, path);
+      return EXIT_FAILURE;
+    }
+  }
+
+  // Read the entries
+  for (int i = 0; i < personArrayLen; ++i) {
+    nBytes = getline(&line, &len, fp);
+    if (nBytes == -1) {
+      printf("Failed to entry %d of %s", i + 2, path);
+      return EXIT_FAILURE;
+    }
+    char* curName;
+    int curAge;
+    // NOTE: We are changing curName, so we call using the address of curName
+    int exitFailure = strToNameAge(line, &curName, &curAge);
+    if (exitFailure) {
+      printf("Failed to get entry %d of %s", i, path);
+      return EXIT_FAILURE;
+    }
+    exitFailure = createPerson(curName, curAge, &personArray[i]);
+    free(curName);
+    if (exitFailure) {
+      return EXIT_FAILURE;
+    }
+  }
+
+  free(line);
+
+  fclose(fp);
+  return EXIT_SUCCESS;
+}
+
+// NOTE: We are changing the pointer so we take a pointer to the pointer as an
+//       input
+int strToNameAge(char* str, char** name, int* age) {
+  // Find the length of the string and the length until comma
+  int strLen = strlen(str);
+  int i = 0;
+  for (; i < strLen; ++i) {
+    if (str[i] == ',') {
+      break;
+    }
+  }
+
+  if ((i == 0) || (i == strLen)) {
+    printf("Failed to split %s into 'name' and 'age", str);
+    return EXIT_FAILURE;
+  }
+
+  // Increment i once to go from index to counter
+  ++i;
+
+  // Capture the name
+  // +1 for the /0 char
+  *name = (char*)malloc((i + 1) * sizeof(char));
+  snprintf(*name, i, "%s", str);
+
+  // Capture the age
+  char* ageStr = &(str[i]);
+  *age = atoi(ageStr);
+
+  return EXIT_SUCCESS;
+}
+
+// NOTE: We change the personArray, hence we must pass a pointer to the array
+int readRegister(const char* path, struct Person** personArray,
+                 int* personArrayLen) {
+  // Get number of lines
+  int lines;
+  int exitFailure = getNumberOfLines(path, &lines);
+  if (exitFailure) {
+    printf("Failed to obtain the number of lines of %s", path);
+    return EXIT_FAILURE;
+  }
+
+  // Get number of entries (subtract 2 due to header)
+  (*personArrayLen) = lines - 2;
+
+  // Allocate array to the personArray
+  *personArray =
+      (struct Person*)malloc((*personArrayLen) * sizeof(struct Person));
+
+  // Read entries and store it to the personArray
+  exitFailure = readRegisterEntries(path, *personArray, *personArrayLen);
+  if (exitFailure) {
+    free(*personArray);
+    printf("Failed to obtain the entries from %s", path);
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+int storeRegister(const char* path, const struct Person* personArray,
+                  const int personArrayLen) {
+  FILE* fp = fopen(path, "r");
+  if (fp == NULL) {
+    printf("Failed to open %s", path);
+    return EXIT_FAILURE;
+  }
+
+  for (int i = 0; i < personArrayLen; ++i) {
+    char str[MAX_NAME_LEN + 2];
+    personToStr(&personArray[i], str);
+    int success = fputs(str, fp);
+    if (success == EOF) {
+      printf("Failed to write '%s' to %s", str, path);
+      return EXIT_FAILURE;
+    }
+  }
+
+  fclose(fp);
   return EXIT_SUCCESS;
 }
