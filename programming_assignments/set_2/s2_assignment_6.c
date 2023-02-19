@@ -16,7 +16,6 @@ int readRemoveEntries(const char* path, char** removePersonArray,
 
   char* line = NULL;
   size_t len = 0;
-  ssize_t nBytes;  // ssize_t is when the output can be negative
 
   // NOTE: getline is from POSIX.1-2008, not the C-standard, see
   // https://pubs.opengroup.org/onlinepubs/9699919799/functions/getline.html
@@ -25,6 +24,7 @@ int readRemoveEntries(const char* path, char** removePersonArray,
   // for possible implementation
   // Read the entries
   for (int i = 0; i < removePersonLen; ++i) {
+    ssize_t nBytes;  // ssize_t is when the output can be negative
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
       printf("Failed to read line %d of %s", i, path);
@@ -142,10 +142,10 @@ void addFromFile(const char* path, struct Person** personArray,
 
   char* line = NULL;
   size_t len = 0;
-  ssize_t nBytes;  // ssize_t is when the output can be negative
 
   // Read the entries
   for (int i = 0; i < lines; ++i) {
+    ssize_t nBytes;  // ssize_t is when the output can be negative
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
       printf("Failed to entry %d of %s", i, path);
@@ -154,7 +154,7 @@ void addFromFile(const char* path, struct Person** personArray,
     char* curName;
     int curAge;
     // NOTE: We are changing curName, so we call using the address of curName
-    int exitFailure = strToNameAge(line, &curName, &curAge);
+    exitFailure = strToNameAge(line, &curName, &curAge);
     if (exitFailure) {
       printf("Failed to get entry %d of %s", i, path);
       exit(EXIT_FAILURE);

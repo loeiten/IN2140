@@ -23,7 +23,7 @@ int setName(struct Person* person, const char* name) {
   return EXIT_SUCCESS;
 }
 
-int nameSet(struct Person* person) {
+int nameSet(const struct Person* person) {
   if (person == NULL) {
     return 0;
   }
@@ -33,7 +33,7 @@ int nameSet(struct Person* person) {
   return 1;
 }
 
-int getName(struct Person* person, char* name) {
+int getName(const struct Person* person, char* name) {
   if (!nameSet(person)) {
     printf("Name was not set\n");
     return EXIT_FAILURE;
@@ -57,7 +57,7 @@ int setAge(struct Person* person, int age) {
   return EXIT_SUCCESS;
 }
 
-int ageSet(struct Person* person) {
+int ageSet(const struct Person* person) {
   if (person == NULL) {
     return 0;
   }
@@ -67,7 +67,7 @@ int ageSet(struct Person* person) {
   return 1;
 }
 
-int getAge(struct Person* person, int* age) {
+int getAge(const struct Person* person, int* age) {
   if (!ageSet(person)) {
     printf("Age was not set\n");
     return EXIT_FAILURE;
@@ -88,7 +88,7 @@ int createPerson(const char* name, int age, struct Person* person) {
   return EXIT_SUCCESS;
 }
 
-int printPerson(struct Person* person) {
+int printPerson(const struct Person* person) {
   char name[MAX_NAME_LEN];
   int exitFailure = getName(person, name);
   if (exitFailure) {
@@ -108,7 +108,7 @@ int printPerson(struct Person* person) {
   return EXIT_SUCCESS;
 }
 
-int personToStr(struct Person* person, char* str) {
+int personToStr(const struct Person* person, char str[MAX_NAME_LEN + 2]) {
   char name[MAX_NAME_LEN];
   int exitFailure = getName(person, name);
   if (exitFailure) {
@@ -121,7 +121,6 @@ int personToStr(struct Person* person, char* str) {
   }
   const char* format = "%s,%d\n";
   int length = snprintf(NULL, 0, format, name, age);
-  str = malloc(length + 1);
   snprintf(str, length + 1, format, name, age);
   return EXIT_SUCCESS;
 }
@@ -182,7 +181,7 @@ int readRegisterEntries(const char* path, struct Person* personArray,
 
 // NOTE: We are changing the pointer so we take a pointer to the pointer as an
 //       input
-int strToNameAge(char* str, char** name, int* age) {
+int strToNameAge(const char* str, char** name, int* age) {
   // Find the length of the string and the length until comma
   int strLen = strlen(str);
   int i = 0;
