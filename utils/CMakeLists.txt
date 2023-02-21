@@ -21,3 +21,5 @@ target_include_directories(utils
 target_include_directories(person
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+# Link with other libraries
+target_link_libraries(person PRIVATE utils)

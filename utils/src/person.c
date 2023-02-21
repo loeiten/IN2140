@@ -108,7 +108,7 @@ int printPerson(const struct Person* person) {
   return EXIT_SUCCESS;
 }
 
-int personToStr(const struct Person* person, char str[MAX_NAME_LEN + 2]) {
+int personToStr(const struct Person* person, char str[MAX_NAME_LEN + 4]) {
   char name[MAX_NAME_LEN];
   int exitFailure = getName(person, name);
   if (exitFailure) {
@@ -129,7 +129,7 @@ int readRegisterEntries(const char* path, struct Person* personArray,
                         int personArrayLen) {
   FILE* fp = fopen(path, "r");
   if (fp == NULL) {
-    printf("Failed to open %s", path);
+    printf("Failed to open %s\n", path);
     return EXIT_FAILURE;
   }
 
@@ -146,7 +146,7 @@ int readRegisterEntries(const char* path, struct Person* personArray,
   for (int i = 0; i < 2; ++i) {
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
-      printf("Failed to read line %d of %s", i, path);
+      printf("Failed to read line %d of %s\n", i, path);
       return EXIT_FAILURE;
     }
   }
@@ -155,7 +155,7 @@ int readRegisterEntries(const char* path, struct Person* personArray,
   for (int i = 0; i < personArrayLen; ++i) {
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
-      printf("Failed to entry %d of %s", i + 2, path);
+      printf("Failed to entry %d of %s\n", i + 2, path);
       return EXIT_FAILURE;
     }
     char* curName;
@@ -163,10 +163,10 @@ int readRegisterEntries(const char* path, struct Person* personArray,
     // NOTE: We are changing curName, so we call using the address of curName
     int exitFailure = strToNameAge(line, &curName, &curAge);
     if (exitFailure) {
-      printf("Failed to get entry %d of %s", i, path);
+      printf("Failed to get entry %d of %s\n", i, path);
       return EXIT_FAILURE;
     }
-    exitFailure = createPerson(curName, curAge, &personArray[i]);
+    exitFailure = createPerson(curName, curAge, &(personArray[i]));
     free(curName);
     if (exitFailure) {
       return EXIT_FAILURE;
@@ -192,7 +192,7 @@ int strToNameAge(const char* str, char** name, int* age) {
   }
 
   if ((i == 0) || (i == strLen)) {
-    printf("Failed to split %s into 'name' and 'age", str);
+    printf("Failed to split %s into 'name' and 'age'\n", str);
     return EXIT_FAILURE;
   }
 
@@ -200,12 +200,12 @@ int strToNameAge(const char* str, char** name, int* age) {
   ++i;
 
   // Capture the name
-  // +1 for the /0 char
+  // +1 for the \0 char
   *name = (char*)malloc((i + 1) * sizeof(char));
   snprintf(*name, i, "%s", str);
 
   // Capture the age
-  char* ageStr = &(str[i]);
+  const char* ageStr = &(str[i]);
   *age = atoi(ageStr);
 
   return EXIT_SUCCESS;
@@ -218,7 +218,7 @@ int readRegister(const char* path, struct Person** personArray,
   int lines;
   int exitFailure = getNumberOfLines(path, &lines);
   if (exitFailure) {
-    printf("Failed to obtain the number of lines of %s", path);
+    printf("Failed to obtain the number of lines of %s\n", path);
     return EXIT_FAILURE;
   }
 
@@ -233,7 +233,7 @@ int readRegister(const char* path, struct Person** personArray,
   exitFailure = readRegisterEntries(path, *personArray, *personArrayLen);
   if (exitFailure) {
     free(*personArray);
-    printf("Failed to obtain the entries from %s", path);
+    printf("Failed to obtain the entries from %s\n", path);
     return EXIT_FAILURE;
   }
 
@@ -242,18 +242,24 @@ int readRegister(const char* path, struct Person** personArray,
 
 int storeRegister(const char* path, const struct Person* personArray,
                   const int personArrayLen) {
-  FILE* fp = fopen(path, "r");
+  FILE* fp = fopen(path, "w");
   if (fp == NULL) {
-    printf("Failed to open %s", path);
+    printf("Failed to open %s\n", path);
     return EXIT_FAILURE;
   }
 
+  // Print the header
+  fputs("Name,Age\n\n", fp);
+
   for (int i = 0; i < personArrayLen; ++i) {
-    char str[MAX_NAME_LEN + 2];
-    personToStr(&personArray[i], str);
+    char str[MAX_NAME_LEN + 4];
+    if (!(nameSet(&(personArray[i]))) && !(ageSet(&(personArray[i])))) {
+      continue;
+    }
+    personToStr(&(personArray[i]), str);
     int success = fputs(str, fp);
     if (success == EOF) {
-      printf("Failed to write '%s' to %s", str, path);
+      printf("Failed to write '%s' to %s\n", str, path);
       return EXIT_FAILURE;
     }
   }

@@ -21,7 +21,8 @@ int getAge(const struct Person* person, int* age);
 
 int createPerson(const char* name, int age, struct Person* person);
 int printPerson(const struct Person* person);
-int personToStr(const struct Person* person, char str[MAX_NAME_LEN + 2]);
+// +2 for age, +1 for , and +1 for \0
+int personToStr(const struct Person* person, char str[MAX_NAME_LEN + 4]);
 
 int strToNameAge(const char* str, char** name, int* age);
 int readRegister(const char* path, struct Person** personArray,

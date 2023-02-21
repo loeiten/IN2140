@@ -9,6 +9,7 @@ set(source_files
 
 set(link_with_utils
     s2_assignment_5
+    s2_assignment_6
 )
 
 set(link_with_person

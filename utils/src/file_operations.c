@@ -15,13 +15,13 @@ int copyFile(const char* src, const char* dst) {
 
   rStream = fopen(src, "r");
   if (rStream == NULL) {
-    printf("Couldn't open %s", src);
+    printf("Couldn't open %s\n", src);
     return EXIT_FAILURE;
   }
   wStream = fopen(dst, "w");
   if (wStream == NULL) {
     fclose(rStream);
-    printf("Couldn't open %s", dst);
+    printf("Couldn't open %s\n", dst);
     return EXIT_FAILURE;
   }
 
@@ -42,7 +42,7 @@ int getNumberOfLines(const char* path, int* lines) {
   // NOTE: Could instead use getline
   FILE* fp = fopen(path, "r");
   if (fp == NULL) {
-    printf("Failed to open %s", path);
+    printf("Failed to open %s\n", path);
     return EXIT_FAILURE;
   }
 
