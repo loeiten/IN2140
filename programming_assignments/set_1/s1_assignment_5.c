@@ -1,3 +1,17 @@
+/*
+ * Assignment:
+ *
+ * A
+ * Write the function `int ishex(unsigned char c)` which checks whether `c` is
+ * a hex-number (0'-'9', 'a'-'f' or 'A'-'F')
+ *
+ * B
+ * Write the function `int hexval(unsigned char c)` which converts a hex-number
+ * to its decimal value 0-15.
+ * Use the function from A to check that `c` has a valid value.
+ * Deal with potential exceptions in an appropriate way.
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS

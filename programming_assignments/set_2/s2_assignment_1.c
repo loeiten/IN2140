@@ -1,3 +1,13 @@
+/*
+ * Assignment:
+ *
+ * Make a function
+ *
+ *     void sum(int a, int b, int* result);
+ *
+ * which takes the sum of `a` and `b` and stores the result in `result`.
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for atoi, EXIT_FAILURE, EXIT_SUCCESS

@@ -1,3 +1,16 @@
+/*
+ * Assignment:
+ *
+ * Make a program uses the data structure you made in assignment 5 to handle a
+ * register with information about several persons.
+ * The program should:
+ * - Add and remove persons from the register
+ * - Store the entire register to a file
+ * - Read the entire register from a file
+ *
+ * It's up to you how the assignment should be solved
+ */
+
 #include <libgen.h>  // for basename
 #include <stddef.h>
 #include <stdio.h>   // for printf, snprintf, FILE

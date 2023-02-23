@@ -2,7 +2,13 @@
 
 ## Assignment 1
 
-### Why do we have OSes
+Why do we have OSes?
+
+Why do we need to understand them?
+
+### Answer assignment 1
+
+#### Why do we have OSes
 
 - Can enable portability of the same application program on different hardware
    - Presents a "virtual machine" which is easier to use
@@ -13,7 +19,7 @@
 - Manages concurrency
 - Usually adds a layer of security for the use of the underlying hardware
 
-### Why do we need to understand them
+#### Why do we need to understand them
 
 - Important in order to
    - Do things correctly
@@ -21,6 +27,13 @@
    - Meet technical challenges
 
 ## Assignment 2
+
+What are the main tasks of the BIOS and bootstrap?
+
+Describe in simple terms what happens from the moment we turn on the computer
+until the operating system is ready for use.
+
+### Answer assignment 2
 
 ### What are the main tasks to the BIOS and the bootstrapping
 
@@ -44,7 +57,11 @@
 
 ## Assignment 3
 
-### What is the user level and the kernel level
+What is user and kernel level? Why can't everything run at the kernel level?
+
+### Answer assignment 3
+
+#### What is the user level and the kernel level
 
 - User level:
    - Protected mode
@@ -57,14 +74,16 @@
    - All instructions can be executed
    - Bypasses security
 
-### Why cannot everything run at the kernel level
+#### Why cannot everything run at the kernel level
 
 One could in principle make such an OS, however this would be a big security
 risk, and the potential for memory mismanagement would be great
 
 ## Assignment 4
 
-### What happens when we call a sys function (like `read`) from the user level
+What happens when we call a system function (e.g. `read`) from the user level?
+
+### Answer assignment 4
 
 1. Parameters are pushed on the stack
 1. The library code is called
@@ -80,7 +99,13 @@ risk, and the potential for memory mismanagement would be great
 
 ## Assignment 5
 
-### Name the pros and cons for monolithic vs micro kernels
+What are the advantages and disadvantages of monolithic cores vs micro-cores?
+Find out how the most popular operating systems (Windows, Linux, MacOS) are
+built in terms of kernel type.
+
+### Answer assignment 5
+
+#### Name the pros and cons for monolithic vs micro kernels
 
 - Monolithic kernel
    - Pro
@@ -95,7 +120,7 @@ risk, and the potential for memory mismanagement would be great
    - Cons
       - Lots of message passing
 
-### Find out what kernels types are used for Windows, Linux and MacOs
+#### Find out what kernels types are used for Windows, Linux and MacOs
 
 - Windows 11: Hybrid (Windows NT kernel [source](https://en.wikipedia.org/wiki/Windows_11))
 - Ubuntu 22.10 : Monolithic (Linux kernel [source](https://en.wikipedia.org/wiki/Ubuntu))
@@ -103,7 +128,17 @@ risk, and the potential for memory mismanagement would be great
 
 ## Assignment 6
 
-### What is an "interrupt"
+Interrupts are used for many different things, such as reading from the hard
+drive, killing processes and communicating over networks.
+
+Explain the following:
+
+- What is an interrupt?
+- What happens when an interrupt is created?
+
+### Answer assignment 6
+
+#### What is an "interrupt"
 
 - Interrupt
    - An electronic signal that (usually) transfers the control to an interrupt
@@ -124,7 +159,7 @@ risk, and the potential for memory mismanagement would be great
 - Abort - unrecoverable error
       - Hardware failure
 
-### What happens when an "interrupt" is created
+#### What happens when an "interrupt" is created
 
 1. Processes is running while the interrupt occur
 1. Capture the state
