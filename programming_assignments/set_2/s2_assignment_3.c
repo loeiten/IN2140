@@ -1,3 +1,13 @@
+/*
+ * Assignment:
+ *
+ * Write a program which takes a word as its first argument, and which counts
+ * the number of occurrences of that word in a file which is given as the
+ * second argument.
+ * Extra: Make a program which counts the occurrence of every word in a file.
+ * It can be wise to think through what data structure you use.
+ */
+
 #include <ctype.h>   // for isalnum
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for fgetc, printf, EOF, fclose, fopen, FILE, NULL

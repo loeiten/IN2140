@@ -1,3 +1,46 @@
+/*
+ * Assignment:
+ *
+ * We will write object oriented in C.
+ * We have a class `Person` with the methods `setName`, `setAge`, `getName` and
+ * `getAge`.
+ * Since we don't have classes in C we have to solve this a bit differently.
+ * The assignment is to figure out how to do this. Here are some hints:
+ * - Make a struct that can contain the information about a person
+ * - Make the functions `getName`, `setAge` etc. such that the first parameter
+ *   points to the person-struct
+ *
+ * A
+ * Implement the simplest possible solution
+ *
+ * B
+ * Think through the names of your function and struct.
+ * Recall that all names are global in C.
+ * Change the names as you see fit.
+ *
+ * C
+ * Add two functions which checks whether the name and age of the person is set.
+ * They should return 1 for true and 0 for false.
+ *
+ * D
+ * Make a function which return a string with the information about a person.
+ * The function should work in a similar manner as `toString()` in Java.
+ *
+ * E
+ * Make a function which makes a person-struct with the same format as what you
+ * made in assignment D
+ *
+ * F
+ * Think through how errors can be handled in a way that can be used in all the
+ * functions you've defined so far
+ *
+ * G
+ * Add the restrictions:
+ *    - The age can not surpass 200 years
+ *    - The name can be at most 30 characters
+ * Also implement error handling
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf, snprintf
 #include <stdlib.h>  // for EXIT_FAILURE, free

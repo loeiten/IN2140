@@ -150,3 +150,4 @@ endif(TSAN)
 
 add_subdirectory(utils)
 add_subdirectory(programming_assignments)
+add_subdirectory(os_theory_assignments)
