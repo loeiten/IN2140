@@ -1,3 +1,12 @@
+/*
+ * Assignment:
+ *
+ * Write a function char `strgetc(char s[], int pos)` which returns the
+ * character at position `pos` in the text `s`.
+ * This should be equivalent to `String.charAt()` in Java.
+ * Also write a small test program.
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_S...

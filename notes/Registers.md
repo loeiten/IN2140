@@ -51,6 +51,9 @@ assembly (IA32).
 Further, one should uncheck the `Intel asm syntax` to get syntax more in line
 with what shown in the course.
 
+One could also do an `objdump -d` on either the object file or the binary to see
+the assembly
+
 ## Sources
 
 [Register purpose](https://en.wikipedia.org/wiki/X86#Purpose)

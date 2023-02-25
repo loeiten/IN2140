@@ -1,3 +1,16 @@
+/*
+ * Assignment:
+ *
+ * Write a macro
+ *
+ *     #define STREQ(s1,s2)
+ *
+ * which checks whether the two strings are equal.
+ * The purpose is to use this in if-tests like
+ *
+ *     if(STREQ(s, "Abc"))
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS

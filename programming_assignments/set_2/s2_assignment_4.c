@@ -1,3 +1,15 @@
+/*
+ * Assignment:
+ *
+ * Write a program which takes `name`, `age` and `filename` as command line
+ * arguments.
+ * Make a cstring with the text
+ *
+ *     "Hello NAME, you are AGE years old."
+ *
+ * and store this in the file `filename`
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf, fclose, fopen, NULL, ferror, fputs, fread
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, malloc

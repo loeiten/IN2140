@@ -1,3 +1,22 @@
+/*
+ * Assignment:
+ *
+ * A
+ * Write a program which
+ * - Takes a message as a command line argument
+ * - Saves the message in the variable `msg`
+ * - Writes to std out "Input: " Followed by `msg`
+ *
+ * B
+ * Extend the program to give an error message if the user does not specify any
+ * arguments
+ *
+ * C
+ * Extend the program such that it checks whether `msg` is an integer.
+ * If `msg` is an integer, you should store a new variable of type `int`.
+ * It's up to you how advanced you wish to make the solution
+ */
+
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf, snprintf
 #include <stdlib.h>  // for free, malloc, EXIT_S...
