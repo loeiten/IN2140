@@ -73,7 +73,7 @@ int main() {
     if (pid == 0) {  // Only process 0 can spawn processes
       pid = fork();
       if (pid != 0) {  // Only children should increase the offset
-        offset += 1000;
+        offset = i * 1000;
       }
     }
   }
@@ -85,7 +85,7 @@ int main() {
 
     // Wait for all processes to finish
     int status = 0;
-    pid_t waitPID = 0;
+    pid_t waitPID = 1;
     while (waitPID > 0) {
       waitPID = wait(&status);
       if (status != 0) {
@@ -96,7 +96,7 @@ int main() {
 
     // Read the numbers and sum them up
     int sum = 0;
-    for (int proc = 1; proc <= 3; ++proc) {
+    for (int proc = 0; proc < 3; ++proc) {
       // Create the path
       const char* format = "proc_%d.txt";
       int length = snprintf(NULL, 0, format, proc);
@@ -115,15 +115,16 @@ int main() {
     // Calculate the sum
     int number = sumFromTo(offset + 1, offset + 1000);
 
-    // Get a random number between 0 and 5
+    // Get a random number between 0 and 2
     // The number generated will not be portable
     // https://stackoverflow.com/a/3503847/2786884
     unsigned int seed = 1337 + offset;
     srand(seed);  // Seed the generator
-    int maxN = 5;
+    int maxN = 2;
     int minN = 0;
     int randomN = rand_r(&seed) % ((maxN + 1) - minN) + minN;
-    printf("Process %d going to sleep for %d seconds", pid, randomN);
+    printf("Process %d going to sleep for %d seconds\n", pid, randomN);
+    fflush(stdout);  // Need to flush to prevent stdout buffering
     sleep(randomN);
 
     // Create the path based on the offset
