@@ -13,11 +13,11 @@ int sumFromTo(const int from, const int to) {
   return curSum;
 }
 
-void storeNumber(const char* path, const int number) {
+int storeNumber(const char* path, const int number) {
   FILE* fp = fopen(path, "w");
   if (fp == NULL) {
     printf("Couldn't open '%s' for writing\n", path);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // Create the string
@@ -32,20 +32,20 @@ void storeNumber(const char* path, const int number) {
   if (success == EOF) {
     fclose(fp);
     printf("Failed to write '%d' to '%s'\n", number, path);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // Close the file
   fclose(fp);
-  return;
+  return EXIT_SUCCESS;
 }
 
-int readNumber(const char* path) {
+int readNumber(const char* path, int* number) {
   // Open file
   FILE* fp = fopen(path, "r");
   if (fp == NULL) {
     printf("Couldn't open '%s' for reading\n", path);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // Read into the buffer
@@ -54,25 +54,25 @@ int readNumber(const char* path) {
   if ((nRead < 0) || ferror(fp)) {
     fclose(fp);
     printf("Failed to read from '%s'\n", path);
-    exit(EXIT_FAILURE);
+    return EXIT_FAILURE;
   }
 
   // Convert to integer
-  int number = atoi(buffer);
+  *number = atoi(buffer);
 
   // Return the number
   fclose(fp);
-  return number;
+  return EXIT_SUCCESS;
 }
 
 int main() {
-  pid_t pid = 0;  // 0 is the PID for the parent process
+  pid_t pid = 1;  // The pid==0 for child processes
   int offset = 0;
 
   for (int i = 0; i < 3; ++i) {
-    if (pid == 0) {  // Only process 0 can spawn processes
+    if (pid != 0) {  // Only the parent can spawn processes
       pid = fork();
-      if (pid != 0) {  // Only children should increase the offset
+      if (pid == 0) {  // Only children should have an offset
         offset = i * 1000;
       }
     }
@@ -80,14 +80,12 @@ int main() {
 
   // NOTE: The parent process is the first condition, although the children
   //       processes will logically exit first
-  if (pid == 0) {
-    // Only the parent will do this
-
+  if (pid != 0) {  // Only the parent will do this
     // Wait for all processes to finish
     int status = 0;
     pid_t waitPID = 1;
     while (waitPID > 0) {
-      waitPID = wait(&status);
+      waitPID = wait(&status);  // NOTE: wait is from POSIX1-2001
       if (status != 0) {
         printf("Process '%d' exited with status '%d'\n", waitPID, status);
         exit(EXIT_FAILURE);
@@ -104,14 +102,18 @@ int main() {
       snprintf(path, length + 1, format, proc);
 
       // Add the result
-      sum += readNumber(path);
+      int curNum;
+      int exitFailure = readNumber(path, &curNum);
+      free(path);
+      if (exitFailure) {
+        return EXIT_FAILURE;
+      }
+      sum += curNum;
     }
 
     // Print the final sum
     printf("sum(1,3000)=%d\n", sum);
-  } else {
-    // Only the children will do this
-
+  } else {  // Only the children will do this
     // Calculate the sum
     int number = sumFromTo(offset + 1, offset + 1000);
 
@@ -123,8 +125,7 @@ int main() {
     int maxN = 2;
     int minN = 0;
     int randomN = rand_r(&seed) % ((maxN + 1) - minN) + minN;
-    printf("Process %d going to sleep for %d seconds\n", pid, randomN);
-    fflush(stdout);  // Need to flush to prevent stdout buffering
+    printf("Process %d going to sleep for %d seconds\n", getpid(), randomN);
     sleep(randomN);
 
     // Create the path based on the offset
@@ -135,7 +136,11 @@ int main() {
     snprintf(path, length + 1, format, proc);
 
     // Write to file
-    storeNumber(path, number);
+    int exitFailure = storeNumber(path, number);
+    free(path);
+    if (exitFailure) {
+      return EXIT_FAILURE;
+    }
   }
 
   return EXIT_SUCCESS;

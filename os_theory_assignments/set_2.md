@@ -130,7 +130,14 @@ the status field to `wait()` instead of writing to file.
 
 ### Answer assignment 5
 
-See [os_set_2_assignment_5.c](./os_set_2_assignment_5.c)
+See [os_set_2_assignment_5.c](./os_set_2_assignment_5.c).
+
+Communicating through the status field is suboptimal as the process exit status
+is limited in value.
+A better solution is to pass the intermediate values as pipes.
+See
+[How to get return value from child process to parent?](https://stackoverflow.com/q/49581349/2786884)
+for more info.
 
 ## Assignment 6
 

@@ -6,6 +6,9 @@ actually taking the course)
 The following is based on the 2019 version of the course (as newer courses are
 behind a LDAP github-wall)
 
+Many most programming assignments will only work on
+[POSIX](https://en.wikipedia.org/wiki/POSIX) compatible OSes
+
 > **DISCLAIMER**:
 > This repo was created for self studying purposes, and should not be seen as a
 > solution to the given assignments
