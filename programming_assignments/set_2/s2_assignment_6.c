@@ -12,13 +12,13 @@
  */
 
 #include <libgen.h>  // for basename
-#include <stddef.h>
-#include <stdio.h>   // for printf, snprintf, FILE
-#include <stdlib.h>  // for EXIT_SUCCESS, malloc, EXIT_FAILURE
-#include <string.h>  // for strlen
+#include <stddef.h>  // for NULL, size_t
+#include <stdio.h>   // for printf, fclose, fopen
+#include <stdlib.h>  // for free, exit, EXIT_FA...
+#include <string.h>  // for strlen, strcmp
 
-#include "../../utils/include/file_operations.h"
-#include "../../utils/include/person.h"
+#include "../../utils/include/file_operations.h"  // for getNumberOfLines
+#include "../../utils/include/person.h"           // for Person, readRegister
 
 int readRemoveEntries(const char* path, char** removePersonArray,
                       const int removePersonLen) {
@@ -41,6 +41,7 @@ int readRemoveEntries(const char* path, char** removePersonArray,
     ssize_t nBytes;  // ssize_t is when the output can be negative
     nBytes = getline(&line, &len, fp);
     if (nBytes == -1) {
+      free(line);
       printf("Failed to read line %d of %s\n", i, path);
       return EXIT_FAILURE;
     }

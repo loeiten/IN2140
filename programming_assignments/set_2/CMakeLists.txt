@@ -35,7 +35,7 @@ do_test(NAME s2_assignment_1 NO 4 ARGS "123" "-456" EXPECTED "-333\n")
 do_test(NAME s2_assignment_2 NO 1 ARGS "" EXPECTED "\\[0\\]: 2\n\\[1\\]: 1\n\\[2\\]: -1\n\\[3\\]: 10\n\\[4\\]: 22\n\\[5\\]: 21\n")
 
 # assignment_3
-# Move files
+# Copy files
 file(GLOB text_files "s2_assignment_3*.txt")
 foreach(text_file ${text_files})
     get_filename_component(cur_file ${text_file} NAME)
@@ -63,7 +63,7 @@ do_test(NAME s2_assignment_5 NO 3 ARGS "null" "-1" EXPECTED "Failed to capture t
 do_test(NAME s2_assignment_5 NO 4 ARGS "Bob" "5" "Alice" EXPECTED "Name: Bob, age: 5\nNot enough arguments given\n")
 
 # assignment_6
-# Move files
+# Copy files
 file(GLOB text_files "s2_assignment_6*.txt")
 file(GLOB csv_files "s2_assignment_6*.csv")
 set(files ${text_files} ${csv_files})

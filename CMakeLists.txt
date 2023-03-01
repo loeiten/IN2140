@@ -130,6 +130,47 @@ function(do_test)
    )
 endfunction(do_test)
 
+function(do_test_with_stdin)
+   # For details of function parameters, see
+   # https://stackoverflow.com/questions/23327687/how-to-write-a-cmake-function-with-more-than-one-parameter-groups
+   cmake_parse_arguments(
+       TEST_ARGS                # Prefix of output variables
+       ""                       # List of names of the boolean arguments (only defined ones will be true)
+       "NAME;NO;STDIN;EXPECTED" # List of names of mono-valued arguments
+       ""                       # List of names of multi-valued arguments (output variables are lists)
+       ${ARGN}                  # Arguments of the function to parse, here we take the all original ones
+   )
+   # NOTE: If unparsed arguments remains here, they can be found in the
+   #       variable TEST_ARGS_UNPARSED_ARGUMENTS
+
+   # Error handling
+   if(NOT TEST_ARGS_NAME)
+       message(FATAL_ERROR "You must provide a name to the executable")
+   endif(NOT TEST_ARGS_NAME)
+   if(NOT TEST_ARGS_NO)
+       message(FATAL_ERROR "You must provide a test number")
+   endif(NOT TEST_ARGS_NO)
+   if(NOT TEST_ARGS_STDIN)
+       message(FATAL_ERROR "You must provide something to stdin")
+   endif(NOT TEST_ARGS_STDIN)
+   if(NOT TEST_ARGS_EXPECTED)
+       message(FATAL_ERROR "You must provide an expected outcome")
+   endif(NOT TEST_ARGS_EXPECTED)
+
+   # Find path relative to this
+   file(RELATIVE_PATH rel_path ${CMAKE_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})
+   string(REPLACE "/" "_" rel_path ${rel_path})
+   set(full_name ${rel_path}_${TEST_ARGS_NAME}_${TEST_ARGS_NO})
+
+   add_test(NAME ${full_name} COMMAND sh -c "echo ${TEST_ARGS_STDIN} | ./${TEST_ARGS_NAME}")
+   # The output must match this regex for the test to pass
+   # For other properties check
+   # https://cmake.org/cmake/help/latest/manual/cmake-properties.7.html#test-properties
+   set_tests_properties(${full_name}
+   PROPERTIES PASS_REGULAR_EXPRESSION "^${TEST_ARGS_EXPECTED}$"
+   )
+endfunction(do_test_with_stdin)
+
 # Enable sanitizers
 if(ASAN)
    add_compile_options(-fsanitize=address)
