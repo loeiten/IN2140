@@ -36,3 +36,6 @@ do_test_with_stdin(NAME s3_assignment_5
                    STDIN "\"s3_assignment_5_1.txt\ns3_assignment_5_2.txt\nthis_does_not_exist.txt\nQUIT\n\""
                    EXPECTED "Enter a path: First line\nThird line\nThis is the last line\nEnter a path: This will be printed\nEnter a path: Failed to open this_does_not_exist.txt\nEnter a path: \n"
 )
+
+# assignment_6
+do_test(NAME s3_assignment_6 NO 1 ARGS EXPECTED "\n20")
