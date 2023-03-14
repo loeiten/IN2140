@@ -7,6 +7,9 @@ add_library(utils SHARED
 add_library(person SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/person.c
 )
+add_library(my_math SHARED
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/my_math.c
+)
 
 # NOTE: It's also possible to do interface libraries like so
 # add_library(my_big_bunch_of_libs INTERFACE)
@@ -19,6 +22,9 @@ target_include_directories(utils
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 target_include_directories(person
+    INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+target_include_directories(my_math
     INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 # Link with other libraries

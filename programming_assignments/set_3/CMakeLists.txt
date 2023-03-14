@@ -2,6 +2,7 @@ set(source_files
     s3_assignment_2.c
     s3_assignment_3.c
     s3_assignment_5.c
+    s3_assignment_6.c
 )
 
 set(link_with_utils
@@ -9,11 +10,16 @@ set(link_with_utils
     s3_assignment_5
 )
 
+set(link_with_my_math
+    s3_assignment_6
+)
+
 # Create executables
 make_executable(SOURCE ${source_files})
 
 # Link with libraries
 link_executable(TARGETS ${link_with_utils} LIB utils)
+link_executable(TARGETS ${link_with_my_math} LIB my_math)
 
 # Test
 # assignment_2
@@ -38,4 +44,24 @@ do_test_with_stdin(NAME s3_assignment_5
 )
 
 # assignment_6
-do_test(NAME s3_assignment_6 NO 1 ARGS EXPECTED "\n20")
+# With CMake
+do_test(NAME s3_assignment_6 NO 1 ARGS EXPECTED "20\n")
+# With Makefile
+# https://stackoverflow.com/a/50204961/2786884
+# https://stackoverflow.com/a/44505200/2786884
+# With a static library
+add_custom_command(OUTPUT s3_assignment_6_static_command
+                  COMMAND make -f Makefile_static
+                  DEPENDS s3_assignment_6.c my_math
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+add_custom_target(s3_assignment_6_static ALL DEPENDS s3_assignment_6_static_command)
+do_test(NAME s3_assignment_6_static NO 1 ARGS EXPECTED "20\n")
+# With a shared library
+add_custom_command(OUTPUT s3_assignment_6_shared_command
+                  COMMAND make -f Makefile_shared
+                  DEPENDS s3_assignment_6.c my_math
+                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
+add_custom_target(s3_assignment_6_shared ALL DEPENDS s3_assignment_6_shared_command)
+do_test(NAME s3_assignment_6_shared NO 1 ARGS EXPECTED "20\n")
