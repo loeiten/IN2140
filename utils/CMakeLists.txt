@@ -3,6 +3,7 @@
 add_library(utils SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/string_helpers.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/file_operations.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.c
 )
 add_library(person SHARED
     ${CMAKE_CURRENT_SOURCE_DIR}/src/person.c

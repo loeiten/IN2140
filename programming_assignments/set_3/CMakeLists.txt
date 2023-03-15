@@ -3,11 +3,13 @@ set(source_files
     s3_assignment_3.c
     s3_assignment_5.c
     s3_assignment_6.c
+    s3_assignment_7.c
 )
 
 set(link_with_utils
     s3_assignment_3
     s3_assignment_5
+    s3_assignment_7
 )
 
 set(link_with_my_math
@@ -65,3 +67,10 @@ add_custom_command(OUTPUT s3_assignment_6_shared_command
 )
 add_custom_target(s3_assignment_6_shared ALL DEPENDS s3_assignment_6_shared_command)
 do_test(NAME s3_assignment_6_shared NO 1 ARGS EXPECTED "20\n")
+
+# assignment_7
+do_test(NAME s3_assignment_7 NO 1 ARGS EXPECTED "Done\n")
+do_test(NAME s3_assignment_7 NO 2 ARGS "DEBUG" EXPECTED "\\[DEBUG\\] The value of a is 10\n\\[INFO\\] Hello world :\\)\n\\[ERROR\\] Something is wrong here\nDone\n")
+do_test(NAME s3_assignment_7 NO 3 ARGS "INFO" EXPECTED "\\[INFO\\] Hello world :\\)\n\\[ERROR\\] Something is wrong here\nDone\n")
+do_test(NAME s3_assignment_7 NO 4 ARGS "ERROR" EXPECTED "\\[ERROR\\] Something is wrong here\nDone\n")
+do_test(NAME s3_assignment_7 NO 5 ARGS "FOO" EXPECTED "Usage: ./s3_assignment_7 \\[DEBUG|INFO|ERROR\\]\n")

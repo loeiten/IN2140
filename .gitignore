@@ -60,6 +60,9 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+# Include makefiles
+!Makefile*
+
 # Other
 build/
 .cache/
