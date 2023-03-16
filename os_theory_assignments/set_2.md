@@ -59,7 +59,26 @@ Why is program relocation unnecessary when virtual memory is used?
 
 ### Answer assignment 3
 
-FIXME: Probably a question for the memory part
+[Relocation](https://en.wikipedia.org/wiki/Relocation_(computing))
+is the process of assigning load addresses for position-dependent code and data
+of a program and adjusting the code and data to reflect the assigned addresses.
+
+[Position-independent code](https://en.wikipedia.org/wiki/Position-independent_code)
+is a body of machine code that, being placed somewhere in the primary memory,
+executes properly regardless of its absolute address. In position dependent code
+absolute addresses are used.
+
+[Virtual memory](https://en.wikipedia.org/wiki/Virtual_memory) is a memory
+management technique that provides an "idealized abstraction of the storage
+resources that are actually available on a given machine" which "creates the
+illusion to users of a very large (main) memory".
+
+One can then conceptually use more memory than might be physically available,
+using the technique of paging or segmentation.
+
+When virtual memory is used, part of the address points to a look-up table for
+the real memory address, hence the program instructions will be relative to the
+loop-up table.
 
 ## Assignment 4
 
