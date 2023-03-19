@@ -198,6 +198,11 @@ pagefault every k'th instruction.
 
 ### Answer assignment 5
 
+```text
+time_k_instruction = 10 ns * k + n ns
+effective_instr_time = (10 ns * k + n ns) / k = 10 ns + (n/k) ns
+```
+
 ## Assignment 6
 
 A machine with 32-bit virtual addresses uses a two-level page table.
@@ -209,6 +214,34 @@ the second?
 
 ### Answer assignment 6
 
+As the total bits of offset are the space between two pages, we get that
+
+```text
+32 bit - 11 bit - 9 bit = 32 bit - 20 bit = 12 bit
+```
+
+Since modern computers are
+[byte-addressable](https://en.wikipedia.org/wiki/Byte_addressing), it means that
+we can address
+
+```text
+2^12 bytes = 4 KiB
+```
+
+Furthermore, the number of pages kan be deduces from the table look-up
+
+```text
+2^20 pages = 1 048 576 pages
+```
+
+When it comes to the number of pages, it does not matter if we use 11 bits for
+the first level and 9 on the second level page table.
+However, there may be performance implication if the tables resides in different
+levels of the hierarchy, and cost implication for having larger tables in
+higher levels of the memory hierarchy, especially if
+[translation lookaside buffers (TLBs)](https://en.wikipedia.org/wiki/Translation_lookaside_buffer#Performance_implications)
+are used
+
 ## Assignment 7
 
 A machine has 48-bit virtual addresses and 32-bit physical addresses.
@@ -217,11 +250,50 @@ How many pages can fit in the machine?
 
 ### Answer assignment 7
 
+```text
+8 kB = 2 * 2 * 2 * 1 kB = 2^3 * 2^10 B = 2^13 B
+```
+
+So `13` bits is used for the offset.
+Since the machine can hold `32` bit addresses, we get
+
+```text
+2^32 bits / (2^13 bits/page) = 2^19 pages = 524 288 pages
+```
+
+The total number of pages (including the virtual ones) are
+
+```
+2^48 bits / (2^13 bits/page) = 2^35 pages = 34 359 738 368 pages
+```
+
 ## Assignment 8
 
 Take some time to get familiar with environment variables in Linux.
 
 ### Answer assignment 8
+
+```bash
+FOO=bar executable
+```
+
+runs the executable with the environment variable `FOO` set to `bar`
+
+```bash
+export FOO=bar
+```
+
+sets `FOO` to `bar` in the
+[shell for child processes](https://unix.stackexchange.com/questions/130985/if-processes-inherit-the-parents-environment-why-do-we-need-export)
+.
+
+One can access the environment variables through `getenv()`,
+`extern char **environ` (POSIX) or sometimes through the
+[non-POSIX way](https://stackoverflow.com/a/10321474/2786884)
+
+```c
+int main(int argc, char* argv[], char* envp[])
+```
 
 ## Assignment 9
 
@@ -230,6 +302,22 @@ In Linux, you can get a lot of information about the system by looking at the
 Take some time to look at the kind of information you can find here.
 
 ### Answer assignment 9
+
+From the
+[Linux Filesystem Hierarchy](https://tldp.org/LDP/Linux-Filesystem-Hierarchy/html/proc.html)
+
+> /proc is very special in that it is also a virtual filesystem.
+> It's sometimes referred to as a process information pseudo-file system.
+> It doesn't contain 'real' files but runtime system information (e.g. system
+> memory, devices mounted, hardware configuration, etc).
+> For this reason it can be regarded as a control and information centre for the
+> kernel.
+> In fact, quite a lot of system utilities are simply calls to files in this
+> directory.
+> For example, 'lsmod' is the same as 'cat /proc/modules' while 'lspci' is a
+> synonym for 'cat /proc/pci'.
+> By altering files located in this directory you can even read/change kernel
+> parameters (sysctl) while the system is running.
 
 ## Assignment 10
 
