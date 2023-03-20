@@ -1,5 +1,7 @@
 # Self test OSes
 
+From <https://web.archive.org/web/20070102084427/http://www.ifi.uio.no/~inf1060/cgi-bin/fv.cgi?filename=Operativsystemer_1.txt>
+
 ## Question 1
 
 The resident part of an operating system is
@@ -12,16 +14,16 @@ The resident part of an operating system is
 
 ## Question 2
 
-An operating system ensures that processes do not destroy each other by
+An operating system ensures that processes do not destroy for each other by
 
-- [] it ensures that there is never more than one process using a resource.
+- [] it ensures that there is never more than one process using a resource
 - [] access to shared resources must be done through calls to operating system
   functions
 - [] it reviews the program code of the process before it starts up (high-level
   scheduling)
-- [] it has backup functionality that can correct any problems that may occur.
+- [] it has backup functionality that can correct any problems that may occur
 - [] only run one process at a time
-- [] locks those resources the running process is not allowed to touch.
+- [] locks those resources the running process is not allowed to touch
 
 ## Question 3
 
