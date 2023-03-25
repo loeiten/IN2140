@@ -154,12 +154,90 @@ same device only involves manipulation of the directory.
 
 ### Answer assignment 3
 
+When moving a file on the same device on a Unix-style system, one have to add
+and remove the [inode](https://en.wikipedia.org/wiki/Inode) number in the
+directory.
+
+The `inode` description can be obtained by the `stat` system call.
+For example `stat programming_assignments` (on macOS) returns
+
+```text
+# Device ID
+16777225
+# File serial number (inode number)
+39679811
+# File mode
+## Directory
+d
+## First triad: What the owner can do (read, write, execute)
+rwx
+## Second triad: What the group members can do (read and execute)
+r-x
+## Third triad: What others can do (read and execute)
+r-x
+# Link count (how many hard links point to the file)
+6
+# User ID of file owner
+michael
+# Group ID
+staff
+# Device ID if file is a device file
+0
+# Size of the file in bytes
+192
+# Timestamp
+## When the inode was modified
+"Feb 13 13:28:48 2023"
+## When the content was modified
+"Feb 13 13:28:42 2023"
+## When the last accessed time was
+"Feb 13 13:28:42 2023"
+## When the files was created
+"Feb  9 20:39:46 2023"
+# Preferred I/0 block size
+4096
+# Number of blocks allocated to this file
+0
+# User defined flags for file
+0
+# Name
+programming_assignments
+```
+
+and `stat -s CMakeLists.txt` returns
+
+```text
+st_dev=16777225 st_ino=39679849 st_mode=0100644 st_nlink=1 st_uid=501 st_gid=20
+st_rdev=0 st_size=72 st_atime=1676297876 st_mtime=1676291330 st_ctime=1676291330
+st_birthtime=1675971648 st_blksize=4096 st_blocks=8 st_flags=0
+```
+
+See
+[What is the meaning of each field with the output of `stat` on OSX?](https://stackoverflow.com/questions/54263830/what-is-the-meaning-of-each-field-with-the-output-of-stat-on-osx)
+for more info.
+
+When data is copied between devices, the data needs to be copied.
+This requires the metadata about the file to be edited
+
 ## Assignment 4
 
 List a number of file types that you will assume are accessed sequentially.
 Do the same for files that you would expect to require random access.
 
 ### Answer assignment 4
+
+Sequential access:
+
+- Media files
+   - Images
+   - Sound
+   - Video
+- Text
+
+Random access:
+
+- Databases
+- Compressed archives
 
 ## Assignment 5
 
@@ -168,12 +246,24 @@ as a partition?
 
 ### Answer assignment 5
 
+- You can have several file systems without having several disks
+- You will limit the amount of space needed to organize the file system
+
 ## Assignment 6
 
 What is the purpose of the `open` and `close` operations?
 What does the `open` and `close` operations do?
 
 ### Answer assignment 6
+
+- `open`:
+   - Check that the file exists
+   - Mark that the file is used by a process
+   - Make a file descriptor and return this
+- `close`:
+   - Remove the file descriptor and clean up the internal kernel structure
+     associated with the file
+   - Remove the mark of the file so that other processes can use it
 
 ### Assignment 7
 
