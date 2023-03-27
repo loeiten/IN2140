@@ -273,9 +273,52 @@ What is happening? Why?
 
 ### Answer assignment 7
 
+See [set_4_assignment_7.c](set_4_assignment_7.c)
+
+When the processes open the file individually:
+
+- The processes will have different file table entries, so each process has its
+  own file position for the file
+- Thus the processes will overwrite each other
+- (Note the `sleep` statement to avoid racing)
+
+When the file is opened prior to the fork:
+
+- The processes will have the same file table entries, so both processes share
+  the position in the file
+- The file is written to sequentially
+- (Note the `sleep` statement to avoid racing)
+
+In general though:
+
+> So having multiple processes write to the same file is a recipe for disaster.
+
+Furthermore in linux:
+
+- `FILE *` refers to a struct
+- `open` returns an `int` which refers to the
+  [file descriptor](https://en.wikipedia.org/wiki/File_descriptor)
+   - `0` is reserved to `stdin`
+   - `1` is reserved to `stdout`
+   - `2` is reserved to `stderr`
+- Each process has a file descriptor table
+   - This points to a global file table shared across all processes
+      - The global file table contains
+         - A reference count (how many times is this file referenced by other
+          processes)
+         - The position in the file
+         - ...
+      - The global file table points to the v-node table which tells about
+         - File access
+         - File type
+         - File size
+         - ...
+
 ## Assignment 8
 
 Create a program that writes the message *hello world* to a file using the
 low-level I/O (unix filesystem interface) calls `open()` and `write()`.
 
 ### Answer assignment 8
+
+See [set_4_assignment_7.c](set_4_assignment_8.c)

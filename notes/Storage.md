@@ -19,7 +19,7 @@ A disk system consists of:
   write information.
   The disk head is located at the very end of a mechanical arm.
 - Sectors: The tracks are divided into sectors separated with unreadable,
-  unmagnetic areas.
+  non-magnetic areas.
   The sector size is fixed for each hard drive.
 - Cylinders: If you have multiple plates, the same groove on all plates will
   form a cylinder.
