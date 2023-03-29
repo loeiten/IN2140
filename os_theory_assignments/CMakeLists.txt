@@ -2,6 +2,7 @@ set(source_files
     set_2_os_assignment_5.c
     set_4_os_assignment_7.c
     set_4_os_assignment_8.c
+    set_5_os_assignment_7.c
 )
 
 # Create the executables
@@ -16,3 +17,6 @@ do_test(NAME set_4_os_assignment_7 NO 1 ARGS EXPECTED ".*\n")
 
 # set_4_os_assignment_8
 do_test(NAME set_4_os_assignment_8 NO 1 ARGS EXPECTED "Hello, world!\n")
+
+# set_5_os_assignment_7
+do_test(NAME set_5_os_assignment_7 NO 1 ARGS "Hello, world!" EXPECTED "Hello, world! from pid: [^0][0-9]*\n")

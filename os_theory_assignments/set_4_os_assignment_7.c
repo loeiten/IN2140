@@ -1,6 +1,7 @@
-#include <stdio.h>   // for printf, fclose, fflush, fopen, ftell, FILE, fputs
-#include <stdlib.h>  // for exit, EXIT_FAILURE, NULL, EXIT_SUCCESS
-#include <unistd.h>  // for sleep, fork, pid_t, NULL
+#include <stdio.h>     // for printf, fclose, fflush, fopen, ftell, FILE, fputs
+#include <stdlib.h>    // for exit, EXIT_FAILURE, NULL, EXIT_SUCCESS
+#include <sys/wait.h>  // for wait
+#include <unistd.h>    // for fork, pid_t, NULL
 
 void writeToFile(FILE* fp, const char* text) {
   int pos;
@@ -35,7 +36,13 @@ pid_t openAfterFork() {
       exit(EXIT_FAILURE);
     }
     printf("pid %d opened '%s' for writing\n", pid, filename);
-    sleep(1);  // Avoid race
+    // Avoid race
+    int status = 0;
+    int waitPID = wait(&status);  // NOTE: wait is from POSIX1-2001
+    if (status != 0) {
+      printf("Process '%d' exited with status '%d'\n", waitPID, status);
+      exit(EXIT_FAILURE);
+    }
     writeToFile(fp, "world\n");
   }
 
@@ -66,13 +73,18 @@ void openBeforeFork() {
   pid_t pid = fork();
   if (pid == 0) {  // Child
     writeToFile(fp, "Hello ");
-  } else {     // Parent
-    sleep(1);  // Avoid race
+  } else {  // Parent
+    // Avoid race
+    int status = 0;
+    int waitPID = wait(&status);  // NOTE: wait is from POSIX1-2001
+    if (status != 0) {
+      printf("Process '%d' exited with status '%d'\n", waitPID, status);
+      exit(EXIT_FAILURE);
+    }
     writeToFile(fp, "world\n");
   }
 
   if (pid != 0) {  // Parent
-    sleep(1);      // Let the processes finish
     fclose(fp);
     printf("Parent closed '%s'\n", filename);
   }

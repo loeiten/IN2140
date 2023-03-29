@@ -280,14 +280,14 @@ When the processes open the file individually:
 - The processes will have different file table entries, so each process has its
   own file position for the file
 - Thus the processes will overwrite each other
-- (Note the `sleep` statement to avoid racing)
+- (Note the `wait` statement to avoid racing)
 
 When the file is opened prior to the fork:
 
 - The processes will have the same file table entries, so both processes share
   the position in the file
 - The file is written to sequentially
-- (Note the `sleep` statement to avoid racing)
+- (Note the `wait` statement to avoid racing)
 
 In general though:
 
