@@ -139,6 +139,8 @@ You can decide how to send the message from one process to the other.
 
 ### Answer assignment 7
 
+See [set_5_os_assignment_7.c](set_5_os_assignment_7.c)
+
 ## Assignment 8
 
 Change [Assignment 7](#assignment-7) so that it uses other forms for IPC.
@@ -148,3 +150,5 @@ Is there any potential for something to go wrong?
 Is there any potential to save capacity in some cases?
 
 ### Answer assignment 8
+
+See [set_5_os_assignment_8.c](set_5_os_assignment_8.c)
