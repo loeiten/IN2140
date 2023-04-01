@@ -4,7 +4,7 @@
 
 ### Internet
 
-It is important that we are aware that the Internet (with large I) represents
+It is important that we are aware that the Internet (with capital I) represents
 one specific network.
 Internet is a worldwide network that links a lot of computers together.
 Through the internet we can visit websites that we are used to or send mail, and
@@ -46,7 +46,7 @@ copper, fiber, coax, Cat5 LAN cable, radio, etc.
 
 ### Circuit switching
 
-Circiut switching means that one establishes a logical direct connection between
+Circuit switching means that one establishes a logical direct connection between
 two machines, which goes through a particular set of routers.
 This connection is locked and reserves resources at all stages along the way
 until the connection is closed.
