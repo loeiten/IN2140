@@ -137,6 +137,14 @@ Why are network functions organized in layers?
 
 ### Answer assignment 3
 
+- It gives a logical separation of tasks
+- Every layer utilized the services provided by the layer below
+- This gives an abstraction such that one necessarily don't need to have deep
+  knowledge about the layers below
+- A network can use different link technologies
+- A network can handle multiple protocols
+- A network can be used by a variety of programs
+
 ## Assignment 4
 
 ### 4A
@@ -151,13 +159,32 @@ What are the tasks of each of these layers?
 
 #### Answer 4A
 
+```text
+application          application
+    |                    |
+ transport            transport
+    |                    |
+ network    network   network
+    |       |    |       |
+  link       link      link
+    |       |    |       |
+physical _ /      \_ physical
+```
+
 #### Answer 4B
+
+- Application: Communication between processes on different machines
+- Transport: End-to-end communication between machines (TCP/UDP)
+- Network: Routing protocol (IP)
+- Link: Communication between neighbors in the network
+- Physical: The medium connecting two neighbors together
 
 ## Assignment 5
 
 ### 5A
 
-Which additional layers exist in the OSI model when compared to the TCP/IP-model?
+Which additional layers exist in the OSI model when compared to the
+TCP/IP-model?
 
 ### 5B
 
@@ -171,9 +198,22 @@ How are these services offered in the Internet (TCP/IP model)?
 
 #### Answer 5A
 
+The OSI model consist of a session layer after the transport layer and a
+presentation layer after the session layer and before the application layer
+
 #### Answer 5B
 
+The session layer offers to sustain a session, whereas the presentation layer
+translates data between machines. I.e. the presentation layer handles the:
+
+- Character set
+- Compression
+- Encoding
+- Encryption
+
 #### Answer 5C
+
+ These layers are often baked into the application layer in TCP/IP
 
 ## Assignment 6
 
@@ -181,6 +221,14 @@ How would you characterize the differences between circuit switching
 and packet switching?
 
 ### Answer assignment 6
+
+Circuit switching means that one establishes a logical direct connection between
+two machines, which goes through a particular set of routers.
+This connection is locked and reserves resources at all stages along the way
+until the connection is closed.
+
+Each packet that is sent contains an address and finds its way to its
+destination by itself, with the help of routers along the way.
 
 ## Assignment 7
 
@@ -209,10 +257,27 @@ Some protocols and layers purposefully do not have trailers, why might that be?
 
 #### Answer 7A
 
+It contains information about how the protocol should handle the data.
+This can include destination address, protocol number, length, type etc.
+
 #### Answer 7B
+
+A layer adds headers to the data it received in the layer above and delivers
+headers and data to the layer below.
+
+The headers are removed before the data is delivered to the layer above.
 
 #### Answer 7C
 
+Headers are put in front of the data as this makes it easier to separate the
+header from the data.
+
 #### Answer 7D
 
+Trailers are often used in lower layers to separate "frames"
+
 #### Answer 7E
+
+Having trails meaning that one have to iterate through the body before coming to
+the trail, this means that extra processing which is resource consuming and can
+be wasteful in time critical systems.
