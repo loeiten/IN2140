@@ -1,43 +1,47 @@
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
+#include <arpa/inet.h>   // for inet_addr, htons
+#include <netinet/in.h>  // for sockaddr_in, IPPROTO_TCP, in_addr
+#include <stdio.h>       // for printf
+#include <stdlib.h>      // for EXIT_SUCCESS
+#include <strings.h>     // for bzero
+#include <sys/socket.h>  // for connect, socket, AF_INET, SOCK_STREAM
+#include <unistd.h>      // for close, read, write
 
-main() {
-  /* deklarasjon av litt datastruktur */
-  struct sockaddr_in serveraddr;
+int main() {
+  // Declaration of structures
+  struct sockaddr_in serverAddr;
   int sock;
-  char buf[12];
+  char buf[14];
 
-  /* Opprett socket */
+  // Create a socket
   sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-  /* Null ut serveradresse-struct'en */
-  bzero((void *)&serveraddr, sizeof(serveraddr));
+  // Zero out the server address in the struct
+  bzero((void *)&serverAddr, sizeof(serverAddr));
 
-  /* Sett domenet til Internett */
-  serveraddr.sin_family = AF_INET;
+  // Set the domain to internet
+  serverAddr.sin_family = AF_INET;
 
-  /* Sett inn internettadressen til kaksi.ifi.uio.no */
-  serveraddr.sin_addr.s_addr = inet_addr("129.240.65.193");
+  // Insert the IP address to the server
+  serverAddr.sin_addr.s_addr = inet_addr("xxx.xxx.xxx.xxx");
 
-  /* Sett portnummer */
-  serveraddr.sin_port = htons(2009);
+  // Sett the port number
+  serverAddr.sin_port = htons(2009);
 
-  /* Koble opp */
-  connect(sock, (struct sockaddr *)&serveraddr, sizeof serveraddr);
+  // Connect
+  connect(sock, (struct sockaddr *)&serverAddr, sizeof serverAddr);
 
-  /* Send data */
-  write(sock, "Hei verden!", 11);
+  // Send the data
+  write(sock, "Hello, world!", 13);
 
-  /* les data fra forbindelsen */
-  read(sock, buf, 11);
+  // Read data from the connection
+  read(sock, buf, 13);
 
-  /* legg til et termineringstegn, og skriv ut til skjerm */
-  buf[11] = '\0';
+  // Add a termination sign, and write it to the screen
+  buf[13] = '\0';
   printf("%s \n", buf);
 
-  /* Steng socketen */
+  // Close the socket
   close(sock);
+
+  return EXIT_SUCCESS;
 }
