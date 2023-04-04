@@ -1,42 +1,47 @@
-#include <netdb.h>
-#include <netinet/in.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/socket.h>
+#include <arpa/inet.h>   // for htons
+#include <netinet/in.h>  // for sockaddr_in, INADDR_ANY, IPPROTO_TCP, in_addr
+#include <stdio.h>       // for printf
+#include <stdlib.h>      // for EXIT_SUCCESS
+#include <strings.h>     // for bzero
+#include <sys/socket.h>  // for accept, bind, listen, socket, AF_INET, SOCK_...
+#include <unistd.h>      // for close, read, write
 
-main() {
-  struct sockaddr_in serveraddr, clientaddr;
-  int clientaddrlen;
-  int request_sock, sock;
-  char buf[12];
+int main() {
+  // Declaration of structures
+  struct sockaddr_in serverAddr, clientAddr;
+  int clientAddrLen;
+  int requestSock, sock;
+  char buf[14];
 
-  /* Opprett request-socket  */
-  request_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  // Create a request socket
+  requestSock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-  /* Opprett adressestruct */
-  bzero((void *)&serveraddr, sizeof(serveraddr));
-  serveraddr.sin_family = AF_INET;
-  serveraddr.sin_addr.s_addr = INADDR_ANY;
-  serveraddr.sin_port = htons(2009);
+  // Create an address structure
+  bzero((void *)&serverAddr, sizeof(serverAddr));
+  serverAddr.sin_family = AF_INET;
+  serverAddr.sin_addr.s_addr = INADDR_ANY;
+  serverAddr.sin_port = htons(2009);
 
-  /* bind adressen til socketen */
-  bind(request_sock, (struct sockaddr *)&serveraddr, sizeof serveraddr);
+  // Bind the address to the socket
+  bind(requestSock, (struct sockaddr *)&serverAddr, sizeof serverAddr);
 
-  /* aktiver lytting på socketen */
-  listen(request_sock, SOMAXCONN);
+  // Activate listening on the socket
+  listen(requestSock, SOMAXCONN);
 
-  /* motta en forbindelse */
-  sock = accept(request_sock, (struct sockaddr *)&clientaddr, &clientaddrlen);
+  // Accept a connection
+  sock = accept(requestSock, (struct sockaddr *)&clientAddr, &clientAddrLen);
 
-  /* les data fra forbindelsen, og skriv dem ut */
-  read(sock, buf, 11);
-  buf[11] = '\0';
+  // Read data from the connection, and write it out
+  read(sock, buf, 13);
+  buf[13] = '\0';
   printf("%s \n", buf);
 
-  /* Send data tilbake over forbindelsen */
-  write(sock, buf, 11);
+  // Send data back to the connection
+  write(sock, buf, 13);
 
-  /* Steng socketene */
+  // Close the sockets
   close(sock);
-  close(request_sock);
+  close(requestSock);
+
+  return EXIT_SUCCESS;
 }
