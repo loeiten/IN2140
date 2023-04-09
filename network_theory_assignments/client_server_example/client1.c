@@ -1,16 +1,37 @@
 #include <arpa/inet.h>   // for inet_addr, htons
 #include <netinet/in.h>  // for sockaddr_in, IPPROTO_TCP, in_addr
 #include <stdio.h>       // for printf
-#include <stdlib.h>      // for EXIT_SUCCESS
+#include <stdlib.h>      // for free, EXIT_SUCCESS, atoi, EXIT_FAILURE
+#include <string.h>      // for strerror
 #include <strings.h>     // for bzero
+#include <sys/errno.h>   // for errno
 #include <sys/socket.h>  // for connect, socket, AF_INET, SOCK_STREAM
 #include <unistd.h>      // for close, read, write
+
+#include "include/helper.h"  // for readLine
+
+#define MSG_LEN 13
 
 int main() {
   // Declaration of structures
   struct sockaddr_in serverAddr;
   int sock;
-  char buf[14];
+  char buf[MSG_LEN + 1];
+
+  // Obtain the ip and port
+  char *ip = NULL;
+  char *portStr = NULL;
+  int success;
+  success = readLine("config.txt", ip, 0);
+  if (success != EXIT_SUCCESS) {
+    printf("Failed to read line\n");
+    return EXIT_FAILURE;
+  }
+  success = readLine("config.txt", portStr, 1);
+  if (success != EXIT_SUCCESS) {
+    printf("Failed to read line\n");
+    return EXIT_FAILURE;
+  }
 
   // Create a socket
   sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -22,22 +43,28 @@ int main() {
   serverAddr.sin_family = AF_INET;
 
   // Insert the IP address to the server
-  serverAddr.sin_addr.s_addr = inet_addr("xxx.xxx.xxx.xxx");
+  serverAddr.sin_addr.s_addr = inet_addr(ip);
+  free(ip);
 
-  // Sett the port number
-  serverAddr.sin_port = htons(2009);
+  // Set the port number
+  int port = atoi(portStr);
+  free(portStr);
+  serverAddr.sin_port = htons(port);
 
   // Connect
-  connect(sock, (struct sockaddr *)&serverAddr, sizeof serverAddr);
+  int error = connect(sock, (struct sockaddr *)&serverAddr, sizeof serverAddr);
+  if (error != 0) {
+    printf("Connection failed: %s", strerror(errno));
+  }
 
   // Send the data
-  write(sock, "Hello, world!", 13);
+  write(sock, "Hello, world!", MSG_LEN);
 
   // Read data from the connection
-  read(sock, buf, 13);
+  read(sock, buf, MSG_LEN);
 
   // Add a termination sign, and write it to the screen
-  buf[13] = '\0';
+  buf[MSG_LEN] = '\0';
   printf("%s \n", buf);
 
   // Close the socket
