@@ -1,6 +1,6 @@
 #ifndef NETWORK_THEORY_ASSIGNMENTS_CLIENT_SERVER_EXAMPLE_INCLUDE_HELPER_H_
 #define NETWORK_THEORY_ASSIGNMENTS_CLIENT_SERVER_EXAMPLE_INCLUDE_HELPER_H_
 
-int readLine(const char *path, char *line, int lineNo);
+int readLine(const char *path, char **line, int lineNo);
 
 #endif  // NETWORK_THEORY_ASSIGNMENTS_CLIENT_SERVER_EXAMPLE_INCLUDE_HELPER_H_

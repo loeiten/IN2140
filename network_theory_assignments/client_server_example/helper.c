@@ -3,7 +3,7 @@
 #include <stdio.h>   // for printf, fclose, fopen, getline, NULL, FILE, size_t
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 
-int readLine(const char *path, char *line, int lineNo) {
+int readLine(const char *path, char **line, int lineNo) {
   FILE *fp = fopen(path, "r");
   if (fp == NULL) {
     printf(
@@ -24,7 +24,7 @@ int readLine(const char *path, char *line, int lineNo) {
   // Read the header
   for (int i = 0; i <= lineNo; ++i) {
     // ssize_t is when the output can be negative
-    ssize_t nBytes = getline(&line, &len, fp);
+    ssize_t nBytes = getline(line, &len, fp);
     if (nBytes == -1) {
       printf("Failed to read line %d of %s\n", i, path);
       return EXIT_FAILURE;

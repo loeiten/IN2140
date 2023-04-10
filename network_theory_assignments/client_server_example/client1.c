@@ -22,12 +22,12 @@ int main() {
   char *ip = NULL;
   char *portStr = NULL;
   int success;
-  success = readLine("config.txt", ip, 0);
+  success = readLine("config.txt", &ip, 0);
   if (success != EXIT_SUCCESS) {
     printf("Failed to read line\n");
     return EXIT_FAILURE;
   }
-  success = readLine("config.txt", portStr, 1);
+  success = readLine("config.txt", &portStr, 1);
   if (success != EXIT_SUCCESS) {
     printf("Failed to read line\n");
     return EXIT_FAILURE;
