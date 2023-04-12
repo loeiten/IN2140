@@ -37,25 +37,33 @@ int main() {
   serverAddr.sin_addr.s_addr = INADDR_ANY;
   int port = atoi(portStr);
   free(portStr);
+  // The htons() function converts the unsigned short integer `hostshort` from
+  // host byte order to network byte order.
   serverAddr.sin_port = htons(port);
 
   // Bind the address to the socket
   int error =
       bind(requestSock, (struct sockaddr *)&serverAddr, sizeof serverAddr);
   if (error != 0) {
-    printf("Connection failed: %s", strerror(errno));
+    printf("Binding socket failed: %s", strerror(errno));
   }
 
   // Activate listening on the socket
-  listen(requestSock, SOMAXCONN);
+  error = listen(requestSock, SOMAXCONN);
+  if (error != 0) {
+    printf("Listening failed: %s", strerror(errno));
+  }
 
   // Accept a connection
   sock = accept(requestSock, (struct sockaddr *)&clientAddr, &clientAddrLen);
+  if (sock == -1) {
+    printf("Accepting request failed: %s", strerror(errno));
+  }
 
   // Read data from the connection, and write it out
   read(sock, buf, MSG_LEN);
   buf[MSG_LEN] = '\0';
-  printf("%s \n", buf);
+  printf("%s\n", buf);
 
   // Send data back to the connection
   write(sock, buf, MSG_LEN);

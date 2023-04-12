@@ -49,6 +49,8 @@ int main() {
   // Set the port number
   int port = atoi(portStr);
   free(portStr);
+  // The htons() function converts the unsigned short integer `hostshort` from
+  // host byte order to network byte order.
   serverAddr.sin_port = htons(port);
 
   // Connect
@@ -65,7 +67,7 @@ int main() {
 
   // Add a termination sign, and write it to the screen
   buf[MSG_LEN] = '\0';
-  printf("%s \n", buf);
+  printf("%s\n", buf);
 
   // Close the socket
   close(sock);
