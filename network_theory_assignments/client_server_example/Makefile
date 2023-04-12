@@ -17,7 +17,8 @@ else
 endif
 
 # Flags to be used together with CC
-CCFLAGS := -std=gnu17
+# -g enables debugging
+CCFLAGS := -std=gnu17 -g
 
 .PHONY: all
 all: $(CLIENT_BIN) $(SERVER_BIN)
@@ -34,18 +35,18 @@ all: $(CLIENT_BIN) $(SERVER_BIN)
 # $(word 2,$^) is getting the second prerequisite
 $(CLIENT_BIN): $(SRC_DIR)/client1.c $(EXEC_DIR)/helper.o
 	$(CC) $(CCFLAGS) -c $< -o $@.o
-	$(CC) $(CCFLAGS) -o $@ $@.o $(word 2,$^)
+	$(CC) $(CCFLAGS) -I/include -o $@ $@.o $(word 2,$^)
 
 # Make the server executable
 $(SERVER_BIN): $(SRC_DIR)/server1.c $(EXEC_DIR)/helper.o
 	$(CC) $(CCFLAGS) -c $< -o $@.o
-	$(CC) $(CCFLAGS) -o $@ $@.o $(word 2,$^)
+	$(CC) $(CCFLAGS) -I/include -o $@ $@.o $(word 2,$^)
 
 # Create the helper.o file
 # NOTE: The config file doesn't have to trigger the build, but it's added as a
 #       a dependency to ensure that the rule is run
 $(EXEC_DIR)/helper.o: helper.c include/helper.h $(EXEC_DIR)/config.txt
-	$(CC) $(CCFLAGS) -c $< -o $@
+	$(CC) $(CCFLAGS) -I/include -c $< -o $@
 
 # Copy the configuration file
 # This will also make the directory for the executables

@@ -13,7 +13,7 @@ int readLine(const char *path, char **line, int lineNo) {
     return EXIT_FAILURE;
   }
 
-  line = NULL;
+  *line = NULL;
   size_t len = 0;
 
   // NOTE: getline is from POSIX.1-2008, not the C-standard, see
