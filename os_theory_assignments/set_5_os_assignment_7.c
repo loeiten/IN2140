@@ -1,7 +1,7 @@
 #include <libgen.h>    // for basename
 #include <stdio.h>     // for perror, printf
 #include <stdlib.h>    // for EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>    // for strlen, strcpy
+#include <string.h>    // for strlen
 #include <sys/ipc.h>   // for IPC_CREAT, IPC_NOWAIT, key_t
 #include <sys/msg.h>   // for msgget, msgrcv, msgsnd, pid_t
 #include <sys/wait.h>  // for wait

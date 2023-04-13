@@ -10,13 +10,16 @@
 
 #include "include/helper.h"  // for readLine
 
-#define MSG_LEN 13
+#define BUFF_LEN 1024
 
 int main() {
   // Declaration of structures
   struct sockaddr_in serverAddr;
-  int sock;
-  char buf[MSG_LEN + 1];
+  char buff[BUFF_LEN];
+
+  // Erase data by writing 0's to the memory location
+  bzero((void *)&serverAddr, sizeof(serverAddr));
+  bzero((void *)buff, sizeof(buff));
 
   // Obtain the ip and port
   char *ip = NULL;
@@ -32,45 +35,51 @@ int main() {
     printf("Failed to read line\n");
     return EXIT_FAILURE;
   }
-
-  // Create a socket
-  sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-  // Zero out the server address in the struct
-  bzero((void *)&serverAddr, sizeof(serverAddr));
-
-  // Set the domain to internet
-  serverAddr.sin_family = AF_INET;
-
-  // Insert the IP address to the server
-  serverAddr.sin_addr.s_addr = inet_addr(ip);
-  free(ip);
-
-  // Set the port number
   int port = atoi(portStr);
   free(portStr);
+
+  // Create a socket, the integer returned can be thought about as a file handle
+  int clientFd =
+      socket(AF_INET,       // Use IPV4
+             SOCK_STREAM,   // Communication type TCP (SOCK_DGRAM is UDP)
+             IPPROTO_TCP);  // What IP protocol to use
+  if (clientFd == -1) {
+    printf("Failed to create socket.\nError %d: %s\n", errno, strerror(errno));
+    return EXIT_FAILURE;
+  }
+  printf("Socket created on the client side\n");
+
+  // Set the domain to internet
+  serverAddr.sin_family = AF_INET;  // Use IPV4
+  // Insert the IP address to the server
+  serverAddr.sin_addr.s_addr = inet_addr(ip);  // Connect to this ip
+  // Set the port number
   // The htons() function converts the unsigned short integer `hostshort` from
   // host byte order to network byte order.
   serverAddr.sin_port = htons(port);
+  free(ip);
 
   // Connect
-  int error = connect(sock, (struct sockaddr *)&serverAddr, sizeof serverAddr);
+  int error =
+      connect(clientFd, (struct sockaddr *)&serverAddr, sizeof serverAddr);
   if (error != 0) {
-    printf("Connection failed: %s", strerror(errno));
+    printf("Connection failed.\nError %d: %s\n", errno, strerror(errno));
+    return EXIT_FAILURE;
   }
+  printf(
+      "Socket connected from the client side to the server side using port "
+      "%d.\n",
+      port);
 
   // Send the data
-  write(sock, "Hello, world!", MSG_LEN);
+  write(clientFd, "Hello, world!", BUFF_LEN);
 
   // Read data from the connection
-  read(sock, buf, MSG_LEN);
-
-  // Add a termination sign, and write it to the screen
-  buf[MSG_LEN] = '\0';
-  printf("%s\n", buf);
+  read(clientFd, buff, BUFF_LEN);
+  printf("From server: %s\n", buff);
 
   // Close the socket
-  close(sock);
+  close(clientFd);
 
   return EXIT_SUCCESS;
 }
