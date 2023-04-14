@@ -7,14 +7,9 @@ Use the
 
 Use them for your tests.
 
-Change the port number in client and server to one of your own choice.
-Use one terminal window to log in to *safir*, and another to log in to
-another machine (the machines *rubin*, *diamant*, *vetur* and *vor* should
-work).
-Compile client and server code. Start the server on *safir*, after that start
-the client on the other machine. Check whether they talk with each other.
-
 ### Answer assignment 1
+
+See [client_server_example](./client_server_example/).
 
 ## Assignment 2
 
@@ -23,13 +18,18 @@ the command line.
 
 ### Answer assignment 2
 
+Have instead made it possible to use a `config.txt` file.
+See [client_server_example](./client_server_example/).
+
 ## Assignment 3
 
 Change the client in such a way, that you can give it a server name and the
 server port on the command line.
-Try to run the server on *another machine than safir*.
 
 ### Answer assignment 3
+
+Have instead made it possible to use a `config.txt` file.
+See [client_server_example](./client_server_example/).
 
 ## Assignment 4
 
@@ -40,6 +40,8 @@ them safer, by checking their return code.
 Handle the errors appropriately.
 
 ### Answer assignment 4
+
+See [client_server_example](./client_server_example/).
 
 ## Assignment 5
 

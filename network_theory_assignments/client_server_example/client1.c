@@ -1,12 +1,39 @@
+/*
+ * Assignment:
+ *
+ * Communicate through a socket by running the binaries of `client1.c` and
+ * `server1.c` on different machines.
+ * In order to do this, you need to create a file `config.txt` on the form
+ *
+ * ```text
+ * IPV4_address_to_the_server
+ * port_to_use
+ * ```
+ *
+ * If you do not have access to two different machines, it's possible to run
+ * the two programs as different processes on the same machine.
+ * In that case `config.txt` could point to localhost like this
+ *
+ * ```text
+ * 127.0.0.1
+ * 8080
+ * ```
+ *
+ * See also explanation and examples in
+ * https://www.geeksforgeeks.org/socket-programming-cc/
+ * https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+ */
+
 #include <arpa/inet.h>   // for inet_addr, htons
+#include <netdb.h>       // for getnameinfo, NI_MAXHOST, NI_MAXSERV, NI_...
 #include <netinet/in.h>  // for sockaddr_in, IPPROTO_TCP, in_addr
 #include <stdio.h>       // for printf
-#include <stdlib.h>      // for free, EXIT_SUCCESS, atoi, EXIT_FAILURE
+#include <stdlib.h>      // for free, EXIT_FAILURE, EXIT_SUCCESS, atoi
 #include <string.h>      // for strerror
 #include <strings.h>     // for bzero
 #include <sys/errno.h>   // for errno
 #include <sys/socket.h>  // for connect, socket, AF_INET, SOCK_STREAM
-#include <unistd.h>      // for close, read, write
+#include <unistd.h>      // for close, read, write, NULL
 
 #include "include/helper.h"  // for readLine
 
@@ -66,10 +93,19 @@ int main() {
     printf("Connection failed.\nError %d: %s\n", errno, strerror(errno));
     return EXIT_FAILURE;
   }
-  printf(
-      "Socket connected from the client side to the server side using port "
-      "%d.\n",
-      port);
+  char ipFromServerAddr[NI_MAXHOST];
+  char portFromServerAddr[NI_MAXSERV];
+  error = getnameinfo((struct sockaddr *)&serverAddr, sizeof(serverAddr),
+                      ipFromServerAddr, sizeof(ipFromServerAddr),
+                      portFromServerAddr, sizeof(portFromServerAddr),
+                      NI_NUMERICHOST | NI_NUMERICSERV);
+  if (error != 0) {
+    printf("Could not resolve the server ip and port. Error %d: %s\n", errno,
+           strerror(errno));
+  } else {
+    printf("Socket connected from the client side to %s:%s.\n",
+           ipFromServerAddr, portFromServerAddr);
+  }
 
   // Send the data
   write(clientFd, "Hello, world!", BUFF_LEN);

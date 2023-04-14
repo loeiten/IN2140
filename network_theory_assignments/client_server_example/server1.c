@@ -1,12 +1,39 @@
+/*
+ * Assignment:
+ *
+ * Communicate through a socket by running the binaries of `client1.c` and
+ * `server1.c` on different machines.
+ * In order to do this, you need to create a file `config.txt` on the form
+ *
+ * ```text
+ * IPV4_address_to_the_server
+ * port_to_use
+ * ```
+ *
+ * If you do not have access to two different machines, it's possible to run
+ * the two programs as different processes on the same machine.
+ * In that case `config.txt` could point to localhost like this
+ *
+ * ```text
+ * 127.0.0.1
+ * 8080
+ * ```
+ *
+ * See also explanation and examples in
+ * https://www.geeksforgeeks.org/socket-programming-cc/
+ * https://www.geeksforgeeks.org/tcp-server-client-implementation-in-c/
+ */
+
 #include <arpa/inet.h>   // for htons
+#include <netdb.h>       // for getnameinfo, NI_MAXHOST, NI_MAXSERV, NI_...
 #include <netinet/in.h>  // for sockaddr_in, INADDR_ANY, IPPROTO_TCP
-#include <stdio.h>       // for printf
-#include <stdlib.h>      // for atoi, free, EXIT_SUCCESS, EXIT_FAILURE
-#include <string.h>      // for strerror
+#include <stdio.h>       // for printf, snprintf
+#include <stdlib.h>      // for EXIT_FAILURE, atoi, free, EXIT_SUCCESS
+#include <string.h>      // for strerror, strlen
 #include <strings.h>     // for bzero
 #include <sys/errno.h>   // for errno
 #include <sys/socket.h>  // for accept, bind, listen, socket, AF_INET
-#include <unistd.h>      // for close, read, write
+#include <unistd.h>      // for close, read, write, NULL
 
 #include "include/helper.h"  // for readLine
 
@@ -57,8 +84,7 @@ int main() {
     printf("Binding socket failed.\nError %d: %s\n", errno, strerror(errno));
     return EXIT_FAILURE;
   }
-  printf("Request socket bound to localhost, port %d on the server side\n",
-         port);
+  printf("Request socket bound on the server side to localhost:%d\n", port);
 
   // Activate listening on the socket
   error = listen(serverFd,
@@ -82,7 +108,21 @@ int main() {
     printf("Accepting request failed.\nError %d: %s\n", errno, strerror(errno));
     return EXIT_FAILURE;
   }
-  printf("Accepted connection\n");
+  char ipFromClientAddr[NI_MAXHOST];
+  char portFromClientAddr[NI_MAXSERV];
+  error = getnameinfo((struct sockaddr *)&clientAddr, clientAddrLen,
+                      ipFromClientAddr, sizeof(ipFromClientAddr),
+                      portFromClientAddr, sizeof(portFromClientAddr),
+                      NI_NUMERICHOST | NI_NUMERICSERV);
+  if (error != 0) {
+    printf(
+        "Could not resolve the server ip and port. It failed with error %d: "
+        "%s\n",
+        error, gai_strerror(error));
+  } else {
+    printf("Accepted connection to %s:%s.\n", ipFromClientAddr,
+           portFromClientAddr);
+  }
 
   // Read data from the fd, and write it out
   read(newSocketFd, buff, BUFF_LEN);
