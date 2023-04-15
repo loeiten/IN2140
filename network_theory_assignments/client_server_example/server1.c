@@ -120,7 +120,7 @@ int main() {
         "%s\n",
         error, gai_strerror(error));
   } else {
-    printf("Accepted connection to %s:%s.\n", ipFromClientAddr,
+    printf("Accepted connection from %s:%s.\n", ipFromClientAddr,
            portFromClientAddr);
   }
 
