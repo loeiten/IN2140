@@ -56,6 +56,18 @@ packets.
 
 ### Answer assignment 5
 
+The sender sends the package together with a packet number and a checksum.
+
+The receiver checks the checksum to verify if the package has arrived
+uncorrupted.
+If the package is uncorrupted send the package number back together with a
+checksum.
+
+If the sender does not receive the package number from the receiver after `x`
+amount of time, send again.
+
+If the channel is very lossy one could even consider to send redundant packages.
+
 ## Assignment 6
 
 Does your answer to [Assignment 5](#assignment-5) guarantee that all packets
@@ -63,6 +75,9 @@ arrive in the sending order?
 If not, how can you add that?
 
 ### Answer assignment 6
+
+A very resource demanding way to do this is to repeatedly send the same package
+until a verification is received from the receiver.
 
 ## Assignment 7
 
@@ -73,6 +88,9 @@ Assume that the signal travels approximately at the speed of light,
 How long does it take from the start of sending the packet to the end of
 receiving the packet if...
 
+**Hint**: You need time for putting the packet onto the channel, and time for
+moving a bit through the channel.
+
 ### 7A
 
 the bandwidth of the data channel is 10 Mbit/s
@@ -81,10 +99,31 @@ the bandwidth of the data channel is 10 Mbit/s
 
 the bandwidth of the data channel is 10 Gbit/s
 
-**Hint**: You need time for putting the packet onto the channel, and time for
-moving a bit through the channel.
-
 ### Answer assignment 7
+
+We can use the following formula:
+
+```text
+time = (n_bits/bandwidth) + (distance/velocity)
+```
+
+#### Answer 7A
+
+We get
+
+```text
+time = (10^3 bits/10^7 bits/s) + (2*10e^3 km/ 3*10e^5 km/s)
+     = 10^-4s + 6.6...*10^-3s
+```
+
+#### Answer 7B
+
+We get
+
+```text
+time = (10^3 bits/10^10 bits/s) + (2*10e^3 km/ 3*10e^5 km/s)
+     = 10^-7s + 6.6...*10^-3s
+```
 
 ## Assignment 8
 
@@ -94,6 +133,10 @@ the speed of the channel in example A?
 
 ### Answer assignment 8
 
+It's only the bandwidth that has increased, not the velocity in the channel.
+This means that you can send 1000 times the amount of data, but not that it
+will arrive 1000 times faster
+
 ## Assignment 9
 
 Propose an application layer protocol on top of TCP for a distributed,
@@ -101,6 +144,8 @@ turn-based game between two players, such as chess (or GO, nine men's morris,
 battleships, stratego, ...).
 
 ### Answer assignment 9
+
+The game would essentially just need to transfer changes in a text based form.
 
 ## Assignment 10
 
