@@ -146,6 +146,9 @@ battleships, stratego, ...).
 ### Answer assignment 9
 
 The game would essentially just need to transfer changes in a text based form.
+In chess one could for example use
+[algebraic notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)),
+or even simpler: Indicate just the movement of the pieces.
 
 ## Assignment 10
 
@@ -156,3 +159,13 @@ Explain what information your measurements gives you specifically.
 **Hint:** Consider layer processing.
 
 ### Answer assignment 10
+
+FIXME:
+
+One can use UDP to send a large number of packages, but without flow control,
+traffic control, retransmission or reshuffling.
+
+One can further look for bottlenecks in the hardware between the client and
+server (like the CPU, NIC, IO-bus), in the software (OS, drivers, other
+processes, implementation of the server and the client) and in the network
+(network components between the machines, network links between the component).
