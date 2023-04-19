@@ -222,6 +222,12 @@ and packet switching?
 
 ### Answer assignment 6
 
+Packet switching means that each router decided the next link based on the
+address and routing protocol.
+Two packages heading the same way can take different paths through the network.
+In package switching there is no guarantees about the capacity, but it gives a
+better utilization of the network than circuit switching.
+
 Circuit switching means that one establishes a logical direct connection between
 two machines, which goes through a particular set of routers.
 This connection is locked and reserves resources at all stages along the way
