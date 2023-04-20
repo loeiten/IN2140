@@ -1,4 +1,4 @@
-# Network theory set 1
+# Network theory set 2
 
 ## Assignment 1
 
@@ -160,10 +160,22 @@ Explain what information your measurements gives you specifically.
 
 ### Answer assignment 10
 
-FIXME:
+One can use UDP to send a large number of packages (to saturate the network),
+but without flow control, congestion control, retransmission or reshuffling.
 
-One can use UDP to send a large number of packages, but without flow control,
-traffic control, retransmission or reshuffling.
+The bandwidth can then be measured from the (assuming that no packages are lost)
+bits send divided by the time. That is, we can inverse the naïve formula:
+
+```text
+time = (n_bits/bandwidth) + (distance/velocity)
+time - (n_bits/bandwidth) = (distance/velocity)
+- (n_bits/bandwidth) = (distance/velocity) - time
+(n_bits/bandwidth) = time - (distance/velocity)
+(bandwidth/n_bits) = 1/(time - (distance/velocity))
+bandwidth = n_bits/(time - (distance/velocity))
+```
+
+This is similar to how [iperf](https://iperf.fr/) measures the bandwidth.
 
 One can further look for bottlenecks in the hardware between the client and
 server (like the CPU, NIC, IO-bus), in the software (OS, drivers, other
