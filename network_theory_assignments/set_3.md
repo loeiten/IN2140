@@ -9,6 +9,15 @@ network architecture.
 
 ### Answer assignment 1
 
+- Component based
+   - Each node has components with specialized responsibilities
+   - There will be one component for routing, one for packet loss, one for
+     encryption etc.
+- Recursive
+   - We split the network recursively into smaller and smaller part
+   - Each part is responsible for transfer from one network to another
+   - Each part does not care how it's smaller parts function
+
 ## Assignment 2
 
 What are the most important services TCP provides, both when it comes to
