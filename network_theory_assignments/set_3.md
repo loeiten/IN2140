@@ -25,6 +25,12 @@ applications and when it comes to network?
 
 ### Answer assignment 2
 
+- Connection-oriented communication, i.e. connection and disconnection
+- Retransmission of lost packets (reliable transmission)
+- Delivery of packages in the correct order
+- Flow control: Do not overload the receiver
+- Congestion control: Do not overload network components
+
 ## Assignment 3
 
 What is bandwidth, throughput, "goodput" (experienced transmission speed for the
