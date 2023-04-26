@@ -38,6 +38,21 @@ application)?
 
 ### Answer assignment 3
 
+- Bandwidth: How much data there is room for on a connection (cable)
+   - Keywords: cable type, radio type, purely physical things
+- Throughput: How much data the receiver receives
+   - Keywords: Packet loss
+- Goodput: How much usable data the application gets
+   - Keywords: Retransmissions, headers, processing, etc
+
+We therefore have
+
+```text
+Bandwidth >= Throughput >= Goodput
+```
+
+Where we very rarely have a strict equality
+
 ## Assignment 4
 
 Describe the difference between flow control and congestion control in TCP.
