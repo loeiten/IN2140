@@ -60,6 +60,15 @@ What do we want to achieve with the two?
 
 ### Answer assignment 4
 
+- Flow control is in place in order not to overload the receiver.
+  Flow control uses signals between transmitter and receiver to ensure that data
+  is not lost because the receiver has no room to receive.
+- Congestion control is in place not to overload network components.
+  Congestion control adjusts the speed from the transmitter to adapt to the
+  situation in the network.
+- In both cases we would like to avoid loss of packages and to be fair/kind to
+  the network/receiver
+
 ## Assignment 5
 
 What five fields are used to uniquely identify a TCP-connection?
