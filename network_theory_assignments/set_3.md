@@ -75,6 +75,12 @@ What five fields are used to uniquely identify a TCP-connection?
 
 ### Answer assignment 5
 
+1. IP address of the sender
+1. IP address of the receiver
+1. Port number of the sender
+1. Port number of the receiver
+1. TCP protocol identifier (IP header)
+
 ## Assignment 6
 
 Explain the difference between propagation delay (latency), end-to-end delay and
