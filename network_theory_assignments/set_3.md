@@ -88,6 +88,13 @@ round trip.
 
 ### Answer assignment 6
 
+- Propagation delay: The time it takes to send a signal one way.
+  This depends on the distance and the speed (approx. speed of light)
+- End-to-end delay: Propagation delay + transmission delay.
+  How long does it take to send the whole package?
+  This depends on queue lengths, number of jumps, distance, etc.
+- Round Trip Time (RTT): How long does it take to get a response?
+
 ## Assignment 7
 
 Mention one scenario where
