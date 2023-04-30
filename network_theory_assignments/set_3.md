@@ -104,3 +104,7 @@ Protocol) is superior to
 (Transmission Control Protocol)
 
 ### Answer assignment 7
+
+UDP is preferred mainly for real-time applications like broadcasting or
+multitasking network traffic.
+One such example is a video call.
