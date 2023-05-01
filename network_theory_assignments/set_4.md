@@ -20,7 +20,7 @@ Is Selective repeat always better than Go-Back-N?
 
 ## Assignment 3
 
-Given a transmission speed of 100Mbps, RTT on 0.5 ms and a packet size of 1000
+Given a transmission speed of 100 Mbps, RTT on 0.5 ms and a packet size of 1000
 bytes. How much of the capacity is utilized by Stop-N-Wait?
 
 ### Answer assignment 3
