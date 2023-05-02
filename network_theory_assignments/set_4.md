@@ -11,6 +11,40 @@ What is its pros and cons?
 
 ### Answer assignment 1
 
+The [Stop-N-Wait algorithm](https://en.wikipedia.org/wiki/Stop-and-wait_ARQ)
+is a [flow control algorithm](https://en.wikipedia.org/wiki/Flow_control_(data))
+(i.e. a process managing the rate of data transmission between two nodes in a
+network in order not to overwhelm a slow receiver).
+
+The algorithm has two features:
+
+1. If a packet gets lost, the algorithm will fix it
+1. The algorithm will distinguish a packet loss and an `ACK` loss
+
+It works as follows:
+
+1. The sender starts a timer
+1. The sender subsequently sends a packet with a single bit indicating the
+   packet number
+1. The sender then waits for an `ACK` from the receiver
+1. If it receives an `ACK` with the correct bit it will:
+    1. Restart the timer
+    1. Send a new packet with the bit flipped
+1. If it does not receive an `ACK` from the receiver within the time frame
+    1. It will resend the previous packet
+
+Pros:
+
+- The algorithm is relatively simple
+
+Cons:
+
+- Only one frame can be sent at a time as the sender cannot transmit a new
+  packet until it has received an `ACK`
+- The sender needs to wait for the `ACK` after every frame in transit
+- The connection is idle most of the time
+- This gives poor throughput
+
 ## Assignment 2
 
 Describe Sliding Window Go-Back-N and selective Repeat.
