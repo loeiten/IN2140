@@ -47,10 +47,31 @@ Cons:
 
 ## Assignment 2
 
-Describe Sliding Window Go-Back-N and selective Repeat.
+### 2A
+
+Describe Sliding Window
+
+### 2B
+
+Describe Go-Back-N
+
+### 2C
+
+Describe Selective Repeat
+
+### 2D
+
 Is Selective repeat always better than Go-Back-N?
 
 ### Answer assignment 2
+
+#### Answer 2A
+
+#### Answer 2B
+
+#### Answer 2C
+
+#### Answer 2D
 
 ## Assignment 3
 
