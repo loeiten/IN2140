@@ -13,8 +13,10 @@ What is its pros and cons?
 
 The [Stop-N-Wait algorithm](https://en.wikipedia.org/wiki/Stop-and-wait_ARQ)
 is a [flow control algorithm](https://en.wikipedia.org/wiki/Flow_control_(data))
-(i.e. a process managing the rate of data transmission between two nodes in a
-network in order not to overwhelm a slow receiver).
+.
+I.e. it's a process managing the rate of data transmission between two nodes in
+a network in order not to overwhelm a slow receiver (in particular that the
+receiver buffer must not overflow).
 
 The algorithm has two features:
 
@@ -66,6 +68,39 @@ Is Selective repeat always better than Go-Back-N?
 ### Answer assignment 2
 
 #### Answer 2A
+
+The [sliding window](https://en.wikipedia.org/wiki/Sliding_window_protocol)
+protocol is a flow control algorithm where several packages can be in flight
+(i.e. that they are sent but not acknowledged) simultaneously.
+
+Both Go-Back-N and Selective Repeat are implementations of the Sliding Window
+protocol, and they only differ in their retransmission.
+
+The packages are given a sequence number `SeqNo`.
+The algorithm sets the size of the buffer equaling `max(SeqNo)` and a window
+size `WS`, where `max(SeqNo) > WS`.
+
+Both the sender side and the receiver side keep track of their own lower bound
+`LB` and an upper bound `UB`, which have slightly different meaning for the two
+sides.
+
+On the sender side we have that:
+
+- `LB` is the oldest `SeqNo` that is still unconfirmed
+- `UB` is the next `SeqNo` to be sent
+- If `UB==LB` then nothing is in flight and the sender is idle
+- The sender can send packages as long as `(LB + WS) % max(SeqNo) < UB`
+- When a package is sent, then `LB` is increased (modulo `max(SeqNo)`)
+- When an `ACK` is received, then `UB` is increased (modulo `max(SeqNo)`)
+
+On the receiver side we have that:
+
+- `LB` is the lowest valid `SeqNo` that should be `ACK`ed
+- `UB` is the highest valid `SeqNo` that should be `ACK`ed + 1
+- If `UB==LB` then the buffer is full
+- If `UB==(LB + WS) % max(SeqNo)` there is nothing to `ACK`
+- When a package is received, then `LB` is increased (modulo `max(SeqNo)`)
+- When an `ACK` is sent, then `UB` is increased (modulo `max(SeqNo)`)
 
 #### Answer 2B
 
