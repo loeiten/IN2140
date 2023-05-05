@@ -75,9 +75,10 @@ protocol is a flow control algorithm where several packages can be in flight
 
 Both Go-Back-N and Selective Repeat are implementations of the Sliding Window
 protocol, and they only differ in their retransmission.
+Both of these have a `timeout` as with the Stop-N-Wait algorithm.
 
 The packages are given a sequence number `SeqNo`.
-The algorithm sets the size of the buffer equaling `max(SeqNo)` and a window
+The algorithm sets the size of the sequence to `max(SeqNo)` and a window
 size `WS`, where `max(SeqNo) > WS`.
 
 Both the sender side and the receiver side keep track of their own lower bound
@@ -103,6 +104,16 @@ On the receiver side we have that:
 - When an `ACK` is sent, then `UB` is increased (modulo `max(SeqNo)`)
 
 #### Answer 2B
+
+For [Go-Back-N](https://en.wikipedia.org/wiki/Go-Back-N_ARQ) the receiver only
+accepts packages in order.
+Packages not arriving in order are discarded and not acknowledged.
+This means that the receiver only needs to buffer for one packet.
+If the network usually looses more than one packet in a row, this fixes the
+problem quickly.
+
+If either a packet or `ACK` is lost, then all packages in that window will be
+resent.
 
 #### Answer 2C
 
