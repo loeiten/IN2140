@@ -63,7 +63,7 @@ Describe Selective Repeat
 
 ### 2D
 
-Is Selective repeat always better than Go-Back-N?
+Is Selective Repeat always better than Go-Back-N?
 
 ### Answer assignment 2
 
@@ -116,6 +116,15 @@ If either a packet or `ACK` is lost, then all packages in that window will be
 resent.
 
 #### Answer 2C
+
+For [Selective Repeat](https://en.wikipedia.org/wiki/Selective_Repeat_ARQ) the
+receiver accepts packages out of order, but in window.
+This has the advantages that it will lead to less overall traffic.
+Also if the network usually looses only one packet in a row, this uses the
+bandwidth better.
+
+Unacknowledged packets in the window will be retransmitted after the `timeout`
+has expired.
 
 #### Answer 2D
 
