@@ -27,13 +27,13 @@ It works as follows:
 
 1. The sender starts a timer
 1. The sender subsequently sends a packet with a single bit indicating the
-   packet number
+  packet number
 1. The sender then waits for an `ACK` from the receiver
 1. If it receives an `ACK` with the correct bit it will:
-    1. Restart the timer
-    1. Send a new packet with the bit flipped
+   1. Restart the timer
+   1. Send a new packet with the bit flipped
 1. If it does not receive an `ACK` from the receiver within the time frame
-    1. It will resend the previous packet
+   1. It will resend the previous packet
 
 Pros:
 
@@ -42,7 +42,7 @@ Pros:
 Cons:
 
 - Only one frame can be sent at a time as the sender cannot transmit a new
-  packet until it has received an `ACK`
+ packet until it has received an `ACK`
 - The sender needs to wait for the `ACK` after every frame in transit
 - The connection is idle most of the time
 - This gives poor throughput
@@ -127,6 +127,18 @@ Unacknowledged packets in the window will be retransmitted after the `timeout`
 has expired.
 
 #### Answer 2D
+
+No, Selective Repeat is not always better than Go-Back-N
+
+- If [burst errors](https://en.wikipedia.org/wiki/Burst_error) are rare, then
+   - Selective Repeat repeats exactly the missing/bad packet
+   - Go-Back-N discards lots of safely arrived packets
+- If burst errors are frequent, then
+   - Selective Repeat waits for a timeout for every packet separately
+   - Go-Back-N recovers quickly after the first timeouts
+- If there is error-free transmission
+   - Selective Repeat must wait after sending 1/2 of `max(SeqNo)` space packets
+   - Go-Back-N senders must wait after sending sequence number space-1 packets
 
 ## Assignment 3
 
