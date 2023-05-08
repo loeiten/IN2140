@@ -147,6 +147,27 @@ bytes. How much of the capacity is utilized by Stop-N-Wait?
 
 ### Answer assignment 3
 
+We have that
+
+```text
+100 Mbps = 100 * 10^6 bits/s = 10^8 bits/s
+0.5 ms = 0.5 * 10^-3 s
+1000 bytes = 1000 bytes * 8 bits/byte =  8 * 10^3 bits
+```
+
+It takes `0.5 * 10^-3 s` to send `8 * 10^3 bits`.
+At that time we could've sent `10^8 bits/s * 0.5 * 10^-3 = 5 * 10^4 bits`.
+Hence, we are utilizing
+
+```text
+8 * 10^3 bits / (5 * 10^4 bits) =
+8/5 * 10^-1 =
+1.6 * 10^-1 =
+16 %
+```
+
+`16 %` of theoretical max
+
 ## Assignment 4
 
 What defines the congestion window?
