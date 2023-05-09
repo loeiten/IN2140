@@ -42,7 +42,7 @@ Pros:
 Cons:
 
 - Only one frame can be sent at a time as the sender cannot transmit a new
- packet until it has received an `ACK`
+  packet until it has received an `ACK`
 - The sender needs to wait for the `ACK` after every frame in transit
 - The connection is idle most of the time
 - This gives poor throughput
@@ -173,6 +173,27 @@ Hence, we are utilizing
 What defines the congestion window?
 
 ### Answer assignment 4
+
+The
+[congestion window](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control)
+(aka `cwnd`) is a concept of
+[congestion control](https://en.wikipedia.org/wiki/Network_congestion#Congestion_control)
+.
+I.e. preventing the senders from overwhelming the network so that packages are
+not lost.
+
+The congestion window is the largest amount of data (bytes) of a connection that
+can be in the network at the same time.
+The congestion window is maintained by the sender.
+
+When a connection is set up, the `cwnd` is set to a small multiple of the
+[maximum segment size (MSS)](https://en.wikipedia.org/wiki/Maximum_segment_size)
+(a parameter of the options field in the TCP header that specifies the largest
+amount of data [bytes] that a communication device can receive in a single
+TCP segment) allowed on that connection.
+Further change in the `cwnd` is dictated by an
+[additive increase/multiplicative decrease (AIMD)](https://en.wikipedia.org/wiki/Additive_increase/multiplicative_decrease)
+approach.
 
 ## Assignment 5
 
