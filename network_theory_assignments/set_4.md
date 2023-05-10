@@ -200,17 +200,17 @@ approach.
 How does the congestion controller try to achieve the correct
 bandwidth performance?
 
+### Answer assignment 5
+
+## Assignment 6
+
+What is the purpose of DNS and how is it structured
+
 ### Answer assignment 6
 
 ## Assignment 7
 
-What is the purpose of DNS and how is it structured
-
-### Answer assignment 7
-
-## Assignment 8
-
 What is the difference between recursive and iterative DNS queries?
 What are the pros and cons of each?
 
-### Answer assignment 8
+### Answer assignment 7
