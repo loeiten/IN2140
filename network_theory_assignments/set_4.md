@@ -186,6 +186,13 @@ The congestion window is the largest amount of data (bytes) of a connection that
 can be in the network at the same time.
 The congestion window is maintained by the sender.
 
+## Assignment 5
+
+How does the congestion controller try to achieve the correct
+bandwidth performance?
+
+### Answer assignment 5
+
 When a connection is set up, the `cwnd` is set to a small multiple of the
 [maximum segment size (MSS)](https://en.wikipedia.org/wiki/Maximum_segment_size)
 (a parameter of the options field in the TCP header that specifies the largest
@@ -195,12 +202,16 @@ Further change in the `cwnd` is dictated by an
 [additive increase/multiplicative decrease (AIMD)](https://en.wikipedia.org/wiki/Additive_increase/multiplicative_decrease)
 approach.
 
-## Assignment 5
+There is usually a "Slow Start" phase where the number of sent packets
+(defined by the `cwnd`) doubles until a `sshtresh`.
 
-How does the congestion controller try to achieve the correct
-bandwidth performance?
+When this threshold is reached there will be a additive increase where one more
+packet is sent until a loss is detected from a timeout.
 
-### Answer assignment 5
+At this point `sshtresh` is set to half of `cwnd`.
+
+In TCP Tahoe `cwnd` is subsequently set back to `1`, whereas in TCP Reno `cwnd`
+is set equal to `sshtresh`.
 
 ## Assignment 6
 
