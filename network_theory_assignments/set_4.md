@@ -215,9 +215,19 @@ is set equal to `sshtresh`.
 
 ## Assignment 6
 
-What is the purpose of DNS and how is it structured
+### 6A
+
+What is the purpose of DNS
+
+### 6B
+
+How is DNS structured
 
 ### Answer assignment 6
+
+#### Answer 6A
+
+#### Answer 6B
 
 ## Assignment 7
 
