@@ -217,15 +217,25 @@ is set equal to `sshtresh`.
 
 ### 6A
 
-What is the purpose of DNS
+What is the purpose of DNS?
 
 ### 6B
 
-How is DNS structured
+How is DNS structured?
 
 ### Answer assignment 6
 
+The DNS hierarchy, also called the domain name space, is an inverted tree
+structure, much like directories.
+
 #### Answer 6A
+
+A [Domain Name System](https://en.wikipedia.org/wiki/Domain_Name_System) (DNS)
+associates various information with domain names assigned to each of the
+associated entities.
+Most prominently, it translates readily memorized domain names to the numerical
+IP addresses needed for locating and identifying computer services and devices
+with the underlying network protocols.
 
 #### Answer 6B
 
