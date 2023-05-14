@@ -239,6 +239,18 @@ with the underlying network protocols.
 
 #### Answer 6B
 
+First you have the top level domains located at root servers
+(like `net`, `edu`, `com` etc.)
+
+Next you'll have the domain name (like `uio`, `hioa`) which is typically
+reserved for an organization.
+
+Then you have possible subdomains within the domain (like `ifi` etc.).
+
+Finally you have leaf nodes such as `www`, `login`, `smtp` etc.
+
+Each zone has an administrator responsible for the part of the hierarchy.
+
 ## Assignment 7
 
 What is the difference between recursive and iterative DNS queries?
