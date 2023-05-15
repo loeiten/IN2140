@@ -257,3 +257,22 @@ What is the difference between recursive and iterative DNS queries?
 What are the pros and cons of each?
 
 ### Answer assignment 7
+
+Recursive DNS query:
+
+This is the classical approach where a server must keep the state for every
+request until an answer is returned.
+It allows every node along the path to cache the results.
+
+This concentrates the data flow at the central servers, and in addition it keeps
+a lot of state on central servers.
+
+Iterative DNS query:
+
+The newer approach in which the requests are redirected.
+This keeps the state only at local server (or some servers) until the query is
+answered.
+
+It allows only few nodes to cache the results.
+In addition it halves the number of requests at central servers.
+Another advantage is that it avoid storing a state on central servers entirely.
