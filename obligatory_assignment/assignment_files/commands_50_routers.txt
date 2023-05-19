@@ -3,6 +3,6 @@ set_model 13 Zyxel b2 POWER
 print 13
 set_flag 13 0 1
 print 13
-found_in_router 13 35
-add_connection 3 35
-found_in_router 13 35
+path_exist 13 35
+add_link 3 35
+path_exist 13 35

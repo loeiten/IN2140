@@ -1,0 +1,15 @@
+print 1
+set_model 1 Cisco v10
+print 1
+set_flag 1 0 0
+set_flag 1 1 0
+set_flag 1 2 1
+print 1
+path_exist 1 7
+path_exist 8 0
+path_exist 7 6
+path_exist 8 6
+add_link 0 6
+path_exist 8 6
+delete_router 3
+path_exist 8 0
