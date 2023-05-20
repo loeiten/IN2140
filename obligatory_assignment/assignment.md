@@ -34,8 +34,8 @@ Together with this assignment we have the files given in [`assignment_files`](./
 | `10_routers_10_edges.png`       | a figure illustrating the topology in `10_routers_10_edges`      |
 | `50_routers_150_edges`          | an information file for 50 routers                               |
 | `50_routers_150_edges.png`      | a figure illustrating the topology in `50_routers_150_edges`     |
-| `commandos_10_routers.txt`      | a command file adapted to `10_routers_10_edges`                  |
-| `commandos_50_routers.txt`      | a command file adapted to `50_routers_150_edges`                 |
+| `commands_10_routers.txt`       | a command file adapted to `10_routers_10_edges`                  |
+| `commands_50_routers.txt`       | a command file adapted to `50_routers_150_edges`                 |
 
 ## File structures
 
@@ -111,7 +111,7 @@ router.
 All these links define a directed graph that you must traverse with a graph
 search.
 
-### Commandos
+### Commands
 
 This file contains a number of commands.
 Each line contains a command.
