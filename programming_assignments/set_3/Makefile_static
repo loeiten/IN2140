@@ -15,6 +15,13 @@ BUILD_OBJ_DIR := $(BUILD_DIR)/obj_files_from_make
 LIB_NAME := lib$(LIB_BASE)_$(LIB_TYPE)
 TARGET_EXEC := $(TARGET_NAME)_$(LIB_TYPE)
 
+# Specify which archive to use
+ifneq (,$(shell which llvm-ar))
+	ARCHIVE := ar
+else
+	ARCHIVE := llvm-ar
+endif
+
 # CC and CPP are implicit rules, but we will override them here
 # See https://makefiletutorial.com/#implicit-rules for details
 CC := clang
@@ -34,7 +41,7 @@ $(EXEC_DIR)/$(TARGET_EXEC): $(BUILD_LIB_DIR)/$(LIB_NAME).$(LIB_EXTENSION) $(BUIL
 # NOTE: We do NOT need to include the headers
 $(BUILD_LIB_DIR)/$(LIB_NAME).$(LIB_EXTENSION): $(BUILD_OBJ_DIR)/$(LIB_BASE).o
 	mkdir -p $(dir $@)
-	llvm-ar $(LIB_FLAGS) $@ $<
+	$(ARCHIVE) $(LIB_FLAGS) $@ $<
 
 # Make the executable object file
 # NOTE: We need to include the headers
