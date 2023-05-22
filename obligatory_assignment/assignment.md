@@ -19,7 +19,7 @@ The second file contains one or more lines of commands to be executed.
 For example, you can start in this way:
 
 ```bash
-./router operation 50_routers_150_edges commands_50_routers.txt
+./router_operation 50_routers_150_edges commands_50_routers.txt
 ```
 
 You can assume that the program is executed with the correct number of arguments and valid files.
