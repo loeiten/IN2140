@@ -1,3 +1,5 @@
+# NOTE: This is purposfully only in make, and not in CMake as testing is best
+#       performed on two separate machines
 # Usage: make
 
 SRC_DIR := .
