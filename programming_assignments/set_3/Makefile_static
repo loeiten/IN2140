@@ -16,7 +16,8 @@ LIB_NAME := lib$(LIB_BASE)_$(LIB_TYPE)
 TARGET_EXEC := $(TARGET_NAME)_$(LIB_TYPE)
 
 # Specify which archive to use
-ifneq (,$(shell which llvm-ar))
+# We're checking if empty is equal to the output of command -v <command>
+ifeq (,$(shell command -v llvm-ar))
 	ARCHIVE := ar
 else
 	ARCHIVE := llvm-ar
