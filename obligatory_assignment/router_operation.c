@@ -1,7 +1,6 @@
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for printf, snprintf
-#include <stdlib.h>  // for free, malloc, EXIT_S...
-#include <string.h>  // for strlen
+#include <stdio.h>   // for printf, fclose, ferror, fopen, fread, size_t, FILE
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, NULL
 
 struct Router {
   unsigned char routerId;
@@ -66,8 +65,9 @@ int readBinaryFile(const char* binFile, struct Router** routers) {
     printf("Failed to read from '%s'\n", binFile);
     return EXIT_FAILURE;
   }
+  fclose(fp);
 
-  printf("Found %d records\n", N);
+  printf("Found %u records\n", N);
 
   return EXIT_SUCCESS;
 }
