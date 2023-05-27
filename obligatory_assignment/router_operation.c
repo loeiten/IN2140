@@ -1,8 +1,6 @@
 #include <libgen.h>  // for basename
-#include <stddef.h>
-#include <stdio.h>   // for printf, fclose, ferror, fopen, fread, size_t, FILE
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, NULL
-#include <string.h>
+#include <stdio.h>   // for printf, fclose, ferror, fread, size_t, FILE, fopen
+#include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS, NULL
 
 struct Router {
   unsigned char routerId;
@@ -64,9 +62,6 @@ int main(int argc, char** argv) {
 
 int readBinaryFile(const char* binFile, struct Router** routerArray,
                    unsigned int* N) {
-  // Initialize success
-  int success;
-
   // Open the file
   FILE* fp;
   fp = fopen(binFile, "rb");
@@ -89,7 +84,7 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
   *routerArray = (struct Router*)malloc(*N * sizeof(struct Router));
 
   for (size_t i = 0; i < *N; ++i) {
-    success = readRouter(fp, *(&(routerArray[i])));
+    int success = readRouter(fp, *(&(routerArray[i])));
     if (success != EXIT_SUCCESS) {
       // Free only the malloced strings
       // If readRouter failed on reading the producerModel the malloced string
