@@ -1,11 +1,13 @@
+#include <errno.h>
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf, fclose, ferror, fread, size_t, FILE, fopen
 #include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS, NULL
+#include <string.h>
 
 struct Router {
   unsigned char routerId;
   unsigned char flag;
-  char* producerModel;
+  const char* producerModel;
   struct Router* neighbors[10];  // Assignment specifies that a router can have
                                  // maximum 10 connections
 };
@@ -24,7 +26,8 @@ int main(int argc, char** argv) {
     // for specification and
     // https://github.com/coreutils/coreutils/blob/master/src/basename.c
     // for possible implementation
-    printf("Usage: ./%s binFile COMMAND|COMMAND_FILE.txt\n", basename(argv[0]));
+    fprintf(stderr, "Usage: ./%s binFile COMMAND|COMMAND_FILE.txt\n",
+            basename(argv[0]));
     return EXIT_FAILURE;
   }
 
@@ -43,10 +46,8 @@ int main(int argc, char** argv) {
   success = readBinaryFile(binFile, &routerArray, &N);
   if (success != EXIT_SUCCESS) {
     // Free the router according to https://stackoverflow.com/a/33170941/2786884
-    for (size_t i = 0; i < N; ++i) {
-      free(&routerArray[i]);
-    }
-    printf("Failed to read binary file");
+    free(routerArray);
+    fprintf(stderr, "Failed to read binary file");
     return EXIT_FAILURE;
   }
 
@@ -55,8 +56,9 @@ int main(int argc, char** argv) {
   // Clean-up
   // Free the router according to https://stackoverflow.com/a/33170941/2786884
   for (size_t i = 0; i < N; ++i) {
-    free(&routerArray[i]);
+    free((void*)routerArray[i].producerModel);
   }
+  free(routerArray);
   return EXIT_SUCCESS;
 }
 
@@ -66,7 +68,7 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
   FILE* fp;
   fp = fopen(binFile, "rb");
   if (fp == NULL) {
-    printf("%s not found", binFile);
+    fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
     return EXIT_FAILURE;
   }
 
@@ -76,24 +78,51 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
   int readBytes = fread(N, nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
     fclose(fp);
-    printf("Failed to read from '%s'\n", binFile);
+    fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
     return EXIT_FAILURE;
   }
 
   // Malloc the routerArray
   *routerArray = (struct Router*)malloc(*N * sizeof(struct Router));
+  if (*routerArray == NULL) {
+    fclose(fp);
+    perror("Could not allocate memory to routerArray: ");
+    return EXIT_FAILURE;
+  }
 
   for (size_t i = 0; i < *N; ++i) {
-    int success = readRouter(fp, *(&(routerArray[i])));
+    // Read the newline
+    unsigned char c;
+    readBytes = fread(&c, sizeof(char), nItems, fp);
+    if ((readBytes < 1) || ferror(fp)) {
+      fclose(fp);
+      // Free only the malloced strings
+      for (size_t j = 0; j < i; ++j) {
+        free((void*)(routerArray[j]->producerModel));
+      }
+      fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
+      return EXIT_FAILURE;
+    }
+    if (c != '\n') {
+      fclose(fp);
+      // Free only the malloced strings
+      for (size_t j = 0; j < i; ++j) {
+        free((void*)(routerArray[j]->producerModel));
+      }
+      fprintf(stderr, "Expected newline, but got '%c'\n", c);
+      return EXIT_FAILURE;
+    }
+
+    int success = readRouter(fp, &((*routerArray)[i]));
     if (success != EXIT_SUCCESS) {
       // Free only the malloced strings
       // If readRouter failed on reading the producerModel the malloced string
       // will already have been freed
       for (size_t j = 0; j < i; ++j) {
-        free(routerArray[i]->producerModel);
+        free((void*)(routerArray[j]->producerModel));
       }
       fclose(fp);
-      printf("Failed to read router %zu\n", i);
+      fprintf(stderr, "Failed to read router %zu\n", i);
       return EXIT_FAILURE;
     }
   }
@@ -113,7 +142,7 @@ int readRouter(FILE* fp, struct Router* router) {
   int readBytes = fread(&(router->routerId), nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
     fclose(fp);
-    printf("Failed to read routerId\n");
+    fprintf(stderr, "Failed to read routerId: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
@@ -121,7 +150,7 @@ int readRouter(FILE* fp, struct Router* router) {
   readBytes = fread(&(router->flag), nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
     fclose(fp);
-    printf("Failed to read flag\n");
+    fprintf(stderr, "Failed to read flag: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
@@ -130,23 +159,31 @@ int readRouter(FILE* fp, struct Router* router) {
   readBytes = fread(&charLen, nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
     fclose(fp);
-    printf("Failed to read charLen\n");
+    fprintf(stderr, "Failed to read charLen: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
   // Read the producerModel
-  router->producerModel = (char*)malloc((charLen + 1) * sizeof(char));
-  readBytes = fread(router->producerModel, charLen, nItems, fp);
+  char* producerModel = (char*)malloc(charLen * sizeof(char));
+  if (producerModel == NULL) {
+    fclose(fp);
+    perror("Could not allocate memory to producerModel: ");
+    return EXIT_FAILURE;
+  }
+  readBytes = fread(producerModel, (charLen - 1), nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
     // Free the producerModel here we do not indicate whether or not is has been
     // allocated outside this function
-    free(router->producerModel);
+    free(producerModel);
     fclose(fp);
-    printf("Failed to read producerModel\n");
+    fprintf(stderr, "Failed to read producerModel: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
   // Null terminate
-  router->producerModel[readBytes] = '\0';
+  producerModel[charLen - 1] = '\0';
+
+  // Assign
+  router->producerModel = producerModel;
   return EXIT_SUCCESS;
 }
