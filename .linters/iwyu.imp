@@ -1,4 +1,5 @@
 [
     # Fix private headers
     { include: [<_ctype.h>, "private", <ctype.h>, "public"] },
+    { include: [<sys/errno.h>, "private", <errno.h>, "public"] },
 ]

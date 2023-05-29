@@ -1,8 +1,8 @@
-#include <errno.h>
+#include <errno.h>   // for errno
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for printf, fclose, ferror, fread, size_t, FILE, fopen
-#include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS, NULL
-#include <string.h>
+#include <stdio.h>   // for fclose, fprintf, ferror, fread, stderr, size_t
+#include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS
+#include <string.h>  // for strerror
 
 struct Router {
   unsigned char routerId;
