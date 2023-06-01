@@ -11,5 +11,10 @@ endforeach(assignment_file ${text_files})
 # Make a binary of the router_operations
 add_executable(router_operation src/router_operation.c)
 
+# Add includes
+target_include_directories(router_operation
+    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
 # Add tests
 do_test(NAME router_operation NO 1 ARGS "${ASSIGNMENT_DIR}/5_routers_fully_connected" "print 0" EXPECTED "Found 5 records\n")
