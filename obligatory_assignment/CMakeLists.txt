@@ -9,7 +9,7 @@ foreach(assignment_file ${assignment_files})
 endforeach(assignment_file ${text_files})
 
 # Make a binary of the router_operations
-add_executable(router_operation src/router_operation.c)
+add_executable(router_operation src/binary_file.c src/router_operation.c)
 
 # Add includes
 target_include_directories(router_operation
