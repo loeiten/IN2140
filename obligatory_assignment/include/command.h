@@ -1,7 +1,10 @@
 #ifndef OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_
 
-int getCommand(const char* commandStr, const char* command, const char** args);
+#include <stddef.h>
+
+int getCommand(const char* commandStr, char* command, char** args,
+               size_t* nArgs);
 int runCommand(const char* command, ...);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_

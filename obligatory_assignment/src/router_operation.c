@@ -1,9 +1,11 @@
 #include <libgen.h>  // for basename
+#include <stddef.h>
 #include <stdio.h>   // for fprintf, NULL, stderr, size_t
 #include <stdlib.h>  // for free, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp, strrchr
 
 #include "../include/binary_file.h"  // for readBinaryFile
+#include "../include/command.h"      // for Router
 #include "../include/router.h"       // for Router
 
 // argv is allocated by the OS, see:
@@ -41,6 +43,10 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
+  char* command = NULL;
+  char** args = NULL;
+  size_t nArgs;
+
   // Check if we are reading one command or a command file
   char* dot = strrchr(commandArg, '.');
   if ((dot != NULL) && (strcmp(dot, ".txt") == 0)) {
@@ -48,15 +54,24 @@ int main(int argc, char** argv) {
     // getline
     // for
     // runCommand(command)
+    success = getCommand(commandArg, command, args, &nArgs);
   } else {
+    success = getCommand(commandArg, command, args, &nArgs);
     // runCommand(commandArg);
   }
 
-  // Clean-up
-  // Free the router according to https://stackoverflow.com/a/33170941/2786884
+  // Clean-up according to https://stackoverflow.com/a/33170941/2786884
+  // Free the router
   for (size_t i = 0; i < N; ++i) {
     free((void*)routerArray[i].producerModel);
   }
   free(routerArray);
+  // Free the command
+  free(command);
+  // Free the args
+  for (size_t i = 0; i < nArgs; ++i) {
+    free(args[i]);
+  }
+  free(args);
   return EXIT_SUCCESS;
 }
