@@ -1,11 +1,10 @@
 #include <libgen.h>  // for basename
-#include <stddef.h>
-#include <stdio.h>   // for fprintf, NULL, stderr, size_t
+#include <stdio.h>   // for fprintf, NULL, size_t, stderr
 #include <stdlib.h>  // for free, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp, strrchr
 
 #include "../include/binary_file.h"  // for readBinaryFile
-#include "../include/command.h"      // for Router
+#include "../include/command.h"      // for getCommand
 #include "../include/router.h"       // for Router
 
 // argv is allocated by the OS, see:
@@ -39,7 +38,7 @@ int main(int argc, char** argv) {
   if (success != EXIT_SUCCESS) {
     // Free the router according to https://stackoverflow.com/a/33170941/2786884
     free(routerArray);
-    fprintf(stderr, "Failed to read binary file");
+    fprintf(stderr, "Failed to read binary file\n");
     return EXIT_FAILURE;
   }
 
@@ -55,8 +54,18 @@ int main(int argc, char** argv) {
     // for
     // runCommand(command)
     success = getCommand(commandArg, command, args, &nArgs);
+    if (success != EXIT_SUCCESS) {
+      free(routerArray);
+      fprintf(stderr, "Failed to obtain command\n");
+      return EXIT_FAILURE;
+    }
   } else {
     success = getCommand(commandArg, command, args, &nArgs);
+    if (success != EXIT_SUCCESS) {
+      free(routerArray);
+      fprintf(stderr, "Failed to obtain command\n");
+      return EXIT_FAILURE;
+    }
     // runCommand(commandArg);
   }
 
