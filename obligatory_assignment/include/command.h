@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-int getCommand(const char* commandStr, char* command, char** args,
+int getCommand(const char* commandStr, char** command, char*** args,
                size_t* nArgs);
 int runCommand(const char* command, ...);
 

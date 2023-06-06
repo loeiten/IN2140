@@ -53,14 +53,14 @@ int main(int argc, char** argv) {
     // getline
     // for
     // runCommand(command)
-    success = getCommand(commandArg, command, args, &nArgs);
+    success = getCommand(commandArg, &command, &args, &nArgs);
     if (success != EXIT_SUCCESS) {
       free(routerArray);
       fprintf(stderr, "Failed to obtain command\n");
       return EXIT_FAILURE;
     }
   } else {
-    success = getCommand(commandArg, command, args, &nArgs);
+    success = getCommand(commandArg, &command, &args, &nArgs);
     if (success != EXIT_SUCCESS) {
       free(routerArray);
       fprintf(stderr, "Failed to obtain command\n");
