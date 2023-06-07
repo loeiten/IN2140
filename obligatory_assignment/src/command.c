@@ -48,7 +48,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     *nArgs = 2;
 
     **args = (char *)malloc(*nArgs * sizeof(char));
-    if (args == NULL) {
+    if (**args == NULL) {
       free(commandStrCpy);
       free(command);
       perror("Could not allocate memory to args: ");
@@ -59,7 +59,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     token = strtok(NULL, " ");
     strLen = strlen(token);
     *(args[0]) = (char *)malloc((strLen + 1) * sizeof(char));
-    if (args[0] == NULL) {
+    if (*(args[0]) == NULL) {
       free(commandStrCpy);
       free(command);
       free(args);
@@ -72,7 +72,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     // -2 for the spaces which are not captured in commandStr and command
     strLen = strlen(commandStr) - strlen(*command) - strLen - 2;
     *(args[1]) = (char *)malloc((strLen + 1) * sizeof(char));
-    if (args[1] == NULL) {
+    if (*(args[1]) == NULL) {
       free(commandStrCpy);
       free(*command);
       free(*(args[0]));
@@ -93,11 +93,11 @@ int getCommand(const char *commandStr, char **command, char ***args,
   **args = (char *)malloc(nSpaces * sizeof(char));
 
   // Capture the args
-  for (size_t i = 0; i < *nArgs; ++i) {
+  for (i = 0; i < *nArgs; ++i) {
     token = strtok(NULL, " ");
     strLen = strlen(token);
     *(args[i]) = (char *)malloc((strLen + 1) * sizeof(char));
-    if (args[i] == NULL) {
+    if (*(args[i]) == NULL) {
       free(commandStrCpy);
       free(command);
       for (size_t j = 0; j < i; ++j) {
