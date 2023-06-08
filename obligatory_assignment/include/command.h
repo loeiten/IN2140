@@ -2,6 +2,7 @@
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_
 
 #include <stddef.h>
+#include <string.h>
 
 int getCommand(const char* commandStr, char** command, char*** args,
                size_t* nArgs);

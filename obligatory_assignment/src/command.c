@@ -1,4 +1,5 @@
 #include "../include/command.h"
+#include "../include/router.h"
 
 #include <stddef.h>
 #include <stdio.h>  // for printf, NULL, snprintf
@@ -9,9 +10,10 @@ int getCommand(const char *commandStr, char **command, char ***args,
                size_t *nArgs) {
   size_t strLen;
   char *token;
+  char *savePtr;
   const char *format = "%s";
 
-  // Copy the commandStr as strtok will alter the string
+  // Copy the commandStr as strtok_r will alter the string
   strLen = snprintf(NULL, 0, format, commandStr);
   char *commandStrCpy = (char *)malloc((strLen + 1) * sizeof(char));
   if (commandStrCpy == NULL) {
@@ -32,7 +34,8 @@ int getCommand(const char *commandStr, char **command, char ***args,
 
   // The first word is always the command
   // Find the first space
-  token = strtok(commandStrCpy, " ");
+  // NOTE: strtok_r is the thread safe version of strtok
+  token = strtok_r(commandStrCpy, " ", &savePtr);
   strLen = snprintf(NULL, 0, format, commandStr);
   *command = (char *)malloc((strLen + 1) * sizeof(char));
   if (*command == NULL) {
@@ -56,7 +59,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     }
 
     // The following word is the routerID
-    token = strtok(NULL, " ");
+    token = strtok_r(NULL, " ", &savePtr);
     strLen = strlen(token);
     *(args[0]) = (char *)malloc((strLen + 1) * sizeof(char));
     if (*(args[0]) == NULL) {
@@ -94,7 +97,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
 
   // Capture the args
   for (i = 0; i < *nArgs; ++i) {
-    token = strtok(NULL, " ");
+    token = strtok_r(NULL, " ", &savePtr);
     strLen = strlen(token);
     *(args[i]) = (char *)malloc((strLen + 1) * sizeof(char));
     if (*(args[i]) == NULL) {
