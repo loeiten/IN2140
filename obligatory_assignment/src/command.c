@@ -1,10 +1,9 @@
 #include "../include/command.h"
-#include "../include/router.h"
 
-#include <stddef.h>
-#include <stdio.h>  // for printf, NULL, snprintf
-#include <stdlib.h>
-#include <string.h>
+#include <stddef.h>  // for NULL, size_t
+#include <stdio.h>   // for perror, snprintf
+#include <stdlib.h>  // for free, malloc, EXIT_FAILURE, EXIT_SUCCESS
+#include <string.h>  // for strlen, strtok_r, strcmp
 
 int getCommand(const char *commandStr, char **command, char ***args,
                size_t *nArgs) {
