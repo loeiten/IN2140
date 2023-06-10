@@ -49,7 +49,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     // We know that this function only has two arguments
     *nArgs = 2;
 
-    **args = (char *)malloc(*nArgs * sizeof(char));
+    *args = (char **)malloc(*nArgs * sizeof(char));
     if (**args == NULL) {
       free(commandStrCpy);
       free(command);
@@ -92,7 +92,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
 
   // Allocate space for the args array
   *nArgs = nSpaces - 1;
-  **args = (char *)malloc(nSpaces * sizeof(char));
+  *args = (char **)malloc(nSpaces * sizeof(char));
 
   // Capture the args
   for (i = 0; i < *nArgs; ++i) {
