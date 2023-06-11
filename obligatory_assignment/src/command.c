@@ -19,7 +19,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     perror("Could not allocate memory to commandStrCpy: ");
     return EXIT_FAILURE;
   }
-  snprintf(commandStrCpy, strLen, "%s", commandStr);
+  snprintf(commandStrCpy, (strLen + 1), "%s", commandStr);
 
   // Count the number of arguments
   size_t nSpaces = 0;
@@ -49,7 +49,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     // We know that this function only has two arguments
     *nArgs = 2;
 
-    *args = (char **)malloc(*nArgs * sizeof(char));
+    *args = (char **)malloc(*nArgs * sizeof(char *));
     if (**args == NULL) {
       free(commandStrCpy);
       free(command);
@@ -60,29 +60,29 @@ int getCommand(const char *commandStr, char **command, char ***args,
     // The following word is the routerID
     token = strtok_r(NULL, " ", &savePtr);
     strLen = strlen(token);
-    *(args[0]) = (char *)malloc((strLen + 1) * sizeof(char));
-    if (*(args[0]) == NULL) {
+    (*args)[0] = (char *)malloc((strLen + 1) * sizeof(char));
+    if (args[0] == NULL) {
       free(commandStrCpy);
       free(command);
       free(args);
       perror("Could not allocate memory to args[0]: ");
       return EXIT_FAILURE;
     }
-    snprintf(*(args[0]), strLen, "%s", token);
+    snprintf((*args)[0], strLen, "%s", token);
 
     // The rest of the string is the model name and can contain spaces
     // -2 for the spaces which are not captured in commandStr and command
     strLen = strlen(commandStr) - strlen(*command) - strLen - 2;
-    *(args[1]) = (char *)malloc((strLen + 1) * sizeof(char));
-    if (*(args[1]) == NULL) {
+    (*args)[1] = (char *)malloc((strLen + 1) * sizeof(char));
+    if (args[1] == NULL) {
       free(commandStrCpy);
       free(*command);
-      free(*(args[0]));
+      free(args[0]);
       free(args);
       perror("Could not allocate memory to args[1]: ");
       return EXIT_FAILURE;
     }
-    snprintf(*(args[1]), strLen, "%s",
+    snprintf((*args)[1], strLen, "%s",
              &commandStr[strlen(commandStr) - strLen]);
 
     // Free the copy
@@ -91,25 +91,25 @@ int getCommand(const char *commandStr, char **command, char ***args,
   }
 
   // Allocate space for the args array
-  *nArgs = nSpaces - 1;
-  *args = (char **)malloc(nSpaces * sizeof(char));
+  *nArgs = nSpaces;
+  *args = (char **)malloc(nSpaces * sizeof(char *));
 
   // Capture the args
   for (i = 0; i < *nArgs; ++i) {
     token = strtok_r(NULL, " ", &savePtr);
     strLen = strlen(token);
-    *(args[i]) = (char *)malloc((strLen + 1) * sizeof(char));
-    if (*(args[i]) == NULL) {
+    (*args)[i] = (char *)malloc((strLen + 1) * sizeof(char));
+    if (args[i] == NULL) {
       free(commandStrCpy);
       free(command);
       for (size_t j = 0; j < i; ++j) {
-        free(*(args[j]));
+        free(args[j]);
       }
       free(args);
       perror("Could not allocate memory to args[i]: ");
       return EXIT_FAILURE;
     }
-    snprintf(*(args[i]), strLen, "%s", token);
+    snprintf((*args)[i], strLen, "%s", token);
   }
 
   return EXIT_SUCCESS;
