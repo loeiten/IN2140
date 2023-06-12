@@ -42,7 +42,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
     perror("Could not allocate memory to command: ");
     return EXIT_FAILURE;
   }
-  snprintf(*command, strLen, "%s", token);
+  snprintf(*command, strLen + 1, "%s", token);
 
   // Special case for set_model
   if (strcmp(*command, "setModel") == 0) {
@@ -68,7 +68,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
       perror("Could not allocate memory to args[0]: ");
       return EXIT_FAILURE;
     }
-    snprintf((*args)[0], strLen, "%s", token);
+    snprintf((*args)[0], strLen + 1, "%s", token);
 
     // The rest of the string is the model name and can contain spaces
     // -2 for the spaces which are not captured in commandStr and command
@@ -109,7 +109,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
       perror("Could not allocate memory to args[i]: ");
       return EXIT_FAILURE;
     }
-    snprintf((*args)[i], strLen, "%s", token);
+    snprintf((*args)[i], strLen + 1, "%s", token);
   }
 
   return EXIT_SUCCESS;
