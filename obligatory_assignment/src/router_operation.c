@@ -1,11 +1,11 @@
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, NULL, size_t, stderr
+#include <stdio.h>   // for fprintf, NULL, stderr, size_t
 #include <stdlib.h>  // for free, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp, strrchr
 
-#include "../include/binary_file.h"  // for readBinaryFile
-#include "../include/command.h"      // for getCommand
-#include "../include/router.h"       // for Router
+#include "../include/binary_file.h"     // for readBinaryFile
+#include "../include/command.h"         // for getCommand
+#include "../include/dynamic_memory.h"  // for freeRouterArray
 
 // argv is allocated by the OS, see:
 // https://stackoverflow.com/questions/2115301/where-command-line-arguments-are-stored
@@ -24,27 +24,27 @@ int main(int argc, char** argv) {
 
   // Capture the binFile
   const char* binFile = argv[1];
-
   // Capture the command
   const char* commandArg = argv[2];
 
-  int success = 0;
+  // Initialize malloced memory
+  struct Router* routerArray = NULL;
+  char* command = NULL;
+  char** args = NULL;
+
+  // Initialize and declare helper variables
+  int success = EXIT_FAILURE;
+  size_t N;
+  size_t nArgs;
 
   // Load binary file
   // Initialize the routers
-  struct Router* routerArray = NULL;
-  unsigned int N;
   success = readBinaryFile(binFile, &routerArray, &N);
   if (success != EXIT_SUCCESS) {
-    // Free the router according to https://stackoverflow.com/a/33170941/2786884
-    free(routerArray);
+    freeRouterArray(&routerArray, N);
     fprintf(stderr, "Failed to read binary file\n");
     return EXIT_FAILURE;
   }
-
-  char* command = NULL;
-  char** args = NULL;
-  size_t nArgs;
 
   // Check if we are reading one command or a command file
   char* dot = strrchr(commandArg, '.');
@@ -69,12 +69,9 @@ int main(int argc, char** argv) {
     // runCommand(commandArg);
   }
 
-  // Clean-up according to https://stackoverflow.com/a/33170941/2786884
   // Free the router
-  for (size_t i = 0; i < N; ++i) {
-    free((void*)routerArray[i].producerModel);
-  }
-  free(routerArray);
+  freeRouterArray(&routerArray, N);
+
   // Free the command
   free(command);
   // Free the args

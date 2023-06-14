@@ -2,6 +2,7 @@
 
 #include <errno.h>   // for errno
 #include <libgen.h>  // for basename
+#include <math.h>    // for errno
 #include <stdio.h>   // for fclose, fprintf, ferror, fread, stderr, size_t
 #include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS
 #include <string.h>  // for strerror
@@ -9,7 +10,7 @@
 #include "../include/router.h"  // for Router
 
 int readBinaryFile(const char* binFile, struct Router** routerArray,
-                   unsigned int* N) {
+                   size_t* N) {
   // Open the file
   FILE* fp;
   fp = fopen(binFile, "rb");
@@ -42,19 +43,11 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
     readBytes = fread(&c, sizeof(char), nItems, fp);
     if ((readBytes < 1) || ferror(fp)) {
       fclose(fp);
-      // Free only the malloced strings
-      for (size_t j = 0; j < i; ++j) {
-        free((void*)(routerArray[j]->producerModel));
-      }
       fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
       return EXIT_FAILURE;
     }
     if (c != '\n') {
       fclose(fp);
-      // Free only the malloced strings
-      for (size_t j = 0; j < i; ++j) {
-        free((void*)(routerArray[j]->producerModel));
-      }
       fprintf(stderr, "Expected newline, but got '%c'\n", c);
       return EXIT_FAILURE;
     }
@@ -62,11 +55,6 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
     int success = readRouter(fp, &((*routerArray)[i]));
     if (success != EXIT_SUCCESS) {
       // Free only the malloced strings
-      // If readRouter failed on reading the producerModel the malloced string
-      // will already have been freed
-      for (size_t j = 0; j < i; ++j) {
-        free((void*)(routerArray[j]->producerModel));
-      }
       fclose(fp);
       fprintf(stderr, "Failed to read router %zu\n", i);
       return EXIT_FAILURE;
@@ -75,7 +63,7 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
 
   fclose(fp);
 
-  printf("Found %u records\n", *N);
+  printf("Found %zu records\n", *N);
 
   return EXIT_SUCCESS;
 }
