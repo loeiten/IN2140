@@ -10,7 +10,7 @@
 #include "../include/router.h"  // for Router
 
 int readBinaryFile(const char* binFile, struct Router** routerArray,
-                   size_t* N) {
+                   unsigned int* N) {
   // Open the file
   FILE* fp;
   fp = fopen(binFile, "rb");
@@ -63,7 +63,7 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
 
   fclose(fp);
 
-  printf("Found %zu records\n", *N);
+  printf("Found %u records\n", *N);
 
   return EXIT_SUCCESS;
 }

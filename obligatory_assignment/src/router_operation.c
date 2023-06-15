@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 
   // Initialize and declare helper variables
   int success = EXIT_FAILURE;
-  size_t N;
+  unsigned int N;
   size_t nArgs;
 
   // Load binary file

@@ -7,10 +7,10 @@ void freeRouterArray(struct Router** routerArray, size_t N) {
   if (*routerArray != NULL) {
     // Free the malloced strings
     for (size_t i = 0; i < N; ++i) {
-      if (routerArray[i]->producerModel != NULL) {
+      if ((*routerArray)[i].producerModel != NULL) {
         // Cast to void pointer since we are dealing with a const char *
-        free((void*)routerArray[i]->producerModel);
-        routerArray[i]->producerModel = NULL;
+        free((void*)(*routerArray)[i].producerModel);
+        (*routerArray)[i].producerModel = NULL;
       }
     }
     free(*routerArray);
