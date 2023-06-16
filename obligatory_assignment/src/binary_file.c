@@ -69,13 +69,16 @@ int readBinaryFile(const char* binFile, struct Router** routerArray,
 }
 
 int readRouter(FILE* fp, struct Router* router) {
+  // Initialize memory to be allocated
+  char* producerModel = NULL;
+
+  // Initialize helper variables
   size_t nBytes = 1;  // Given in the assignment
   size_t nItems = 1;
 
   // Read router id
   int readBytes = fread(&(router->routerId), nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
-    fclose(fp);
     fprintf(stderr, "Failed to read routerId: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
@@ -83,7 +86,6 @@ int readRouter(FILE* fp, struct Router* router) {
   // Read flag
   readBytes = fread(&(router->flag), nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
-    fclose(fp);
     fprintf(stderr, "Failed to read flag: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
@@ -92,15 +94,13 @@ int readRouter(FILE* fp, struct Router* router) {
   unsigned char charLen;
   readBytes = fread(&charLen, nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
-    fclose(fp);
     fprintf(stderr, "Failed to read charLen: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
   // Read the producerModel
-  char* producerModel = (char*)malloc(charLen * sizeof(char));
+  producerModel = (char*)malloc(charLen * sizeof(char));
   if (producerModel == NULL) {
-    fclose(fp);
     perror("Could not allocate memory to producerModel: ");
     return EXIT_FAILURE;
   }
@@ -109,7 +109,7 @@ int readRouter(FILE* fp, struct Router* router) {
     // Free the producerModel here we do not indicate whether or not is has been
     // allocated outside this function
     free(producerModel);
-    fclose(fp);
+    producerModel = NULL;
     fprintf(stderr, "Failed to read producerModel: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }

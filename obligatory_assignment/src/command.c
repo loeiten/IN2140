@@ -1,26 +1,33 @@
-#include <stdio.h>   // for fprintf, perror, NULL, size_t, snprintf, stderr
-#include <stdlib.h>  // for free, malloc, EXIT_FAILURE, EXIT_SUCCESS
+#include <stdio.h>   // for perror, NULL, snprintf, size_t
+#include <stdlib.h>  // for malloc, EXIT_FAILURE, EXIT_SU...
 #include <string.h>  // for strlen, strtok_r, strcmp
+
+#include "../include/dynamic_memory.h"  // for freeCommandStrCpy
 
 int getCommand(const char *commandStr, char **command, char ***args,
                size_t *nArgs) {
+  // Initialize memory to be allocated
+  char *commandStrCpy = NULL;
+
+  // Initialize helper variables
+  const char *format = "%s";
+
+  // Declare helper variables
   size_t strLen;
   int charWritten;  // Number of chars not including terminating char
   char *token;
   char *savePtr;
-  const char *format = "%s";
 
   // Copy the commandStr as strtok_r will alter the string
   strLen = snprintf(NULL, 0, format, commandStr);
-  char *commandStrCpy = (char *)malloc((strLen + 1) * sizeof(char));
+  commandStrCpy = (char *)malloc((strLen + 1) * sizeof(char));
   if (commandStrCpy == NULL) {
     perror("Could not allocate memory to commandStrCpy: ");
     return EXIT_FAILURE;
   }
   charWritten = snprintf(commandStrCpy, (strLen + 1), "%s", commandStr);
   if ((charWritten < 0) || (charWritten > strLen)) {
-    free(commandStrCpy);
-    fprintf(stderr, "Failed to copy the commandStr\n");
+    freeCommandStrCpy(&commandStrCpy, "Failed to copy the commandStr\n");
     return EXIT_FAILURE;
   }
 
@@ -40,21 +47,18 @@ int getCommand(const char *commandStr, char **command, char ***args,
   token = strtok_r(commandStrCpy, " ", &savePtr);
   strLen = snprintf(NULL, 0, format, commandStr);
   if (strLen < 1) {
-    free(commandStrCpy);
-    fprintf(stderr, "Failed to get strLen of commandStr\n");
+    freeCommandStrCpy(&commandStrCpy, "Failed to get strLen of commandStr\n");
     return EXIT_FAILURE;
   }
   *command = (char *)malloc((strLen + 1) * sizeof(char));
   if (*command == NULL) {
-    free(commandStrCpy);
+    freeCommandStrCpy(&commandStrCpy, "");
     perror("Could not allocate memory to command: ");
     return EXIT_FAILURE;
   }
   charWritten = snprintf(*command, strLen + 1, "%s", token);
   if ((charWritten < 0) || (charWritten > strLen)) {
-    free(commandStrCpy);
-    free(*command);
-    fprintf(stderr, "Failed to copy the command\n");
+    freeCommandStrCpy(&commandStrCpy, "Failed to copy the command\n");
     return EXIT_FAILURE;
   }
 
@@ -65,8 +69,7 @@ int getCommand(const char *commandStr, char **command, char ***args,
 
     *args = (char **)malloc(*nArgs * sizeof(char *));
     if (**args == NULL) {
-      free(commandStrCpy);
-      free(*command);
+      freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args: ");
       return EXIT_FAILURE;
     }
@@ -76,19 +79,13 @@ int getCommand(const char *commandStr, char **command, char ***args,
     strLen = strlen(token);
     (*args)[0] = (char *)malloc((strLen + 1) * sizeof(char));
     if (args[0] == NULL) {
-      free(commandStrCpy);
-      free(*command);
-      free(*args);
+      freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args[0]: ");
       return EXIT_FAILURE;
     }
     charWritten = snprintf((*args)[0], strLen + 1, "%s", token);
     if ((charWritten < 0) || (charWritten > strLen)) {
-      free(commandStrCpy);
-      free(*command);
-      free((*args)[0]);
-      free(*args);
-      fprintf(stderr, "Failed to copy to arg[0]\n");
+      freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[0]\n");
       return EXIT_FAILURE;
     }
 
@@ -97,27 +94,19 @@ int getCommand(const char *commandStr, char **command, char ***args,
     strLen = strlen(commandStr) - strlen(*command) - strLen - 2;
     (*args)[1] = (char *)malloc((strLen + 1) * sizeof(char));
     if (args[1] == NULL) {
-      free(commandStrCpy);
-      free(*command);
-      free((*args)[0]);
-      free((*args));
+      freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args[1]: ");
       return EXIT_FAILURE;
     }
     charWritten = snprintf((*args)[1], strLen, "%s",
                            &commandStr[strlen(commandStr) - strLen]);
     if ((charWritten < 0) || (charWritten > strLen)) {
-      free(commandStrCpy);
-      free(*command);
-      free((*args)[0]);
-      free((*args)[1]);
-      free((*args));
-      fprintf(stderr, "Failed to copy to arg[1]\n");
+      freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[1]\n");
       return EXIT_FAILURE;
     }
 
     // Free the copy
-    free(commandStrCpy);
+    freeCommandStrCpy(&commandStrCpy, "");
     return EXIT_SUCCESS;
   }
 
@@ -131,27 +120,17 @@ int getCommand(const char *commandStr, char **command, char ***args,
     strLen = strlen(token);
     (*args)[i] = (char *)malloc((strLen + 1) * sizeof(char));
     if (args[i] == NULL) {
-      free(commandStrCpy);
-      free(*command);
-      for (size_t j = 0; j < i; ++j) {
-        free((*args)[j]);
-      }
-      free(*args);
+      freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args[i]: ");
       return EXIT_FAILURE;
     }
     charWritten = snprintf((*args)[i], strLen + 1, "%s", token);
     if ((charWritten < 0) || (charWritten > strLen)) {
-      free(commandStrCpy);
-      free(*command);
-      for (size_t j = 0; j <= i; ++j) {
-        free((*args)[j]);
-      }
-      free(*args);
-      fprintf(stderr, "Failed to copy to arg[i]\n");
+      freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[i]\n");
       return EXIT_FAILURE;
     }
   }
 
+  freeCommandStrCpy(&commandStrCpy, "");
   return EXIT_SUCCESS;
 }
