@@ -8,6 +8,8 @@ struct Router;
 // and https://stackoverflow.com/a/722993/2786884
 
 void freeRouterArray(struct Router** routerArray, size_t N);
+void freeCommand(char** command, char*** args, size_t nArgs);
+
 void freeCommandStrCpy(char** commandStrCpy, const char* errorMsg);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_DYNAMIC_MEMORY_H_

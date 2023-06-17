@@ -21,6 +21,21 @@ void freeRouterArray(struct Router** routerArray, size_t N) {
   return;
 }
 
+void freeCommand(char** command, char*** args, size_t nArgs) {
+  if (*command != NULL) {
+    free(*command);
+    *command = NULL;
+  }
+  if (*args != NULL) {
+    for (size_t i = 0; i < nArgs; ++i) {
+      free((*args)[i]);
+      (*args)[i] = NULL;
+    }
+    free(*args);
+    *args = NULL;
+  }
+}
+
 void freeCommandStrCpy(char** commandStrCpy, const char* errorMsg) {
   free(*commandStrCpy);
   *commandStrCpy = NULL;
