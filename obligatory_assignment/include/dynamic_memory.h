@@ -9,6 +9,8 @@ struct Router;
 
 void freeRouterArray(struct Router** routerArray, size_t N);
 void freeCommand(char** command, char*** args, size_t nArgs);
+void freeRoutersAndCommand(struct Router** routerArray, size_t N,
+                           char** command, char*** args, size_t nArgs);
 
 void freeCommandStrCpy(char** commandStrCpy, const char* errorMsg);
 

@@ -55,16 +55,14 @@ int main(int argc, char** argv) {
     // runCommand(command)
     success = getCommand(commandArg, &command, &args, &nArgs);
     if (success != EXIT_SUCCESS) {
-      freeRouterArray(&routerArray, N);
-      freeCommand(&command, &args, nArgs);
+      freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
       fprintf(stderr, "Failed to obtain command\n");
       return EXIT_FAILURE;
     }
   } else {
     success = getCommand(commandArg, &command, &args, &nArgs);
     if (success != EXIT_SUCCESS) {
-      freeRouterArray(&routerArray, N);
-      freeCommand(&command, &args, nArgs);
+      freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
       fprintf(stderr, "Failed to obtain command\n");
       return EXIT_FAILURE;
     }
@@ -72,8 +70,7 @@ int main(int argc, char** argv) {
   }
 
   // Free the router
-  freeRouterArray(&routerArray, N);
-  freeCommand(&command, &args, nArgs);
+  freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
 
   return EXIT_SUCCESS;
 }

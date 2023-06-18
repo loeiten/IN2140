@@ -34,6 +34,14 @@ void freeCommand(char** command, char*** args, size_t nArgs) {
     free(*args);
     *args = NULL;
   }
+  return;
+}
+
+void freeRoutersAndCommand(struct Router** routerArray, size_t N,
+                           char** command, char*** args, size_t nArgs) {
+  freeRouterArray(routerArray, N);
+  freeCommand(command, args, nArgs);
+  return;
 }
 
 void freeCommandStrCpy(char** commandStrCpy, const char* errorMsg) {
