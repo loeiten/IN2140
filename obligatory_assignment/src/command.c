@@ -1,8 +1,12 @@
+#include "../include/command.h"
+
+#include <math.h>    // for strlen, strtok_r, strcmp
 #include <stdio.h>   // for perror, NULL, snprintf, size_t
 #include <stdlib.h>  // for malloc, EXIT_FAILURE, EXIT_SU...
 #include <string.h>  // for strlen, strtok_r, strcmp
 
 #include "../include/dynamic_memory.h"  // for freeCommandStrCpy
+#include "../include/router.h"
 
 int getCommand(const char *commandStr, char **command, char ***args,
                size_t *nArgs) {
@@ -132,5 +136,17 @@ int getCommand(const char *commandStr, char **command, char ***args,
   }
 
   freeCommandStrCpy(&commandStrCpy, "");
+  return EXIT_SUCCESS;
+}
+
+int runCommand(char const *const command, char const *const *const args,
+               struct Router const *const routerArray, unsigned int N) {
+  if (strcmp(command, "print") == 0) {
+    int routerId = atoi(args[0]);
+    int success = printStruct(routerArray, N, routerId);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+  }
   return EXIT_SUCCESS;
 }

@@ -13,7 +13,9 @@ add_executable(router_operation
     "src/binary_file.c"
     "src/dynamic_memory.c"
     "src/command.c"
-    "src/router_operation.c")
+    "src/router.c"
+    "src/router_operation.c"
+    )
 
 # Add includes
 target_include_directories(router_operation

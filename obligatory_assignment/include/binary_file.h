@@ -4,6 +4,7 @@
 #include <stdio.h>  // for FILE
 struct Router;
 
+// FIXME: Proper const
 int readBinaryFile(const char* binFile, struct Router** routerArray,
                    unsigned int* N);
 int readRouter(FILE* fp, struct Router* router);
