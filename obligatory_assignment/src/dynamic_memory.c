@@ -44,7 +44,7 @@ void freeRoutersAndCommand(struct Router** routerArray, size_t N,
   return;
 }
 
-void freeCommandStrCpy(char** commandStrCpy, const char* errorMsg) {
+void freeCommandStrCpy(char** commandStrCpy, const char* const errorMsg) {
   free(*commandStrCpy);
   *commandStrCpy = NULL;
   if (strcmp(errorMsg, "") == 0) {

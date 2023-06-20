@@ -9,8 +9,8 @@
 
 #include "../include/router.h"  // for Router
 
-int readBinaryFile(const char* binFile, struct Router** routerArray,
-                   unsigned int* N) {
+int readBinaryFile(const char* const binFile, struct Router** routerArray,
+                   unsigned int* const N) {
   // Open the file
   FILE* fp;
   fp = fopen(binFile, "rb");

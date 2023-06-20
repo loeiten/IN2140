@@ -4,9 +4,21 @@
 #include <stdio.h>  // for FILE
 struct Router;
 
-// FIXME: Proper const
-int readBinaryFile(const char* binFile, struct Router** routerArray,
-                   unsigned int* N);
+// A note on the constness:
+// The content of binFile should not change, also we don't want to change the
+// pointer to something else.
+// Hence we will have that binFile is a const pointer to a char which is const
+// In the routerArray we will change both the pointer to the array and the
+// content of the array
+// At last, we can change the content of N, but we don't want to change what it
+// points to
+// Hence, the pointer should be const but not the value
+// Remember to read from right to left:
+// N is a const pointer to an unsigned int
+int readBinaryFile(const char* const binFile, struct Router** routerArray,
+                   unsigned int* const N);
+// In read router we will change the file pointer as we read and the router
+// itself
 int readRouter(FILE* fp, struct Router* router);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_BINARY_FILE_H_

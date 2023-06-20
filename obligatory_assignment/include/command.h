@@ -4,9 +4,17 @@
 #include <stddef.h>  // for size_t
 struct Router;
 
-int getCommand(const char* commandStr, char** command, char*** args,
-               size_t* nArgs);
-int runCommand(const char* command, const char* const* args,
-               const struct Router* routerArray, unsigned int N);
+// A note on constness:
+// We should not change the commandStr in any way
+// We should be allowed to change the content of command, but not the pointer
+// itself
+// In args we need to allocate the array and change it contents, however the
+// pointer should not be allowed to change
+// In similar fashion, we shouldn't be allowed to change the pointer of nArgs
+int getCommand(const char* const commandStr, char** const command,
+               char*** const args, size_t* const nArgs);
+// When we run the command nothing is allowed to change
+int runCommand(const char* const command, const char* const* const args,
+               const struct Router* const routerArray, const unsigned int N);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_

@@ -8,8 +8,8 @@
 #include "../include/dynamic_memory.h"  // for freeCommandStrCpy
 #include "../include/router.h"
 
-int getCommand(const char *commandStr, char **command, char ***args,
-               size_t *nArgs) {
+int getCommand(const char *const commandStr, char **const command,
+               char ***const args, size_t *const nArgs) {
   // Initialize memory to be allocated
   char *commandStrCpy = NULL;
 
@@ -139,8 +139,8 @@ int getCommand(const char *commandStr, char **command, char ***args,
   return EXIT_SUCCESS;
 }
 
-int runCommand(char const *const command, char const *const *const args,
-               struct Router const *const routerArray, unsigned int N) {
+int runCommand(const char *const command, const char *const *const args,
+               const struct Router *const routerArray, const unsigned int N) {
   if (strcmp(command, "print") == 0) {
     int routerId = atoi(args[0]);
     int success = printStruct(routerArray, N, routerId);

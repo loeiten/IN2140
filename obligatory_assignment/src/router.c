@@ -9,8 +9,8 @@
 #include "../include/binary_file.h"  // for readBinaryFile
 #include "../include/command.h"      // for getCommand
 
-int printStruct(const struct Router* routerArray, unsigned int N,
-                int routerId) {
+int printStruct(const struct Router* const routerArray, const unsigned int N,
+                const int routerId) {
   int hitIdx = -1;
   for (size_t i = 0; i < N; ++i) {
     if (((int)routerArray[i].routerId) == routerId) {
@@ -35,7 +35,7 @@ int printStruct(const struct Router* routerArray, unsigned int N,
   return EXIT_SUCCESS;
 }
 
-void getBinaryString(unsigned char c, char* binaryStr) {
+void getBinaryString(unsigned char c, char* const binaryStr) {
   // Number of bits in an unsigned char
   int numBits = sizeof(c) * 8;
 

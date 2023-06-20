@@ -66,7 +66,8 @@ int main(int argc, char** argv) {
       fprintf(stderr, "Failed to obtain command\n");
       return EXIT_FAILURE;
     }
-    success = runCommand(command, args, routerArray, N);
+    success =
+        runCommand(command, (const char* const* const)args, routerArray, N);
     if (success != EXIT_SUCCESS) {
       freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
       fprintf(stderr, "Failed to run %s\n", commandArg);
