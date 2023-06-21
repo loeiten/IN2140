@@ -77,7 +77,7 @@ int readRouter(FILE* fp, struct Router* router) {
   size_t nItems = 1;
 
   // Read router id
-  int readBytes = fread(&(router->routerId), nBytes, nItems, fp);
+  int readBytes = fread((void *)&(router->routerId), nBytes, nItems, fp);
   if ((readBytes < 1) || ferror(fp)) {
     fprintf(stderr, "Failed to read routerId: %s\n", strerror(errno));
     return EXIT_FAILURE;
