@@ -93,6 +93,11 @@ called FLAG, and it must represent various properties a router can have.
 | 3            | Unused              | Not in use                                           |
 | 4-7          | Modification number | Serial number which increases by one for each change |
 
+Note that the bit position is referring to least significant 0 bit ordering
+(i.e.
+[LSb 0 numbering](https://en.wikipedia.org/wiki/Bit_numbering#LSb_0_bit_numbering)
+)
+
 After the `N` lines of information about the routers follow an unknown number of
 lines with connections between the routers.
 Each line contains two router IDs, and the lines are separated by line breaks.
