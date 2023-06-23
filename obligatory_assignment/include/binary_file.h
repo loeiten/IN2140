@@ -15,6 +15,14 @@ struct Router;
 // Hence, the pointer should be const but not the value
 // Remember to read from right to left:
 // N is a const pointer to an unsigned int
+
+// Note that the top level const is irrelevant from the caller perspective as
+// the variable gets its own local scope within the function
+// One way of think about this is to think about what happens to an int when
+// it's passed by value
+// See also:
+// https://abseil.io/tips/109#:~:text=Never%20use%20top%2Dlevel%20const,and%20it%20could%20mislead%20readers
+
 int readBinaryFile(const char* const binFile, struct Router** routerArray,
                    unsigned int* const N);
 // In read router we will change the file pointer as we read and the router
