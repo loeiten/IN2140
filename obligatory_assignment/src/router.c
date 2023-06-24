@@ -43,11 +43,9 @@ int printStruct(const struct Router* const routerArray, const unsigned int N,
   long modificationNumber = strtol(modificationNumberStr, NULL, 2);
   printf(
       "\nName: %s\nRouterId: %d\nActive: %s\nWireless: %s\n5 GHz: "
-      "%s\nModification number: %ld\nFlag (unsigned char): %c\nFlag (int): "
-      "%d\nFlag (binary): %s\n",
+      "%s\nModification number: %ld\nFlag: %s (%d)\n",
       routerArray[hitIdx].producerModel, routerId, active, wireless, fiveGHz,
-      modificationNumber, routerArray[hitIdx].flag,
-      (int)routerArray[hitIdx].flag, binaryFlag);
+      modificationNumber, binaryFlag, (int)routerArray[hitIdx].flag);
   return EXIT_SUCCESS;
 }
 

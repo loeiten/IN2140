@@ -63,8 +63,6 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
 
   fclose(fp);
 
-  printf("Found %u records\n", *N);
-
   return EXIT_SUCCESS;
 }
 
