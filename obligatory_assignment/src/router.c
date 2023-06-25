@@ -32,14 +32,17 @@ int printStruct(const struct Router* const routerArray, const unsigned int N,
   const char* wireless = (binaryFlag[6] == '1') ? "Yes" : "No";
   const char* fiveGHz = (binaryFlag[5] == '1') ? "Yes" : "No";
   // Extract the modification number
-  unsigned int bitLen = 4;
-  char modificationNumberStr[bitLen + 1];
+  const unsigned int kBitLen = 4;
+  // This is a fixed size array and not a variable size array (aka VLA) as the
+  // size can be determined during compile time
+  // Hence, there is no danger of stack-overflow for this variable
+  char modificationNumberStr[kBitLen + 1];
   // Reverse the order of bit in the binaryFlag
-  for (size_t i = 0; i < bitLen; ++i) {
+  for (size_t i = 0; i < kBitLen; ++i) {
     // -1 as we start counting from 0
-    modificationNumberStr[i] = binaryFlag[bitLen - i - 1];
+    modificationNumberStr[i] = binaryFlag[kBitLen - i - 1];
   }
-  modificationNumberStr[bitLen] = '\0';  // Null terminator
+  modificationNumberStr[kBitLen] = '\0';  // Null terminator
   long modificationNumber = strtol(modificationNumberStr, NULL, 2);
   printf(
       "\nName: %s\nRouterId: %d\nActive: %s\nWireless: %s\n5 GHz: "
