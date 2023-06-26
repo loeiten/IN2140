@@ -3,6 +3,7 @@
 #include <errno.h>   // for errno
 #include <libgen.h>  // for basename
 #include <math.h>    // for errno
+#include <stddef.h>
 #include <stdio.h>   // for fclose, fprintf, ferror, fread, stderr, size_t
 #include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS
 #include <string.h>  // for strerror
@@ -18,6 +19,9 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
     fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
     return EXIT_FAILURE;
   }
+
+  // Initialize success
+  int success;
 
   // Read the number of records
   size_t nBytes = 4;  // Given in the assignment
@@ -52,13 +56,21 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
       return EXIT_FAILURE;
     }
 
-    int success = readRouter(fp, &((*routerArray)[i]));
+    success = readRouter(fp, &((*routerArray)[i]));
     if (success != EXIT_SUCCESS) {
-      // Free only the malloced strings
       fclose(fp);
       fprintf(stderr, "Failed to read router %zu\n", i);
       return EXIT_FAILURE;
     }
+  }
+
+  // Read the neighbors
+  size_t pairNumber = 0;
+  success = readNeighbors(fp, routerArray, *N, &pairNumber);
+  if (success != EXIT_SUCCESS) {
+    fclose(fp);
+    fprintf(stderr, "Failed to get neighbor from pair %zu\n", pairNumber);
+    return EXIT_FAILURE;
   }
 
   fclose(fp);
@@ -73,6 +85,11 @@ int readRouter(FILE* fp, struct Router* router) {
   // Initialize helper variables
   size_t nBytes = 1;  // Given in the assignment
   size_t nItems = 1;
+
+  // Initialize the neighbors to be -1
+  for (size_t i = 0; i < MAX_NEIGHBORS; ++i) {
+    router->neighbors[i] = -1;
+  }
 
   // Read router id
   int readBytes = fread((void*)&(router->routerId), nBytes, nItems, fp);
@@ -118,4 +135,48 @@ int readRouter(FILE* fp, struct Router* router) {
   // Assign
   router->producerModel = producerModel;
   return EXIT_SUCCESS;
+}
+
+int readNeighbors(FILE* fp, struct Router* const* routerArray,
+                  unsigned int const N, size_t* pairNumber) {
+  unsigned char c;
+  size_t nItems = 1;
+  size_t nBytes = 1;  // Given in the assignment
+  size_t readBytes = nItems;
+
+  unsigned char fromRouter;
+  unsigned char toRouter;
+
+  while (readBytes >= nItems) {
+    // Increment the pairNumber
+    ++pairNumber;
+
+    // Read the newline
+    fread(&c, sizeof(char), nItems, fp);
+    if (ferror(fp)) {
+      fprintf(stderr, "Failed to read from file: %s\n", strerror(errno));
+      return EXIT_FAILURE;
+    }
+    if (c != '\n') {
+      fprintf(stderr, "Expected newline, but got '%c'\n", c);
+      return EXIT_FAILURE;
+    }
+
+    // Read the from unsigned char
+    fread(&fromRouter, nBytes, nItems, fp);
+    if (ferror(fp)) {
+      fprintf(stderr, "Failed to read the from router: %s\n", strerror(errno));
+      return EXIT_FAILURE;
+    }
+
+    // FIXME: Need a better way of finding EOF, readd readBytes above
+    // Read the to unsigned char
+    readBytes = fread(&toRouter, nBytes, nItems, fp);
+    if (ferror(fp)) {
+      fprintf(stderr, "Failed to read the to router: %s\n", strerror(errno));
+      return EXIT_FAILURE;
+    }
+
+    // FIXME: Implement setNeighbor
+  }
 }

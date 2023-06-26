@@ -28,5 +28,7 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
 // In read router we will change the file pointer as we read and the router
 // itself
 int readRouter(FILE* fp, struct Router* router);
+int readNeighbors(FILE* fp, struct Router* const* routerArray,
+                  unsigned int const N, size_t* pairNumber);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_BINARY_FILE_H_

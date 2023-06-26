@@ -1,12 +1,14 @@
 #ifndef OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
 
+#define MAX_NEIGHBORS 10
+
 struct Router {
   const unsigned char routerId;
   unsigned char flag;
   const char* producerModel;
-  int neighbors[10];  // Assignment specifies that a router can have
-                      // maximum 10 connections
+  int neighbors[MAX_NEIGHBORS];  // Assignment specifies that a router can have
+                                 // maximum 10 connections
 };
 
 // A note on constness:
