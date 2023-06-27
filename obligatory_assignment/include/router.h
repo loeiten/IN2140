@@ -18,4 +18,7 @@ int printStruct(const struct Router* const routerArray, const unsigned int N,
                 const int routerId);
 void getBinaryString(const unsigned char c, char* const binaryStr);
 
+int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
+                struct Router* const* const routerArray, unsigned int const N);
+
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_

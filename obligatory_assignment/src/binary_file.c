@@ -1,14 +1,11 @@
-#include "../include/binary_file.h"  // for Router
+#include "../include/binary_file.h"
 
-#include <errno.h>   // for errno
-#include <libgen.h>  // for basename
-#include <math.h>    // for errno
-#include <stddef.h>
-#include <stdio.h>   // for fclose, fprintf, ferror, fread, stderr, size_t
-#include <stdlib.h>  // for free, EXIT_FAILURE, malloc, EXIT_SUCCESS
-#include <string.h>  // for strerror
+#include <stdio.h>      // for fprintf, ferror, fread, fclose, stderr
+#include <stdlib.h>     // for EXIT_FAILURE, EXIT_SUCCESS, malloc, free
+#include <string.h>     // for strerror
+#include <sys/errno.h>  // for errno
 
-#include "../include/router.h"  // for Router
+#include "../include/router.h"  // for Router, setNeighbor, MAX_NEIGHBORS
 
 int readBinaryFile(const char* const binFile, struct Router** routerArray,
                    unsigned int* const N) {
@@ -27,7 +24,7 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
   size_t nBytes = 4;  // Given in the assignment
   size_t nItems = 1;
   int readBytes = fread(N, nBytes, nItems, fp);
-  if ((readBytes < 1) || ferror(fp)) {
+  if ((readBytes < nItems) || ferror(fp)) {
     fclose(fp);
     fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
     return EXIT_FAILURE;
@@ -45,7 +42,7 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
     // Read the newline
     unsigned char c;
     readBytes = fread(&c, sizeof(char), nItems, fp);
-    if ((readBytes < 1) || ferror(fp)) {
+    if ((readBytes < nItems) || ferror(fp)) {
       fclose(fp);
       fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
       return EXIT_FAILURE;
@@ -93,14 +90,14 @@ int readRouter(FILE* fp, struct Router* router) {
 
   // Read router id
   int readBytes = fread((void*)&(router->routerId), nBytes, nItems, fp);
-  if ((readBytes < 1) || ferror(fp)) {
+  if ((readBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to read routerId: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
   // Read flag
   readBytes = fread(&(router->flag), nBytes, nItems, fp);
-  if ((readBytes < 1) || ferror(fp)) {
+  if ((readBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to read flag: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
@@ -108,7 +105,7 @@ int readRouter(FILE* fp, struct Router* router) {
   // Read the length of the char
   unsigned char charLen;
   readBytes = fread(&charLen, nBytes, nItems, fp);
-  if ((readBytes < 1) || ferror(fp)) {
+  if ((readBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to read charLen: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
@@ -120,7 +117,7 @@ int readRouter(FILE* fp, struct Router* router) {
     return EXIT_FAILURE;
   }
   readBytes = fread(producerModel, (charLen - 1), nItems, fp);
-  if ((readBytes < 1) || ferror(fp)) {
+  if ((readBytes < nItems) || ferror(fp)) {
     // Free the producerModel here we do not indicate whether or not is has been
     // allocated outside this function
     free(producerModel);
@@ -137,23 +134,22 @@ int readRouter(FILE* fp, struct Router* router) {
   return EXIT_SUCCESS;
 }
 
-int readNeighbors(FILE* fp, struct Router* const* routerArray,
+int readNeighbors(FILE* fp, struct Router* const* const routerArray,
                   unsigned int const N, size_t* pairNumber) {
   unsigned char c;
   size_t nItems = 1;
   size_t nBytes = 1;  // Given in the assignment
-  size_t readBytes = nItems;
 
   unsigned char fromRouter;
   unsigned char toRouter;
 
-  while (readBytes >= nItems) {
+  while ((!feof(fp)) && (!ferror(fp))) {
     // Increment the pairNumber
     ++pairNumber;
 
     // Read the newline
-    fread(&c, sizeof(char), nItems, fp);
-    if (ferror(fp)) {
+    size_t readBytes = fread(&c, sizeof(char), nItems, fp);
+    if ((readBytes < nItems) || ferror(fp)) {
       fprintf(stderr, "Failed to read from file: %s\n", strerror(errno));
       return EXIT_FAILURE;
     }
@@ -163,20 +159,26 @@ int readNeighbors(FILE* fp, struct Router* const* routerArray,
     }
 
     // Read the from unsigned char
-    fread(&fromRouter, nBytes, nItems, fp);
-    if (ferror(fp)) {
-      fprintf(stderr, "Failed to read the from router: %s\n", strerror(errno));
+    readBytes = fread(&fromRouter, nBytes, nItems, fp);
+    if ((readBytes < nItems) || ferror(fp)) {
+      fprintf(stderr, "Failed to read the first neighbor: %s\n",
+              strerror(errno));
       return EXIT_FAILURE;
     }
 
-    // FIXME: Need a better way of finding EOF, readd readBytes above
     // Read the to unsigned char
     readBytes = fread(&toRouter, nBytes, nItems, fp);
-    if (ferror(fp)) {
-      fprintf(stderr, "Failed to read the to router: %s\n", strerror(errno));
+    if ((readBytes < nItems) || ferror(fp)) {
+      fprintf(stderr, "Failed to read the second neighbor: %s\n",
+              strerror(errno));
       return EXIT_FAILURE;
     }
 
-    // FIXME: Implement setNeighbor
+    int success = setNeighbor(fromRouter, toRouter, routerArray, N);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Failed to store the neighbor in the array\n");
+      return EXIT_FAILURE;
+    }
   }
+  return EXIT_SUCCESS;
 }
