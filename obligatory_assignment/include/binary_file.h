@@ -28,6 +28,8 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
 // In read router we will change the file pointer as we read and the router
 // itself
 int readRouter(FILE* fp, struct Router* router);
+
+// FIXME: Constness and pointer to routerArray
 int readNeighbors(FILE* fp, struct Router* const* const routerArray,
                   unsigned int const N, size_t* pairNumber);
 
