@@ -11,14 +11,10 @@
 
 int printStruct(const struct Router* const routerArray, const unsigned int N,
                 const int routerId) {
-  int hitIdx = -1;
-  for (size_t i = 0; i < N; ++i) {
-    if (((int)routerArray[i].routerId) == routerId) {
-      hitIdx = i;
-    }
-  }
-  if (hitIdx == -1) {
-    fprintf(stderr, "Could not find routerId %d in routerArray", routerId);
+  int hitIdx;
+  int success = findRouterId(routerArray, N, routerId, &hitIdx);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Could not print router as routerId was not found");
     return EXIT_FAILURE;
   }
 
@@ -71,4 +67,20 @@ void getBinaryString(unsigned char c, char* const binaryStr) {
 
   // Null-terminate the binary string
   binaryStr[numBits] = '\0';
+}
+
+int findRouterId(const struct Router* const routerArray, const unsigned int N,
+                 const int routerId, int* const hitIdx) {
+  *hitIdx = -1;
+  for (size_t i = 0; i < N; ++i) {
+    if (((int)routerArray[i].routerId) == routerId) {
+      *hitIdx = i;
+      break;
+    }
+  }
+  if (*hitIdx == -1) {
+    fprintf(stderr, "Could not find routerId %d in routerArray", routerId);
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
 }
