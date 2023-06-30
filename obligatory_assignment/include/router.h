@@ -25,4 +25,6 @@ int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
 int findRouterId(const struct Router* const routerArray, const unsigned int N,
                  const int routerId, int* const hitIdx);
 
+int findFreeNeighbor(const struct Router* const router, int* const hitIdx);
+
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_

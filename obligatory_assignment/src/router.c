@@ -69,6 +69,32 @@ void getBinaryString(unsigned char c, char* const binaryStr) {
   binaryStr[numBits] = '\0';
 }
 
+int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
+                struct Router* const* const routerArray, unsigned int const N) {
+  // Find the router which we will update the neighbor with
+  int routerIdx;
+  int success = findRouterId(routerArray, N, fromRouter, routerIdx);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr,
+            "Could not set the neighbor as the routerId was not found\n");
+    return EXIT_FAILURE;
+  }
+
+  // Find the first free index
+  int neighborIdx;
+  success = findFreeNeighbor(routerArray[routerIdx], &neighborIdx);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr,
+            "Could not set the neighbor as a free neighbor of routerId %d was "
+            "not found\n",
+            fromRouter);
+    return EXIT_FAILURE;
+  }
+
+  // Set the neighbor
+  return EXIT_SUCCESS;
+}
+
 int findRouterId(const struct Router* const routerArray, const unsigned int N,
                  const int routerId, int* const hitIdx) {
   *hitIdx = -1;
@@ -83,4 +109,15 @@ int findRouterId(const struct Router* const routerArray, const unsigned int N,
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
+}
+
+int findFreeNeighbor(const struct Router* const router, int* const hitIdx) {
+  *hitIdx = -1;
+  for (size_t i = 0; i < MAX_NEIGHBORS; ++i) {
+    if (router->neighbors[i] == -1) {
+      *hitIdx = i;
+      return EXIT_SUCCESS;
+    }
+  }
+  return EXIT_FAILURE;
 }
