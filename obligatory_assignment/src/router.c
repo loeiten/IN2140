@@ -73,7 +73,7 @@ int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
                 struct Router* const* const routerArray, unsigned int const N) {
   // Find the router which we will update the neighbor with
   int routerIdx;
-  int success = findRouterId(routerArray, N, fromRouter, routerIdx);
+  int success = findRouterId(*routerArray, N, fromRouter, &routerIdx);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Could not set the neighbor as the routerId was not found\n");
