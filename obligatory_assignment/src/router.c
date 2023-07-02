@@ -82,7 +82,7 @@ int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
 
   // Find the first free index
   int neighborIdx;
-  success = findFreeNeighbor(routerArray[routerIdx], &neighborIdx);
+  success = findFreeNeighbor(&((*routerArray)[routerIdx]), &neighborIdx);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Could not set the neighbor as a free neighbor of routerId %d was "

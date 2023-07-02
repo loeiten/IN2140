@@ -160,6 +160,12 @@ int readNeighbors(FILE* fp, struct Router* const* const routerArray,
 
     // Read the from unsigned char
     readBytes = fread(&fromRouter, nBytes, nItems, fp);
+
+    // We first get a end of stream *after* a failed read
+    if (feof(fp)) {
+      return EXIT_SUCCESS;
+    }
+
     if ((readBytes < nItems) || ferror(fp)) {
       fprintf(stderr, "Failed to read the first neighbor: %s\n",
               strerror(errno));
@@ -180,5 +186,8 @@ int readNeighbors(FILE* fp, struct Router* const* const routerArray,
       return EXIT_FAILURE;
     }
   }
-  return EXIT_SUCCESS;
+
+  fprintf(stderr,
+          "Reading neighbors finished before reaching a terminating \\n\n");
+  return EXIT_FAILURE;
 }
