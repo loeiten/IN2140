@@ -22,5 +22,8 @@ target_include_directories(router_operation
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# Add tests
+# Add the unit tests
+add_subdirectory(test)
+
+# Add the integration tests
 do_test(NAME router_operation NO 1 ARGS "${ASSIGNMENT_DIR}/5_routers_fully_connected" "print 0" EXPECTED "Found 5 records\n")
