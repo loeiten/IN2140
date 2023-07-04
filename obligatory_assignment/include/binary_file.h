@@ -25,6 +25,7 @@ struct Router;
 
 int readBinaryFile(const char* const binFile, struct Router** routerArray,
                    unsigned int* const N);
+int readNewline(FILE* fp);
 // In read router we will change the file pointer as we read and the router
 // itself
 int readRouter(FILE* fp, struct Router* router);

@@ -1,5 +1,6 @@
 #include "../include/binary_file.h"
 
+#include <stddef.h>
 #include <stdio.h>      // for fprintf, ferror, fread, fclose, stderr
 #include <stdlib.h>     // for EXIT_FAILURE, EXIT_SUCCESS, malloc, free
 #include <string.h>     // for strerror
@@ -40,16 +41,9 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
 
   for (size_t i = 0; i < *N; ++i) {
     // Read the newline
-    unsigned char c;
-    readBytes = fread(&c, sizeof(char), nItems, fp);
-    if ((readBytes < nItems) || ferror(fp)) {
+    if (readNewline(fp) != EXIT_SUCCESS) {
       fclose(fp);
-      fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
-      return EXIT_FAILURE;
-    }
-    if (c != '\n') {
-      fclose(fp);
-      fprintf(stderr, "Expected newline, but got '%c'\n", c);
+      fprintf(stderr, "Failed to read from %s\n", binFile);
       return EXIT_FAILURE;
     }
 
@@ -66,12 +60,28 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
   success = readNeighbors(fp, routerArray, *N, &pairNumber);
   if (success != EXIT_SUCCESS) {
     fclose(fp);
-    fprintf(stderr, "Failed to get neighbor from pair %zu\n", pairNumber);
+    fprintf(stderr, "Failed to get neighbor from pair %zu in %s\n", pairNumber,
+            binFile);
     return EXIT_FAILURE;
   }
 
   fclose(fp);
 
+  return EXIT_SUCCESS;
+}
+
+int readNewline(FILE* fp) {
+  unsigned char c;
+  size_t nItems = 1;
+  int readBytes = fread(&c, sizeof(char), nItems, fp);
+  if ((readBytes < nItems) || ferror(fp)) {
+    fprintf(stderr, "Failed to read from file: %s\n", strerror(errno));
+    return EXIT_FAILURE;
+  }
+  if (c != '\n') {
+    fprintf(stderr, "Expected newline, but got '%c'\n", c);
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
 
@@ -136,7 +146,6 @@ int readRouter(FILE* fp, struct Router* router) {
 
 int readNeighbors(FILE* fp, struct Router* const* const routerArray,
                   unsigned int const N, size_t* pairNumber) {
-  unsigned char c;
   size_t nItems = 1;
   size_t nBytes = 1;  // Given in the assignment
 
@@ -148,18 +157,12 @@ int readNeighbors(FILE* fp, struct Router* const* const routerArray,
     ++pairNumber;
 
     // Read the newline
-    size_t readBytes = fread(&c, sizeof(char), nItems, fp);
-    if ((readBytes < nItems) || ferror(fp)) {
-      fprintf(stderr, "Failed to read from file: %s\n", strerror(errno));
-      return EXIT_FAILURE;
-    }
-    if (c != '\n') {
-      fprintf(stderr, "Expected newline, but got '%c'\n", c);
+    if (readNewline(fp) != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }
 
     // Read the from unsigned char
-    readBytes = fread(&fromRouter, nBytes, nItems, fp);
+    int readBytes = fread(&fromRouter, nBytes, nItems, fp);
 
     // We first get a end of stream *after* a failed read
     if (feof(fp)) {
