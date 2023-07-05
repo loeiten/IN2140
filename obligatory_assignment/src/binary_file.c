@@ -1,6 +1,5 @@
 #include "../include/binary_file.h"
 
-#include <stddef.h>
 #include <stdio.h>      // for fprintf, ferror, fread, fclose, stderr
 #include <stdlib.h>     // for EXIT_FAILURE, EXIT_SUCCESS, malloc, free
 #include <string.h>     // for strerror
@@ -27,7 +26,8 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
   int readBytes = fread(N, nBytes, nItems, fp);
   if ((readBytes < nItems) || ferror(fp)) {
     fclose(fp);
-    fprintf(stderr, "Failed to read from %s: %s\n", binFile, strerror(errno));
+    fprintf(stderr, "Failed to obtain the number of records from %s: %s\n",
+            binFile, strerror(errno));
     return EXIT_FAILURE;
   }
 
