@@ -21,4 +21,4 @@ target_include_directories(router_operation
 )
 
 # Add the unit tests
-do_test(NAME test_binary_file NO 1 ARGS "binary_file" EXPECTED "Found 5 records\n")
+do_test(NAME test_binary_file NO 1 ARGS "newline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")

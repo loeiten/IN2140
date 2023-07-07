@@ -19,7 +19,13 @@ void testReadNewline() {
   assert(success == EXIT_SUCCESS);
 
   // Test failure
-  // There should be only one newline in the file
+  // The next char in the file should be 'm'
+  success = readNewline(fp);
+  assert(success == EXIT_FAILURE);
+  // We will read the newline before the EOF
+  success = readNewline(fp);
+  assert(success == EXIT_SUCCESS);
+  // We will read the EOF
   success = readNewline(fp);
   assert(success == EXIT_FAILURE);
 }
@@ -35,7 +41,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if (strcmp(argv[1], "binary_file") == 0) {
+  if (strcmp(argv[1], "newline") == 0) {
     testReadNewline();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
