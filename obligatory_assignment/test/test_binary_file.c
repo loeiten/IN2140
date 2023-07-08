@@ -10,7 +10,7 @@
 
 void testReadNewline() {
   // Test success
-  const char* const binFile = "data/newline";
+  const char* const binFile = "data/readNewline";
   FILE* fp = fopen(binFile, "rb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
@@ -22,7 +22,7 @@ void testReadNewline() {
   // The next char in the file should be 'm'
   success = readNewline(fp);
   assert(success == EXIT_FAILURE);
-  // We will read the newline before the EOF
+  // We will read the readNewline before the EOF
   success = readNewline(fp);
   assert(success == EXIT_SUCCESS);
   // We will read the EOF
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if (strcmp(argv[1], "newline") == 0) {
+  if (strcmp(argv[1], "readNewline") == 0) {
     testReadNewline();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
