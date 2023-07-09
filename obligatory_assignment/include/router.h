@@ -14,7 +14,7 @@ struct Router {
 // A note on constness:
 // Printing should not be able to change any input
 // When obtaining the binary string we should not be able to change the pointer
-int printStruct(const struct Router* const routerArray, const unsigned int N,
+int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId);
 void getBinaryString(const unsigned char c, char* const binaryStr);
 

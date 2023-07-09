@@ -9,7 +9,7 @@
 #include "../include/binary_file.h"  // for readBinaryFile
 #include "../include/command.h"      // for getCommand
 
-int printStruct(const struct Router* const routerArray, const unsigned int N,
+int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId) {
   int hitIdx;
   int success = findRouterId(routerArray, N, routerId, &hitIdx);

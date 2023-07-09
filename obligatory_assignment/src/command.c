@@ -143,7 +143,7 @@ int runCommand(const char *const command, const char *const *const args,
                const struct Router *const routerArray, const unsigned int N) {
   if (strcmp(command, "print") == 0) {
     int routerId = atoi(args[0]);
-    int success = printStruct(routerArray, N, routerId);
+    int success = printRouter(routerArray, N, routerId);
     if (success != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }
