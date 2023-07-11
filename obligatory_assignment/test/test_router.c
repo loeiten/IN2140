@@ -15,6 +15,8 @@ void testGetBinaryString(const char* const c, const char* const expected) {
 
   getBinaryString(c[0], binaryFlag);
   assert(strcmp(binaryFlag, expected));
+  printf("Success\n");
+  return;
 }
 
 int main(int argc, char** argv) {

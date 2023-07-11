@@ -32,4 +32,4 @@ target_include_directories(test_router
 do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
 
 # Test router
-do_test(NAME test_router NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "\n")
+do_test(NAME test_router NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")

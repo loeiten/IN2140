@@ -10,7 +10,7 @@
 
 void testReadNewline() {
   // Test success
-  const char* const binFile = "data/readNewline";
+  const char* const binFile = "data/newline";
   FILE* fp = fopen(binFile, "rb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
