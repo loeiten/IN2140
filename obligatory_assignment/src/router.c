@@ -48,7 +48,7 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
   return EXIT_SUCCESS;
 }
 
-void getBinaryString(unsigned char c, char* const binaryStr) {
+void getBinaryString(const unsigned char c, char* const binaryStr) {
   // Number of bits in an unsigned char
   int numBits = sizeof(c) * 8;
 

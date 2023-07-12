@@ -7,14 +7,15 @@
 
 #include "../include/router.h"  // for getBinaryString
 
-void testGetBinaryString(const char* const c, const char* const expected) {
+void testGetBinaryString(const char* const number, const char* const expected) {
   // Initialize test
   // 8 for the number of bits
   // +1 for the null terminator
   char binaryFlag[sizeof(unsigned char) * 8 + 1];
 
-  getBinaryString(c[0], binaryFlag);
-  assert(strcmp(binaryFlag, expected));
+  const unsigned char c = (const unsigned char)atoi(number);
+  getBinaryString(c, binaryFlag);
+  assert(strcmp(binaryFlag, expected) == 0);
   printf("Success\n");
   return;
 }

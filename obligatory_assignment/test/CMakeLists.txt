@@ -33,3 +33,7 @@ do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline
 
 # Test router
 do_test(NAME test_router NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")
+do_test(NAME test_router NO 2 ARGS "getBinaryString" "1" "00000001" EXPECTED "Success\n")
+do_test(NAME test_router NO 3 ARGS "getBinaryString" "2" "00000010" EXPECTED "Success\n")
+do_test(NAME test_router NO 4 ARGS "getBinaryString" "10" "00001010" EXPECTED "Success\n")
+do_test(NAME test_router NO 5 ARGS "getBinaryString" "255" "11111111" EXPECTED "Success\n")
