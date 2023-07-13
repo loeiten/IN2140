@@ -14,6 +14,7 @@ add_executable(router_operation
     "src/dynamic_memory.c"
     "src/command.c"
     "src/router.c"
+    "src/utils.c"
     "src/router_operation.c"
     )
 
