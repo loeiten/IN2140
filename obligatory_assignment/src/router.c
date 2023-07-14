@@ -1,15 +1,9 @@
-#include "../include/router.h"  // for freeRouterArray
+#include "../include/router.h"
 
-#include <libgen.h>  // for basename
-#include <math.h>
-#include <stddef.h>
-#include <stdio.h>   // for fprintf, NULL, stderr, size_t
-#include <stdlib.h>  // for free, EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>  // for strcmp, strrchr
+#include <stdio.h>   // for fprintf, stderr, printf, size_t, NULL
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE, strtol
 
-#include "../include/binary_file.h"  // for readBinaryFile
-#include "../include/command.h"      // for getCommand
-#include "../include/utils.h"        // for freeRouterArray
+#include "../include/utils.h"  // for getBinaryString
 
 int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId) {
