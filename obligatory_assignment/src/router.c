@@ -44,7 +44,21 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
       "%s\nModification number: %ld\nFlag: %s (%d)\n",
       routerArray[hitIdx].producerModel, routerId, active, wireless, fiveGHz,
       modificationNumber, binaryFlag, (int)routerArray[hitIdx].flag);
+  printNeighbors(routerArray[hitIdx].neighbors);
   return EXIT_SUCCESS;
+}
+
+void printNeighbors(const int* const neighbors) {
+  char* delim = "";
+  printf("Neighbors: [");
+  for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+    if (neighbors[i] == -1) {
+      break;
+    }
+    printf("%s%d", delim, neighbors[i]);
+    delim = ", ";
+  }
+  printf("]\n");
 }
 
 int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
