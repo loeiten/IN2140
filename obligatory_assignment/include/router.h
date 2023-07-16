@@ -17,7 +17,6 @@ struct Router {
 int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId);
 void printNeighbors(const int* const neighbors);
-void getBinaryString(const unsigned char c, char* const binaryStr);
 
 // FIXME: Constness and pointer to routerArray
 int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
