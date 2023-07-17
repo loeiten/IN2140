@@ -28,7 +28,7 @@ int getCommand(const char *const commandStr, char **const command,
     perror("Could not allocate memory to commandStrCpy: ");
     return EXIT_FAILURE;
   }
-  charWritten = snprintf(commandStrCpy, (strLen + 1), "%s", commandStr);
+  charWritten = snprintf(commandStrCpy, (strLen + 1), format, commandStr);
   if ((charWritten < 0) || (charWritten > strLen)) {
     freeCommandStrCpy(&commandStrCpy, "Failed to copy the commandStr\n");
     return EXIT_FAILURE;
@@ -59,7 +59,7 @@ int getCommand(const char *const commandStr, char **const command,
     perror("Could not allocate memory to command: ");
     return EXIT_FAILURE;
   }
-  charWritten = snprintf(*command, strLen + 1, "%s", token);
+  charWritten = snprintf(*command, strLen + 1, format, token);
   if ((charWritten < 0) || (charWritten > strLen)) {
     freeCommandStrCpy(&commandStrCpy, "Failed to copy the command\n");
     return EXIT_FAILURE;
@@ -86,7 +86,7 @@ int getCommand(const char *const commandStr, char **const command,
       perror("Could not allocate memory to args[0]: ");
       return EXIT_FAILURE;
     }
-    charWritten = snprintf((*args)[0], strLen + 1, "%s", token);
+    charWritten = snprintf((*args)[0], strLen + 1, format, token);
     if ((charWritten < 0) || (charWritten > strLen)) {
       freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[0]\n");
       return EXIT_FAILURE;
@@ -101,7 +101,7 @@ int getCommand(const char *const commandStr, char **const command,
       perror("Could not allocate memory to args[1]: ");
       return EXIT_FAILURE;
     }
-    charWritten = snprintf((*args)[1], strLen, "%s",
+    charWritten = snprintf((*args)[1], strLen, format,
                            &commandStr[strlen(commandStr) - strLen]);
     if ((charWritten < 0) || (charWritten > strLen)) {
       freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[1]\n");
@@ -127,7 +127,7 @@ int getCommand(const char *const commandStr, char **const command,
       perror("Could not allocate memory to args[i]: ");
       return EXIT_FAILURE;
     }
-    charWritten = snprintf((*args)[i], strLen + 1, "%s", token);
+    charWritten = snprintf((*args)[i], strLen + 1, format, token);
     if ((charWritten < 0) || (charWritten > strLen)) {
       freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[i]\n");
       return EXIT_FAILURE;
