@@ -5,7 +5,7 @@
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp
 
-#include "../include/router.h"  // for getBinaryString
+#include "../include/utils.h"  // for getBinaryString
 
 void testGetBinaryString(const char* const number, const char* const expected) {
   // Initialize test
