@@ -1,6 +1,5 @@
 # Copy the test data
 set(DATA_DIR "data")
-
 file(GLOB data_files "${DATA_DIR}/*")
 foreach(data_file ${data_files})
     get_filename_component(cur_file ${data_file} NAME)
@@ -15,6 +14,11 @@ add_executable(test_binary_file
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"  # For printRouter
     "test_binary_file.c"
     )
+add_executable(test_router
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"  # For printRouter
+    "test_router.c"
+    )
 add_executable(test_utils
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"
     "test_utils.c"
@@ -24,6 +28,9 @@ add_executable(test_utils
 target_include_directories(test_binary_file
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
 )
+target_include_directories(test_router
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+)
 target_include_directories(test_utils
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
 )
@@ -31,6 +38,12 @@ target_include_directories(test_utils
 # Add the unit tests
 # Test binary file
 do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
+
+# Test router
+do_test(NAME test_router NO 1 ARGS "printNeighbors" "1,2,3" EXPECTED "Neighbors: \\[1, 2, 3\\]\n")
+do_test(NAME test_router NO 2 ARGS "printNeighbors" "2,1,3" EXPECTED "Neighbors: \\[2, 1, 3\\]\n")
+do_test(NAME test_router NO 3 ARGS "printNeighbors" "" EXPECTED "Neighbors: \\[\\]\n")
+do_test(NAME test_router NO 4 ARGS "printNeighbors" "92,105" EXPECTED "Neighbors: \\[92, 105\\]\n")
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")
