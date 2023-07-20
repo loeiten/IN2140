@@ -40,10 +40,13 @@ target_include_directories(test_utils
 do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
 
 # Test router
+# printNeighbors
 do_test(NAME test_router NO 1 ARGS "printNeighbors" "1,2,3" EXPECTED "Neighbors: \\[1, 2, 3\\]\n")
 do_test(NAME test_router NO 2 ARGS "printNeighbors" "2,1,3" EXPECTED "Neighbors: \\[2, 1, 3\\]\n")
 do_test(NAME test_router NO 3 ARGS "printNeighbors" "" EXPECTED "Neighbors: \\[\\]\n")
 do_test(NAME test_router NO 4 ARGS "printNeighbors" "92,105" EXPECTED "Neighbors: \\[92, 105\\]\n")
+# findRouterId
+do_test(NAME test_router NO 5 ARGS "findRouterId" EXPECTED "Could not find routerId 100 in routerArray\n")
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")
