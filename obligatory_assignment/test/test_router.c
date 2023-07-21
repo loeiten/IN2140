@@ -1,12 +1,12 @@
-
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
-#include <stddef.h>  // for NULL, size_t
-#include <stdio.h>   // for fprintf, perror, stderr, snprintf
-#include <stdlib.h>  // for free, atoi, malloc, EXIT_SUCCESS, EXI...
-#include <string.h>  // for strcmp, strlen
+#include <stddef.h>  // for NULL
+#include <stdio.h>   // for fprintf, stderr
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
+#include <string.h>  // for strcmp
 
 #include "../include/router.h"  // for findRouterId, printNeighbors, Router
+#include "include/helpers.h"    // for strToIntArray
 
 void testPrintNeighbors(const char *const neighborStr) {
   // Initialize test
@@ -20,57 +20,9 @@ void testPrintNeighbors(const char *const neighborStr) {
     printNeighbors(neighbors);
     return;
   }
-  size_t strLen = strlen(neighborStr);
-  size_t neighbourCounter = 0;
-  size_t start = 0;
-  size_t end = 0;
-  char *subStr = NULL;
-  for (int i = 0; i < strLen; ++i) {
-    if (neighborStr[i] == ',') {
-      end = i;
-      size_t subStrLen = end - start;
-      subStr = (char *)malloc((subStrLen + 1) * sizeof(char));
-      if (subStr == NULL) {
-        perror("Could not allocate memory to subStr: ");
-        return;
-      }
-      int charWritten =
-          snprintf(subStr, subStrLen + 1, "%s", &neighborStr[start]);
-      if ((charWritten < 0) || (charWritten < subStrLen)) {
-        fprintf(stderr, "Could not copy to subStr");
-        free(subStr);
-        subStr = NULL;
-        return;
-      }
-      neighbors[neighbourCounter] = atoi(subStr);
-      free(subStr);
-      subStr = NULL;
-      start = end + 1;
-      ++neighbourCounter;
-    }
-    ++end;
-  }
+  int success = strToIntArray(neighborStr, neighbors);
+  assert(success == EXIT_SUCCESS);
 
-  // Add the last neighbor if any
-  if (end != start) {
-    size_t subStrLen = end - start;
-    subStr = (char *)malloc((subStrLen + 1) * sizeof(char));
-    if (subStr == NULL) {
-      perror("Could not allocate memory to subStr: ");
-      return;
-    }
-    int charWritten =
-        snprintf(subStr, subStrLen + 1, "%s", &neighborStr[start]);
-    if ((charWritten < 0) || (charWritten < subStrLen)) {
-      fprintf(stderr, "Could not copy to subStr");
-      free(subStr);
-      subStr = NULL;
-      return;
-    }
-    neighbors[neighbourCounter] = atoi(subStr);
-    free(subStr);
-    subStr = NULL;
-  }
   // Call printNeighbors
   printNeighbors(neighbors);
   return;
@@ -106,6 +58,10 @@ void testFindRouterId() {
   return;
 }
 
+void testFindFreeNeighbor(const char *const array, const char *const expected) {
+  return;
+}
+
 int main(int argc, char **argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -121,6 +77,8 @@ int main(int argc, char **argv) {
     testPrintNeighbors(argv[2]);
   } else if (strcmp(argv[1], "findRouterId") == 0) {
     testFindRouterId();
+  } else if (strcmp(argv[1], "findFreeNeighbor") == 0) {
+    testFindFreeNeighbor(argv[2], argv[3]);
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

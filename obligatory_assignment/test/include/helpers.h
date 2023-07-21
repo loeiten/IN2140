@@ -1,0 +1,6 @@
+#ifndef OBLIGATORY_ASSIGNMENT_TEST_INCLUDE_HELPERS_H_
+#define OBLIGATORY_ASSIGNMENT_TEST_INCLUDE_HELPERS_H_
+
+int strToIntArray(const char *const arrayStr, int *const intArray);
+
+#endif  // OBLIGATORY_ASSIGNMENT_TEST_INCLUDE_HELPERS_H_

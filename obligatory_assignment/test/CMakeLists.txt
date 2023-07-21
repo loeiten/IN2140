@@ -17,6 +17,7 @@ add_executable(test_binary_file
 add_executable(test_router
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"  # For printRouter
+    "src/helpers.c"
     "test_router.c"
     )
 add_executable(test_utils
@@ -30,6 +31,7 @@ target_include_directories(test_binary_file
 )
 target_include_directories(test_router
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 target_include_directories(test_utils
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
