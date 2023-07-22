@@ -49,6 +49,12 @@ do_test(NAME test_router NO 3 ARGS "printNeighbors" "" EXPECTED "Neighbors: \\[\
 do_test(NAME test_router NO 4 ARGS "printNeighbors" "92,105" EXPECTED "Neighbors: \\[92, 105\\]\n")
 # findRouterId
 do_test(NAME test_router NO 5 ARGS "findRouterId" EXPECTED "Could not find routerId 100 in routerArray\n")
+# findFreeNeighbor
+do_test(NAME test_router NO 6 ARGS "findFreeNeighbor" "9" "1" EXPECTED "Success\n")
+do_test(NAME test_router NO 7 ARGS "findFreeNeighbor" "4,7" "2" EXPECTED "Success\n")
+do_test(NAME test_router NO 8 ARGS "findFreeNeighbor" "4,7,95" "3" EXPECTED "Success\n")
+do_test(NAME test_router NO 9 ARGS "findFreeNeighbor" "0,1,2,3,4,5,6,7,8,9" "-1" EXPECTED "Success\n")
+do_test(NAME test_router NO 10 ARGS "findFreeNeighbor" "x" "0" EXPECTED "Success\n")
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")

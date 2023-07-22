@@ -9,7 +9,6 @@
 #include "include/helpers.h"    // for strToIntArray
 
 void testPrintNeighbors(const char *const neighborStr) {
-  // Initialize test
   // Initialize the neighbors
   int neighbors[MAX_NEIGHBORS];
   for (int i = 0; i < MAX_NEIGHBORS; ++i) {
@@ -31,10 +30,8 @@ void testPrintNeighbors(const char *const neighborStr) {
 void testFindRouterId() {
   // Create testRouters
   unsigned int N = 3;
-  struct Router router0 = {.routerId = 42};
-  struct Router router1 = {.routerId = 7};
-  struct Router router2 = {.routerId = 88};
-  struct Router routerArray[3] = {router0, router1, router2};
+  struct Router routerArray[3] = {
+      {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
 
   int hitIdx;
 
@@ -51,6 +48,7 @@ void testFindRouterId() {
   assert(success == EXIT_SUCCESS);
   assert(hitIdx == 1);
 
+  // Test negative
   success = findRouterId(routerArray, N, 100, &hitIdx);
   assert(success == EXIT_FAILURE);
   assert(hitIdx == -1);
@@ -58,7 +56,42 @@ void testFindRouterId() {
   return;
 }
 
-void testFindFreeNeighbor(const char *const array, const char *const expected) {
+void testFindFreeNeighbor(const char *const arrayStr,
+                          const char *const expected) {
+  // Declare the variables
+  struct Router router;
+  int hitIdx;
+  int success;
+  // Initialize the neighbors
+  for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+    router.neighbors[i] = -1;
+  }
+
+  // Test negative
+  if (arrayStr[0] == 'x') {
+    success = findFreeNeighbor(&router, &hitIdx);
+    assert(success == EXIT_SUCCESS);
+    assert(hitIdx == atoi(expected));
+    printf("Success\n");
+    return;
+  }
+
+  success = strToIntArray(arrayStr, router.neighbors);
+  assert(success == EXIT_SUCCESS);
+
+  if (router.neighbors[MAX_NEIGHBORS - 1] != -1) {
+    success = findFreeNeighbor(&router, &hitIdx);
+    assert(success == EXIT_FAILURE);
+    assert(hitIdx == atoi(expected));
+    printf("Success\n");
+    return;
+  }
+
+  // Test positive
+  success = findFreeNeighbor(&router, &hitIdx);
+  assert(success == EXIT_SUCCESS);
+  assert(hitIdx == atoi(expected));
+  printf("Success\n");
   return;
 }
 
