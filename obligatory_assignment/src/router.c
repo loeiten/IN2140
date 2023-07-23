@@ -37,8 +37,6 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
   modificationNumberStr[kBitLen] = '\0';  // Null terminator
   long modificationNumber = strtol(modificationNumberStr, NULL, 2);
 
-  // FIXME: Capture the neighbors
-
   printf(
       "\nName: %s\nRouterId: %d\nActive: %s\nWireless: %s\n5 GHz: "
       "%s\nModification number: %ld\nFlag: %s (%d)\n",
@@ -84,6 +82,7 @@ int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
   }
 
   // Set the neighbor
+  routerArray[routerIdx]->neighbors[neighborIdx] = toRouter;
   return EXIT_SUCCESS;
 }
 
