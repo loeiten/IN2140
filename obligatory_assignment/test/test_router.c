@@ -10,7 +10,26 @@
 
 #define N 3
 
-void testPrintNeighbors(const char *const neighborStr) {
+void testPrintRouter(const char* const routerIdStr, const char* const flagStr,
+                     const char* const producerModel,
+                     const char* const neighborsStr) {
+  unsigned char routerId = atoi(routerIdStr);
+  struct Router routerArray[1] = {{.routerId = routerId,
+                                   .flag = (unsigned char)atoi(flagStr),
+                                   .producerModel = producerModel}};
+  // Initialize the neighbors
+  for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+    routerArray[0].neighbors[i] = -1;
+  }
+  if (neighborsStr != NULL) {
+    int success = strToIntArray(neighborsStr, routerArray[0].neighbors);
+    assert(success == EXIT_SUCCESS);
+  }
+
+  printRouter(routerArray, 1, routerId);
+}
+
+void testPrintNeighbors(const char* const neighborStr) {
   // Initialize the neighbors
   int neighbors[MAX_NEIGHBORS];
   for (int i = 0; i < MAX_NEIGHBORS; ++i) {
@@ -106,8 +125,8 @@ void testFindRouterId() {
   return;
 }
 
-void testFindFreeNeighbor(const char *const arrayStr,
-                          const char *const expected) {
+void testFindFreeNeighbor(const char* const arrayStr,
+                          const char* const expected) {
   // Declare the variables
   struct Router router;
   int hitIdx;
@@ -145,18 +164,20 @@ void testFindFreeNeighbor(const char *const arrayStr,
   return;
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
     // https://www.unix.com/man-page/posix/3p/basename/
     // for specification and
     // https://github.com/coreutils/coreutils/blob/master/src/basename.c
     // for possible implementation
-    fprintf(stderr, "Usage: ./%s test args\n", basename(argv[0]));
+    fprintf(stderr, "Usage: ./%s test [arg1 arg2 ...]\n", basename(argv[0]));
     return EXIT_FAILURE;
   }
 
-  if (strcmp(argv[1], "printNeighbors") == 0) {
+  if (strcmp(argv[1], "printRouter") == 0) {
+    testPrintRouter(argv[2], argv[3], argv[4], argv[5]);
+  } else if (strcmp(argv[1], "printNeighbors") == 0) {
     testPrintNeighbors(argv[2]);
   } else if (strcmp(argv[1], "setNeighbor") == 0) {
     testSetNeighbor();
