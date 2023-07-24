@@ -29,6 +29,55 @@ void testPrintNeighbors(const char *const neighborStr) {
   return;
 }
 
+void testSetNeighbor() {
+  // Create testRouters
+  struct Router routerArray[N] = {
+      {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
+
+  // Initialize the routers
+  for (int r = 0; r < N; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray[r].neighbors[i] = -1;
+    }
+  }
+
+  // Test positive
+  int success =
+      setNeighbor((unsigned char)42, (unsigned char)7, routerArray, N);
+  assert(success == EXIT_SUCCESS);
+  assert(routerArray[0].neighbors[0] == 7);
+
+  success = setNeighbor((unsigned char)42, (unsigned char)88, routerArray, N);
+  assert(success == EXIT_SUCCESS);
+  assert(routerArray[0].neighbors[1] == 88);
+
+  success = setNeighbor((unsigned char)42, (unsigned char)42, routerArray, N);
+  assert(success == EXIT_SUCCESS);
+  assert(routerArray[0].neighbors[2] == 42);
+
+  success = setNeighbor((unsigned char)7, (unsigned char)88, routerArray, N);
+  assert(success == EXIT_SUCCESS);
+  assert(routerArray[1].neighbors[0] == 88);
+
+  // This is allowed, even though the router doesn't exist
+  success = setNeighbor((unsigned char)42, (unsigned char)99, routerArray, N);
+  assert(success == EXIT_SUCCESS);
+  assert(routerArray[0].neighbors[3] == 99);
+
+  // Test negative
+  success = setNeighbor((unsigned char)99, (unsigned char)88, routerArray, N);
+  assert(success == EXIT_FAILURE);
+
+  // Fill the neighbors of the first router
+  for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+    routerArray[0].neighbors[i] = i;
+  }
+  success = setNeighbor((unsigned char)42, (unsigned char)7, routerArray, N);
+  assert(success == EXIT_FAILURE);
+
+  return;
+}
+
 void testFindRouterId() {
   // Create testRouters
   struct Router routerArray[N] = {
@@ -96,55 +145,6 @@ void testFindFreeNeighbor(const char *const arrayStr,
   return;
 }
 
-void testSetNeighbor() {
-  // Create testRouters
-  struct Router routerArray[N] = {
-      {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
-
-  // Initialize the routers
-  for (int r = 0; r < N; ++r) {
-    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
-      routerArray[r].neighbors[i] = -1;
-    }
-  }
-
-  // Test positive
-  int success =
-      setNeighbor((unsigned char)42, (unsigned char)7, routerArray, N);
-  assert(success == EXIT_SUCCESS);
-  assert(routerArray[0].neighbors[0] == 7);
-
-  success = setNeighbor((unsigned char)42, (unsigned char)88, routerArray, N);
-  assert(success == EXIT_SUCCESS);
-  assert(routerArray[0].neighbors[1] == 88);
-
-  success = setNeighbor((unsigned char)42, (unsigned char)42, routerArray, N);
-  assert(success == EXIT_SUCCESS);
-  assert(routerArray[0].neighbors[2] == 42);
-
-  success = setNeighbor((unsigned char)7, (unsigned char)88, routerArray, N);
-  assert(success == EXIT_SUCCESS);
-  assert(routerArray[1].neighbors[0] == 88);
-
-  // This is allowed, even though the router doesn't exist
-  success = setNeighbor((unsigned char)42, (unsigned char)99, routerArray, N);
-  assert(success == EXIT_SUCCESS);
-  assert(routerArray[0].neighbors[3] == 99);
-
-  // Test negative
-  success = setNeighbor((unsigned char)99, (unsigned char)88, routerArray, N);
-  assert(success == EXIT_FAILURE);
-
-  // Fill the neighbors of the first router
-  for (int i = 0; i < MAX_NEIGHBORS; ++i) {
-    routerArray[0].neighbors[i] = i;
-  }
-  success = setNeighbor((unsigned char)42, (unsigned char)7, routerArray, N);
-  assert(success == EXIT_FAILURE);
-
-  return;
-}
-
 int main(int argc, char **argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -158,12 +158,12 @@ int main(int argc, char **argv) {
 
   if (strcmp(argv[1], "printNeighbors") == 0) {
     testPrintNeighbors(argv[2]);
+  } else if (strcmp(argv[1], "setNeighbor") == 0) {
+    testSetNeighbor();
   } else if (strcmp(argv[1], "findRouterId") == 0) {
     testFindRouterId();
   } else if (strcmp(argv[1], "findFreeNeighbor") == 0) {
     testFindFreeNeighbor(argv[2], argv[3]);
-  } else if (strcmp(argv[1], "setNeighbor") == 0) {
-    testSetNeighbor();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }
