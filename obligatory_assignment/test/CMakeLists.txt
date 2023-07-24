@@ -60,7 +60,7 @@ do_test(NAME test_router NO 9 ARGS "findFreeNeighbor" "0,1,2,3,4,5,6,7,8,9" "-1"
 do_test(NAME test_router NO 10 ARGS "findFreeNeighbor" "x" "0" EXPECTED "Success\n")
 
 # setNeighbor
-do_test(NAME test_router NO 11 ARGS "setNeighbor" EXPECTED "Could not set the neighbor as the routerId was not found\nCould not set the neighbor as a free neighbor of routerId 42 was not found\n"
+do_test(NAME test_router NO 11 ARGS "setNeighbor" EXPECTED "Could not find routerId 99 in routerArray\nCould not set the neighbor as the routerId was not found\nCould not set the neighbor as a free neighbor of routerId 42 was not found\n"
 )
 
 # Test utils

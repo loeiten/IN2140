@@ -8,6 +8,8 @@
 #include "../include/router.h"  // for findRouterId, printNeighbors, Router
 #include "include/helpers.h"    // for strToIntArray
 
+#define N 3
+
 void testPrintNeighbors(const char *const neighborStr) {
   // Initialize the neighbors
   int neighbors[MAX_NEIGHBORS];
@@ -29,8 +31,7 @@ void testPrintNeighbors(const char *const neighborStr) {
 
 void testFindRouterId() {
   // Create testRouters
-  unsigned int N = 3;
-  struct Router routerArray[3] = {
+  struct Router routerArray[N] = {
       {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
 
   int hitIdx;
@@ -97,7 +98,6 @@ void testFindFreeNeighbor(const char *const arrayStr,
 
 void testSetNeighbor() {
   // Create testRouters
-  const unsigned int N = 3;
   struct Router routerArray[N] = {
       {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
 

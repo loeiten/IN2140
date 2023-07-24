@@ -57,7 +57,7 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
 
   // Read the neighbors
   size_t pairNumber = 0;
-  success = readNeighbors(fp, routerArray, *N, &pairNumber);
+  success = readAndSetNeighbors(fp, *routerArray, *N, &pairNumber);
   if (success != EXIT_SUCCESS) {
     fclose(fp);
     fprintf(stderr, "Failed to get neighbor from pair %zu in %s\n", pairNumber,
@@ -144,8 +144,8 @@ int readRouter(FILE* fp, struct Router* router) {
   return EXIT_SUCCESS;
 }
 
-int readNeighbors(FILE* fp, struct Router* const* const routerArray,
-                  unsigned int const N, size_t* pairNumber) {
+int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
+                        unsigned int const N, size_t* pairNumber) {
   size_t nItems = 1;
   size_t nBytes = 1;  // Given in the assignment
 

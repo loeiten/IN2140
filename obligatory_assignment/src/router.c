@@ -96,7 +96,7 @@ int findRouterId(const struct Router* const routerArray, const unsigned int N,
     }
   }
   if (*hitIdx == -1) {
-    fprintf(stderr, "Could not find routerId %d in routerArray", routerId);
+    fprintf(stderr, "Could not find routerId %d in routerArray\n", routerId);
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
