@@ -1,29 +1,30 @@
 # Copy the test data
 set(DATA_DIR "data")
 file(GLOB data_files "${DATA_DIR}/*")
+
 foreach(data_file ${data_files})
     get_filename_component(cur_file ${data_file} NAME)
     file(COPY ${data_file}
-         DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}")
+        DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/${DATA_DIR}")
 endforeach(data_file ${text_files})
 
 # Make a binary of the tests
 add_executable(test_binary_file
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/binary_file.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c"  # For setNeighbors
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"  # For printRouter
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c" # For setNeighbors
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For printRouter
     "test_binary_file.c"
-    )
+)
 add_executable(test_router
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"  # For printRouter
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For printRouter
     "src/helpers.c"
     "test_router.c"
-    )
+)
 add_executable(test_utils
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c"
     "test_utils.c"
-    )
+)
 
 # Add includes
 target_include_directories(test_binary_file
@@ -47,14 +48,20 @@ do_test(NAME test_router NO 1 ARGS "printNeighbors" "1,2,3" EXPECTED "Neighbors:
 do_test(NAME test_router NO 2 ARGS "printNeighbors" "2,1,3" EXPECTED "Neighbors: \\[2, 1, 3\\]\n")
 do_test(NAME test_router NO 3 ARGS "printNeighbors" "" EXPECTED "Neighbors: \\[\\]\n")
 do_test(NAME test_router NO 4 ARGS "printNeighbors" "92,105" EXPECTED "Neighbors: \\[92, 105\\]\n")
+
 # findRouterId
 do_test(NAME test_router NO 5 ARGS "findRouterId" EXPECTED "Could not find routerId 100 in routerArray\n")
+
 # findFreeNeighbor
 do_test(NAME test_router NO 6 ARGS "findFreeNeighbor" "9" "1" EXPECTED "Success\n")
 do_test(NAME test_router NO 7 ARGS "findFreeNeighbor" "4,7" "2" EXPECTED "Success\n")
 do_test(NAME test_router NO 8 ARGS "findFreeNeighbor" "4,7,95" "3" EXPECTED "Success\n")
 do_test(NAME test_router NO 9 ARGS "findFreeNeighbor" "0,1,2,3,4,5,6,7,8,9" "-1" EXPECTED "Success\n")
 do_test(NAME test_router NO 10 ARGS "findFreeNeighbor" "x" "0" EXPECTED "Success\n")
+
+# setNeighbor
+do_test(NAME test_router NO 11 ARGS "setNeighbor" EXPECTED "Could not set the neighbor as the routerId was not found\nCould not set the neighbor as a free neighbor of routerId 42 was not found\n"
+)
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")

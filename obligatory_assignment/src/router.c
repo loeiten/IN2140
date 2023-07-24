@@ -60,10 +60,10 @@ void printNeighbors(const int* const neighbors) {
 }
 
 int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
-                struct Router* const* const routerArray, unsigned int const N) {
+                struct Router* const routerArray, unsigned int const N) {
   // Find the router which we will update the neighbor with
   int routerIdx;
-  int success = findRouterId(*routerArray, N, fromRouter, &routerIdx);
+  int success = findRouterId(routerArray, N, fromRouter, &routerIdx);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Could not set the neighbor as the routerId was not found\n");
@@ -72,7 +72,7 @@ int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
 
   // Find the first free index
   int neighborIdx;
-  success = findFreeNeighbor(&((*routerArray)[routerIdx]), &neighborIdx);
+  success = findFreeNeighbor(&(routerArray[routerIdx]), &neighborIdx);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Could not set the neighbor as a free neighbor of routerId %d was "
@@ -82,7 +82,7 @@ int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
   }
 
   // Set the neighbor
-  routerArray[routerIdx]->neighbors[neighborIdx] = toRouter;
+  routerArray[routerIdx].neighbors[neighborIdx] = (int)toRouter;
   return EXIT_SUCCESS;
 }
 

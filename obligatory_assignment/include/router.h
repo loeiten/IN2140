@@ -18,9 +18,8 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId);
 void printNeighbors(const int* const neighbors);
 
-// FIXME: Constness and pointer to routerArray
 int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
-                struct Router* const* const routerArray, unsigned int const N);
+                struct Router* const routerArray, unsigned int const N);
 
 int findRouterId(const struct Router* const routerArray, const unsigned int N,
                  const int routerId, int* const hitIdx);
