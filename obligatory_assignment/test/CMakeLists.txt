@@ -12,12 +12,19 @@ endforeach(data_file ${text_files})
 add_executable(test_binary_file
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/binary_file.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c" # For setNeighbors
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For printRouter
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For getBinaryString
     "test_binary_file.c"
+)
+add_executable(test_command
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/command.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/dynamic_memory.c" # For freeCommandStrCpy
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c" # For printRouter
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For getBinaryString
+    "test_command.c"
 )
 add_executable(test_router
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For printRouter
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For getBinaryString
     "src/helpers.c"
     "test_router.c"
 )
@@ -30,6 +37,9 @@ add_executable(test_utils
 target_include_directories(test_binary_file
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
 )
+target_include_directories(test_command
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+)
 target_include_directories(test_router
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
@@ -40,7 +50,17 @@ target_include_directories(test_utils
 
 # Add the unit tests
 # Test binary file
+# readNewline
 do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
+
+# Test command
+# getCommand
+do_test(NAME test_command NO 1 ARGS "getCommand" "Foo Bar" "Foo" "1" EXPECTED "Bar\n")
+do_test(NAME test_command NO 2 ARGS "getCommand" "Foo Bar Baz" "Foo" "2" EXPECTED "Bar\nBaz\n")
+do_test(NAME test_command NO 3 ARGS "getCommand" "Foo Bar Baz FooBar" "Foo" "3" EXPECTED "Bar\nBaz\nFooBar\n")
+do_test(NAME test_command NO 4 ARGS "getCommand" "setModel 1 Bar" "setModel" "2" EXPECTED "1\nBar\n")
+do_test(NAME test_command NO 5 ARGS "getCommand" "setModel 82 Bar Baz FooBar" "setModel" "2" EXPECTED "82\nBar Baz FooBar\n")
+do_test(NAME test_command NO 6 ARGS "getCommand" "setModel 104 Quux" "setModel" "2" EXPECTED "104\nQuux\n")
 
 # Test router
 # printRouter

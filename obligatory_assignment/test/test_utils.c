@@ -1,4 +1,3 @@
-
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for fprintf, stderr

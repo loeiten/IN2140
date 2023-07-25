@@ -67,7 +67,7 @@ int getCommand(const char *const commandStr, char **const command,
 
   // Special case for set_model
   if (strcmp(*command, "setModel") == 0) {
-    // We know that this function only has two arguments
+    // We know that this function only has two argument
     *nArgs = 2;
 
     *args = (char **)malloc(*nArgs * sizeof(char *));
@@ -81,7 +81,7 @@ int getCommand(const char *const commandStr, char **const command,
     token = strtok_r(NULL, " ", &savePtr);
     strLen = strlen(token);
     (*args)[0] = (char *)malloc((strLen + 1) * sizeof(char));
-    if (args[0] == NULL) {
+    if ((*args)[0] == NULL) {
       freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args[0]: ");
       return EXIT_FAILURE;
@@ -96,13 +96,13 @@ int getCommand(const char *const commandStr, char **const command,
     // -2 for the spaces which are not captured in commandStr and command
     strLen = strlen(commandStr) - strlen(*command) - strLen - 2;
     (*args)[1] = (char *)malloc((strLen + 1) * sizeof(char));
-    if (args[1] == NULL) {
+    if ((*args)[1] == NULL) {
       freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args[1]: ");
       return EXIT_FAILURE;
     }
-    charWritten = snprintf((*args)[1], strLen, format,
-                           &commandStr[strlen(commandStr) - strLen]);
+    charWritten = snprintf((*args)[1], strLen + 1, format,
+                           &(commandStr[strlen(commandStr) - strLen]));
     if ((charWritten < 0) || (charWritten > strLen)) {
       freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[1]\n");
       return EXIT_FAILURE;
@@ -122,7 +122,7 @@ int getCommand(const char *const commandStr, char **const command,
     token = strtok_r(NULL, " ", &savePtr);
     strLen = strlen(token);
     (*args)[i] = (char *)malloc((strLen + 1) * sizeof(char));
-    if (args[i] == NULL) {
+    if ((*args)[i] == NULL) {
       freeCommandStrCpy(&commandStrCpy, "");
       perror("Could not allocate memory to args[i]: ");
       return EXIT_FAILURE;
