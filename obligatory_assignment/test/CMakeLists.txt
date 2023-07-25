@@ -53,6 +53,9 @@ target_include_directories(test_utils
 # readNewline
 do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
 
+# readRouter
+do_test(NAME test_binary_file NO 2 ARGS "readRouter" EXPECTED "Name: Foo Bar 42\nRouterId: 87\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 15\nFlag: 11110111 \\(247\\)\nNeighbors: \\[\\]\n")
+
 # Test command
 # getCommand
 do_test(NAME test_command NO 1 ARGS "getCommand" "Foo Bar" "Foo" "1" EXPECTED "Bar\n")

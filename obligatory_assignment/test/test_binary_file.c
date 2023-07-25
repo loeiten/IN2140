@@ -3,10 +3,11 @@
 #include <libgen.h>  // for basename
 #include <stddef.h>  // for NULL
 #include <stdio.h>   // for fprintf, fopen, stderr, FILE
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 #include <string.h>  // for strcmp, strerror
 
-#include "../include/binary_file.h"  // for readNewline
+#include "../include/binary_file.h"  // for readNewline, readRouter
+#include "../include/router.h"       // for printRouter, Router
 
 void testReadNewline() {
   // Test success
@@ -30,6 +31,26 @@ void testReadNewline() {
   assert(success == EXIT_FAILURE);
 }
 
+void testReadRouter() {
+  // Open file
+  const char* const binFile = "data/testRouter";
+  FILE* fp = fopen(binFile, "rb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
+  }
+  // Create the router
+  struct Router routerArray[1];
+
+  // Call readRouter
+  int success = readRouter(fp, &routerArray[0]);
+  assert(success == EXIT_SUCCESS);
+
+  // Print the result
+  printRouter(routerArray,
+              1,    // N
+              87);  // routerId
+}
+
 int main(int argc, char** argv) {
   if (argc != 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -43,6 +64,8 @@ int main(int argc, char** argv) {
 
   if (strcmp(argv[1], "readNewline") == 0) {
     testReadNewline();
+  } else if (strcmp(argv[1], "readRouter") == 0) {
+    testReadRouter();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }
