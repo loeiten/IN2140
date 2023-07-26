@@ -9,6 +9,8 @@
 #include "../include/binary_file.h"  // for readNewline, readRouter
 #include "../include/router.h"       // for printRouter, Router
 
+#define N 3
+
 void testReadNewline() {
   // Test success
   const char* const binFile = "data/newline";
@@ -51,6 +53,38 @@ void testReadRouter() {
               87);  // routerId
 }
 
+void testReadAndSetNeighbors() {
+  // Open file
+  const char* const binFile = "data/testNeighbors";
+  FILE* fp = fopen(binFile, "rb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
+  }
+
+  // Create testRouters
+  struct Router routerArray[N] = {
+      {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
+
+  // Initialize the routers
+  for (int r = 0; r < N; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray[r].neighbors[i] = -1;
+    }
+  }
+
+  size_t pairNumber = 0;
+  int success = readAndSetNeighbors(fp, routerArray, N, &pairNumber);
+  assert(success == EXIT_SUCCESS);
+  assert(pairNumber == 3);
+
+  // Print the neighbors
+  for (int r = 0; r < N; ++r) {
+    printNeighbors(routerArray[r].neighbors);
+  }
+
+  return;
+}
+
 int main(int argc, char** argv) {
   if (argc != 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -66,6 +100,8 @@ int main(int argc, char** argv) {
     testReadNewline();
   } else if (strcmp(argv[1], "readRouter") == 0) {
     testReadRouter();
+  } else if (strcmp(argv[1], "readAndSetNeighbors") == 0) {
+    testReadAndSetNeighbors();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

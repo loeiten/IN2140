@@ -56,6 +56,9 @@ do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline
 # readRouter
 do_test(NAME test_binary_file NO 2 ARGS "readRouter" EXPECTED "Name: Foo Bar 42\nRouterId: 87\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 15\nFlag: 11110111 \\(247\\)\nNeighbors: \\[\\]\n")
 
+# readAndSetNeighbors
+do_test(NAME test_binary_file NO 3 ARGS "readAndSetNeighbors" EXPECTED "Neighbors: \\[7\\]\nNeighbors: \\[\\]\nNeighbors: \\[42, 7\\]\n")
+
 # Test command
 # getCommand
 do_test(NAME test_command NO 1 ARGS "getCommand" "Foo Bar" "Foo" "1" EXPECTED "Bar\n")

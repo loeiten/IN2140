@@ -153,9 +153,6 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
   unsigned char toRouter;
 
   while ((!feof(fp)) && (!ferror(fp))) {
-    // Increment the pairNumber
-    ++pairNumber;
-
     // Read the newline
     if (readNewline(fp) != EXIT_SUCCESS) {
       return EXIT_FAILURE;
@@ -168,6 +165,9 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
     if (feof(fp)) {
       return EXIT_SUCCESS;
     }
+
+    // Increment the pairNumber
+    ++(*pairNumber);
 
     if ((readBytes < nItems) || ferror(fp)) {
       fprintf(stderr, "Failed to read the first neighbor: %s\n",
