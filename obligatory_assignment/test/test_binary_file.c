@@ -11,6 +11,23 @@
 
 #define N 3
 
+void testReadBinaryFile() {
+  struct Router* routerArray = NULL;
+  unsigned int n;
+  int success = readBinaryFile("../assignment_files/5_routers_fully_connected",
+                               &routerArray, &n);
+  assert(success == EXIT_SUCCESS);
+  printRouter(routerArray, n, 0);
+  printf("\n");
+  printRouter(routerArray, n, 1);
+  printf("\n");
+  printRouter(routerArray, n, 2);
+  printf("\n");
+  printRouter(routerArray, n, 3);
+  printf("\n");
+  printRouter(routerArray, n, 4);
+}
+
 void testReadNewline() {
   // Test success
   const char* const binFile = "data/newline";
@@ -96,7 +113,9 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if (strcmp(argv[1], "readNewline") == 0) {
+  if (strcmp(argv[1], "readBinaryFile") == 0) {
+    testReadBinaryFile();
+  } else if (strcmp(argv[1], "readNewline") == 0) {
     testReadNewline();
   } else if (strcmp(argv[1], "readRouter") == 0) {
     testReadRouter();

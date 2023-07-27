@@ -50,14 +50,17 @@ target_include_directories(test_utils
 
 # Add the unit tests
 # Test binary file
+# readBinaryFile
+do_test(NAME test_binary_file NO 1 ARGS "readBinaryFile" EXPECTED "Name: ZyXEL s4\nRouterId: 0\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 11\nFlag: 11010111 \\(215\\)\nNeighbors: \\[4, 2, 1, 3\\]\n\nName: Cisco o1000\nRouterId: 1\nActive: Yes\nWireless: No\n5 GHz: Yes\nModification number: 0\nFlag: 00000101 \\(5\\)\nNeighbors: \\[3, 2, 4, 0\\]\n\nName: Linksys j500\nRouterId: 2\nActive: Yes\nWireless: Yes\n5 GHz: No\nModification number: 8\nFlag: 00010011 \\(19\\)\nNeighbors: \\[4, 1, 3, 0\\]\n\nName: Juniper e30\nRouterId: 3\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 15\nFlag: 11110111 \\(247\\)\nNeighbors: \\[0, 2, 1, 4\\]\n\nName: Netgear y4\nRouterId: 4\nActive: No\nWireless: No\n5 GHz: No\nModification number: 2\nFlag: 01000000 \\(64\\)\nNeighbors: \\[2, 0, 1, 3\\]\n")
+
 # readNewline
-do_test(NAME test_binary_file NO 1 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
+do_test(NAME test_binary_file NO 2 ARGS "readNewline" EXPECTED "Expected newline, but got 'm'\nFailed to read from file: .*\n")
 
 # readRouter
-do_test(NAME test_binary_file NO 2 ARGS "readRouter" EXPECTED "Name: Foo Bar 42\nRouterId: 87\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 15\nFlag: 11110111 \\(247\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_binary_file NO 3 ARGS "readRouter" EXPECTED "Name: Foo Bar 42\nRouterId: 87\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 15\nFlag: 11110111 \\(247\\)\nNeighbors: \\[\\]\n")
 
 # readAndSetNeighbors
-do_test(NAME test_binary_file NO 3 ARGS "readAndSetNeighbors" EXPECTED "Neighbors: \\[7\\]\nNeighbors: \\[\\]\nNeighbors: \\[42, 7\\]\n")
+do_test(NAME test_binary_file NO 4 ARGS "readAndSetNeighbors" EXPECTED "Neighbors: \\[7\\]\nNeighbors: \\[\\]\nNeighbors: \\[42, 7\\]\n")
 
 # Test command
 # getCommand
