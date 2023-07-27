@@ -145,7 +145,7 @@ int readRouter(FILE* fp, struct Router* router) {
 }
 
 int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
-                        unsigned int const N, size_t* pairNumber) {
+                        const unsigned int N, size_t* pairNumber) {
   size_t nItems = 1;
   size_t nBytes = 1;  // Given in the assignment
 
@@ -183,7 +183,7 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
       return EXIT_FAILURE;
     }
 
-    int success = setNeighbor(fromRouter, toRouter, routerArray, N);
+    int success = setNeighbor(routerArray, N, fromRouter, toRouter);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Failed to store the neighbor in the array\n");
       return EXIT_FAILURE;

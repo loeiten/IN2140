@@ -62,36 +62,36 @@ void testSetNeighbor() {
 
   // Test positive
   int success =
-      setNeighbor((unsigned char)42, (unsigned char)7, routerArray, N);
+      setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)7);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[0] == 7);
 
-  success = setNeighbor((unsigned char)42, (unsigned char)88, routerArray, N);
+  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)88);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[1] == 88);
 
-  success = setNeighbor((unsigned char)42, (unsigned char)42, routerArray, N);
+  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)42);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[2] == 42);
 
-  success = setNeighbor((unsigned char)7, (unsigned char)88, routerArray, N);
+  success = setNeighbor(routerArray, N, (unsigned char)7, (unsigned char)88);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[1].neighbors[0] == 88);
 
   // This is allowed, even though the router doesn't exist
-  success = setNeighbor((unsigned char)42, (unsigned char)99, routerArray, N);
+  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)99);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[3] == 99);
 
   // Test negative
-  success = setNeighbor((unsigned char)99, (unsigned char)88, routerArray, N);
+  success = setNeighbor(routerArray, N, (unsigned char)99, (unsigned char)88);
   assert(success == EXIT_FAILURE);
 
   // Fill the neighbors of the first router
   for (int i = 0; i < MAX_NEIGHBORS; ++i) {
     routerArray[0].neighbors[i] = i;
   }
-  success = setNeighbor((unsigned char)42, (unsigned char)7, routerArray, N);
+  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)7);
   assert(success == EXIT_FAILURE);
 
   return;

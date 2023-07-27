@@ -18,8 +18,8 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId);
 void printNeighbors(const int* const neighbors);
 
-int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
-                struct Router* const routerArray, unsigned int const N);
+int setNeighbor(struct Router* const routerArray, const unsigned int N,
+                const unsigned char fromRouter, const unsigned char toRouter);
 
 int findRouterId(const struct Router* const routerArray, const unsigned int N,
                  const int routerId, int* const hitIdx);

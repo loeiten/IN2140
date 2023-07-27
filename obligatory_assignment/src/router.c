@@ -59,8 +59,8 @@ void printNeighbors(const int* const neighbors) {
   printf("]\n");
 }
 
-int setNeighbor(const unsigned char fromRouter, const unsigned char toRouter,
-                struct Router* const routerArray, unsigned int const N) {
+int setNeighbor(struct Router* const routerArray, const unsigned int N,
+                const unsigned char fromRouter, const unsigned char toRouter) {
   // Find the router which we will update the neighbor with
   int routerIdx;
   int success = findRouterId(routerArray, N, fromRouter, &routerIdx);
