@@ -106,6 +106,11 @@ do_test(NAME test_router NO 21 ARGS "findFreeNeighbor" "4,7,95" "3" EXPECTED "Su
 do_test(NAME test_router NO 22 ARGS "findFreeNeighbor" "0,1,2,3,4,5,6,7,8,9" "-1" EXPECTED "Success\n")
 do_test(NAME test_router NO 23 ARGS "findFreeNeighbor" "x" "0" EXPECTED "Success\n")
 
+# setFlag (sanity)
+do_test(NAME test_router NO 24 ARGS "setFlag" "0" "-1" "0" "1" EXPECTED "Flag can only be one of \\{0, 1, 2, 4\\}\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+
+# setFlag (normal)
+
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")
 do_test(NAME test_utils NO 2 ARGS "getBinaryString" "1" "00000001" EXPECTED "Success\n")

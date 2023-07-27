@@ -164,6 +164,32 @@ void testFindFreeNeighbor(const char* const arrayStr,
   return;
 }
 
+void testSetFlag(const char* routerIdStr, const char* flagStr,
+                 const char* valueStr, const char* expectedSuccessStr) {
+  // Setup test
+  int routerId = atoi(routerIdStr);
+  int flag = atoi(flagStr);
+  int value = atoi(valueStr);
+  int expectedSuccess = atoi(expectedSuccessStr);
+
+  // Create the test routers
+  struct Router routerArray[2] = {
+      {.producerModel = "Foo", .routerId = 0, .flag = 0},
+      {.producerModel = "Bar", .routerId = 1, .flag = 215}};
+
+  // Initialize the routers
+  for (int r = 0; r < 2; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray[r].neighbors[i] = -1;
+    }
+  }
+
+  // Test
+  int success = setFlag(routerArray, 2, routerId, flag, value);
+  assert(success == expectedSuccess);
+  printRouter(routerArray, 2, routerId);
+}
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -185,6 +211,8 @@ int main(int argc, char** argv) {
     testFindRouterId();
   } else if (strcmp(argv[1], "findFreeNeighbor") == 0) {
     testFindFreeNeighbor(argv[2], argv[3]);
+  } else if (strcmp(argv[1], "setFlag") == 0) {
+    testSetFlag(argv[2], argv[3], argv[4], argv[5]);
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }
