@@ -26,4 +26,7 @@ int findRouterId(const struct Router* const routerArray, const unsigned int N,
 
 int findFreeNeighbor(const struct Router* const router, int* const hitIdx);
 
+int setFlag(struct Router* const routerArray, const unsigned int N,
+            const int routerId, const int flag, const int value);
+
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_

@@ -112,3 +112,43 @@ int findFreeNeighbor(const struct Router* const router, int* const hitIdx) {
   }
   return EXIT_FAILURE;
 }
+
+int setFlag(struct Router* const routerArray, const unsigned int N,
+            const int routerId, const int flag, const int value) {
+  // Sanity checks
+  if ((flag < 0) || (flag > 4) || (flag == 3)) {
+    fprintf(stderr, "Flag can only be one of {0, 1, 2, 4}\n");
+    return EXIT_FAILURE;
+  }
+  if ((flag < 3) && ((value < 0) || (value > 1))) {
+    fprintf(stderr, "Value can only be {0, 1} for flag {0, 1, 2}\n");
+    return EXIT_FAILURE;
+  }
+  if ((value < 0) || (value > 15)) {
+    fprintf(stderr, "Value can only be in range [0, 15]\n");
+    return EXIT_FAILURE;
+  }
+
+  // Find the correct index
+  int hitIdx;
+  int success = findRouterId(routerArray, N, routerId, &hitIdx);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Could not set flag as routerId was not found");
+    return EXIT_FAILURE;
+  }
+
+  // Modify the flag
+  if (flag < 3) {
+    if (value == 1) {
+      // Set bit
+      routerArray[hitIdx].flag |= 1 << flag;
+    } else {
+      // Clear bit
+      routerArray[hitIdx].flag &= ~(1 << flag);
+    }
+  } else if (flag == 4) {
+    routerArray[hitIdx].flag += value << 4;
+  }
+
+  return EXIT_SUCCESS;
+}
