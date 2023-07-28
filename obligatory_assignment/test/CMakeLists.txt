@@ -107,9 +107,28 @@ do_test(NAME test_router NO 22 ARGS "findFreeNeighbor" "0,1,2,3,4,5,6,7,8,9" "-1
 do_test(NAME test_router NO 23 ARGS "findFreeNeighbor" "x" "0" EXPECTED "Success\n")
 
 # setFlag (sanity)
+# Args: routerId, flag, value, expected success
 do_test(NAME test_router NO 24 ARGS "setFlag" "0" "-1" "0" "1" EXPECTED "Flag can only be one of \\{0, 1, 2, 4\\}\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 25 ARGS "setFlag" "0" "5" "0" "1" EXPECTED "Flag can only be one of \\{0, 1, 2, 4\\}\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 26 ARGS "setFlag" "0" "3" "0" "1" EXPECTED "Flag can only be one of \\{0, 1, 2, 4\\}\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 27 ARGS "setFlag" "0" "0" "-1" "1" EXPECTED "Value can only be \\{0, 1\\} for flag \\{0, 1, 2\\}\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 28 ARGS "setFlag" "0" "0" "2" "1" EXPECTED "Value can only be \\{0, 1\\} for flag \\{0, 1, 2\\}\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 29 ARGS "setFlag" "0" "4" "-1" "1" EXPECTED "Value can only be in range \\[0, 15\\] for flag 4\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 30 ARGS "setFlag" "0" "4" "16" "1" EXPECTED "Value can only be in range \\[0, 15\\] for flag 4\nName: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
 
 # setFlag (normal)
+# Activity
+do_test(NAME test_router NO 31 ARGS "setFlag" "0" "0" "0" "0" EXPECTED "Name: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 0\nFlag: 00000000 \\(0\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 32 ARGS "setFlag" "1" "0" "0" "0" EXPECTED "Name: Bar\nRouterId: 1\nActive: No\nWireless: Yes\n5 GHz: Yes\nModification number: 0\nFlag: 11111110 \\(254\\)\nNeighbors: \\[\\]\n")
+
+# Wireless
+do_test(NAME test_router NO 33 ARGS "setFlag" "0" "1" "1" "0" EXPECTED "Name: Foo\nRouterId: 0\nActive: No\nWireless: Yes\n5 GHz: No\nModification number: 0\nFlag: 00000010 \\(2\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 34 ARGS "setFlag" "1" "1" "1" "0" EXPECTED "Name: Bar\nRouterId: 1\nActive: No\nWireless: Yes\n5 GHz: Yes\nModification number: 0\nFlag: 11111111 \\(255\\)\nNeighbors: \\[\\]\n")
+
+# Modification number
+do_test(NAME test_router NO 35 ARGS "setFlag" "0" "4" "7" "0" EXPECTED "Name: Foo\nRouterId: 0\nActive: No\nWireless: Yes\n5 GHz: No\nModification number: 7\nFlag: 11100000 \\(224\\)\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 36 ARGS "setFlag" "1" "4" "7" "0" EXPECTED "Name: Bar\nRouterId: 1\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 7\nFlag: 11101111 \\(239\\)\nNeighbors: \\[\\]\n")
+
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")

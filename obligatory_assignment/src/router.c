@@ -125,7 +125,7 @@ int setFlag(struct Router* const routerArray, const unsigned int N,
     return EXIT_FAILURE;
   }
   if ((value < 0) || (value > 15)) {
-    fprintf(stderr, "Value can only be in range [0, 15]\n");
+    fprintf(stderr, "Value can only be in range [0, 15] for flag 4\n");
     return EXIT_FAILURE;
   }
 
