@@ -4,7 +4,7 @@
 #define MAX_NEIGHBORS 10
 
 struct Router {
-  const unsigned char routerId;
+  unsigned char routerId;  // The routerId can change when we move during delete
   unsigned char flag;
   const char* producerModel;
   int neighbors[MAX_NEIGHBORS];  // Assignment specifies that a router can have
@@ -28,5 +28,8 @@ int findFreeNeighbor(const struct Router* const router, int* const hitIdx);
 
 int setFlag(struct Router* const routerArray, const unsigned int N,
             const int routerId, const int flag, const int value);
+
+int deleteRouter(struct Router* routerArray, unsigned int* const N,
+                 const int routerId);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
