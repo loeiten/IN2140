@@ -59,14 +59,13 @@ void printNeighbors(const int* const neighbors) {
   printf("]\n");
 }
 
-int setNeighbor(struct Router* const routerArray, const unsigned int N,
-                const unsigned char fromRouter, const unsigned char toRouter) {
+int addLink(struct Router* const routerArray, const unsigned int N,
+            const unsigned char fromRouter, const unsigned char toRouter) {
   // Find the router which we will update the neighbor with
   int routerIdx;
   int success = findRouterId(routerArray, N, fromRouter, &routerIdx);
   if (success != EXIT_SUCCESS) {
-    fprintf(stderr,
-            "Could not set the neighbor as the routerId was not found\n");
+    fprintf(stderr, "Could not add the link as the routerId was not found\n");
     return EXIT_FAILURE;
   }
 
@@ -75,7 +74,7 @@ int setNeighbor(struct Router* const routerArray, const unsigned int N,
   success = findFreeNeighbor(&(routerArray[routerIdx]), &neighborIdx);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
-            "Could not set the neighbor as a free neighbor of routerId %d was "
+            "Could not add the link as a free neighbor of routerId %d was "
             "not found\n",
             fromRouter);
     return EXIT_FAILURE;
@@ -133,7 +132,8 @@ int setFlag(struct Router* const routerArray, const unsigned int N,
   int hitIdx;
   int success = findRouterId(routerArray, N, routerId, &hitIdx);
   if (success != EXIT_SUCCESS) {
-    fprintf(stderr, "Could not set flag as routerId was not found");
+    fprintf(stderr, "Could not set the flag as routerId %d was not found\n",
+            routerId);
     return EXIT_FAILURE;
   }
 
@@ -147,7 +147,18 @@ int setFlag(struct Router* const routerArray, const unsigned int N,
       routerArray[hitIdx].flag &= ~(1 << flag);
     }
   } else if (flag == 4) {
-    routerArray[hitIdx].flag += value << 4;
+    // We must reverse the bits in the value as we are dealing with LSb 0
+    // numbering
+    int reversedValue = 0;
+    // Loop through each bit from least to most significant bit
+    for (int i = 0; i < 4; i++) {
+      // Extract the i-th bit of num and append it to reversedNum
+      reversedValue |= ((value >> i) & 1) << (3 - i);
+    }
+    // Mask any existing bits (do an OR with 0000 1111)
+    routerArray[hitIdx].flag &= 0x0F;
+    // Add the new bits
+    routerArray[hitIdx].flag += reversedValue << 4;
   }
 
   return EXIT_SUCCESS;

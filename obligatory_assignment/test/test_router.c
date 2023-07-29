@@ -61,37 +61,36 @@ void testSetNeighbor() {
   }
 
   // Test positive
-  int success =
-      setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)7);
+  int success = addLink(routerArray, N, (unsigned char)42, (unsigned char)7);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[0] == 7);
 
-  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)88);
+  success = addLink(routerArray, N, (unsigned char)42, (unsigned char)88);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[1] == 88);
 
-  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)42);
+  success = addLink(routerArray, N, (unsigned char)42, (unsigned char)42);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[2] == 42);
 
-  success = setNeighbor(routerArray, N, (unsigned char)7, (unsigned char)88);
+  success = addLink(routerArray, N, (unsigned char)7, (unsigned char)88);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[1].neighbors[0] == 88);
 
   // This is allowed, even though the router doesn't exist
-  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)99);
+  success = addLink(routerArray, N, (unsigned char)42, (unsigned char)99);
   assert(success == EXIT_SUCCESS);
   assert(routerArray[0].neighbors[3] == 99);
 
   // Test negative
-  success = setNeighbor(routerArray, N, (unsigned char)99, (unsigned char)88);
+  success = addLink(routerArray, N, (unsigned char)99, (unsigned char)88);
   assert(success == EXIT_FAILURE);
 
   // Fill the neighbors of the first router
   for (int i = 0; i < MAX_NEIGHBORS; ++i) {
     routerArray[0].neighbors[i] = i;
   }
-  success = setNeighbor(routerArray, N, (unsigned char)42, (unsigned char)7);
+  success = addLink(routerArray, N, (unsigned char)42, (unsigned char)7);
   assert(success == EXIT_FAILURE);
 
   return;
@@ -175,7 +174,7 @@ void testSetFlag(const char* routerIdStr, const char* flagStr,
   // Create the test routers
   struct Router routerArray[2] = {
       {.producerModel = "Foo", .routerId = 0, .flag = 0},
-      {.producerModel = "Bar", .routerId = 1, .flag = 215}};
+      {.producerModel = "Bar", .routerId = 1, .flag = 255}};
 
   // Initialize the routers
   for (int r = 0; r < 2; ++r) {
@@ -205,7 +204,7 @@ int main(int argc, char** argv) {
     testPrintRouter(argv[2], argv[3], argv[4], argv[5]);
   } else if (strcmp(argv[1], "printNeighbors") == 0) {
     testPrintNeighbors(argv[2]);
-  } else if (strcmp(argv[1], "setNeighbor") == 0) {
+  } else if (strcmp(argv[1], "addLink") == 0) {
     testSetNeighbor();
   } else if (strcmp(argv[1], "findRouterId") == 0) {
     testFindRouterId();

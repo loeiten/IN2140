@@ -5,7 +5,7 @@
 #include <string.h>     // for strerror
 #include <sys/errno.h>  // for errno
 
-#include "../include/router.h"  // for Router, setNeighbor, MAX_NEIGHBORS
+#include "../include/router.h"  // for Router, addLink, MAX_NEIGHBORS
 
 int readBinaryFile(const char* const binFile, struct Router** routerArray,
                    unsigned int* const N) {
@@ -183,7 +183,7 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
       return EXIT_FAILURE;
     }
 
-    int success = setNeighbor(routerArray, N, fromRouter, toRouter);
+    int success = addLink(routerArray, N, fromRouter, toRouter);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Failed to store the neighbor in the array\n");
       return EXIT_FAILURE;
