@@ -5,6 +5,7 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 #include <string.h>  // for strcmp
 
+#include "../include/dynamic_memory.h"  // for freeRouterArray
 #include "../include/router.h"  // for findRouterId, printNeighbors, Router
 #include "include/helpers.h"    // for strToIntArray
 
@@ -189,6 +190,76 @@ void testSetFlag(const char* routerIdStr, const char* flagStr,
   printRouter(routerArray, 2, routerId);
 }
 
+void testDeleteRouter(const char* const routerIdStr) {
+  // Setup test
+  int routerId = atoi(routerIdStr);
+  unsigned int n = 4;
+
+  // Malloc the test routers
+  struct Router* routerArray =
+      (struct Router*)malloc(n * sizeof(struct Router));
+  if (routerArray == NULL) {
+    perror("Could not allocate memory to routerArray: ");
+    return;
+  }
+  // Fill the routers
+  const char* producerModels[4] = {"Foo", "Bar", "Baz", "FooBar"};
+  for (int i = 0; i < n; ++i) {
+    routerArray[i].routerId = i;
+    // Dynamically allocate the producerModels
+    int length = snprintf(NULL, 0, "%s", producerModels[i]);
+    char* producerModel = NULL;
+    producerModel = malloc(length + 1);
+    if (producerModel == NULL) {
+      perror("Could not allocate memory to producerModel in the testRouters: ");
+      freeRouterArray(&routerArray, n);
+      return;
+    }
+    snprintf(producerModel, length + 1, "%s", producerModels[i]);
+    routerArray[i].producerModel = producerModel;
+  }
+
+  // Initialize the neighbors
+  for (int r = 0; r < n; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray[r].neighbors[i] = -1;
+    }
+  }
+
+  // Connect
+  routerArray[0].neighbors[0] = 2;
+  routerArray[0].neighbors[1] = 1;
+  routerArray[0].neighbors[2] = 3;
+
+  routerArray[1].neighbors[0] = 87;
+  routerArray[1].neighbors[1] = 1;
+  routerArray[1].neighbors[2] = 0;
+  routerArray[1].neighbors[3] = 4;
+  routerArray[1].neighbors[4] = 5;
+  routerArray[1].neighbors[5] = 6;
+  routerArray[1].neighbors[6] = 7;
+  routerArray[1].neighbors[7] = 8;
+  routerArray[1].neighbors[8] = 9;
+  routerArray[1].neighbors[9] = 3;
+
+  routerArray[2].neighbors[0] = 0;
+
+  routerArray[3].neighbors[0] = 0;
+  routerArray[3].neighbors[1] = 1;
+  routerArray[3].neighbors[2] = 2;
+
+  // Delete the router
+  int success = deleteRouter(&routerArray, &n, routerId);
+  assert(success == EXIT_SUCCESS);
+  assert(n == 3);
+  printNeighbors(routerArray[0].neighbors);
+  printNeighbors(routerArray[1].neighbors);
+  printNeighbors(routerArray[2].neighbors);
+
+  // Clean-up
+  freeRouterArray(&routerArray, n);
+}
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -212,6 +283,8 @@ int main(int argc, char** argv) {
     testFindFreeNeighbor(argv[2], argv[3]);
   } else if (strcmp(argv[1], "setFlag") == 0) {
     testSetFlag(argv[2], argv[3], argv[4], argv[5]);
+  } else if (strcmp(argv[1], "deleteRouter") == 0) {
+    testDeleteRouter(argv[2]);
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

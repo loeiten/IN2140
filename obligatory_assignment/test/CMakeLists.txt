@@ -25,6 +25,7 @@ add_executable(test_command
 add_executable(test_router
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For getBinaryString
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/dynamic_memory.c" # For freeRouterArray
     "src/helpers.c"
     "test_router.c"
 )
@@ -129,6 +130,12 @@ do_test(NAME test_router NO 35 ARGS "setFlag" "1" "1" "1" "0" EXPECTED "Name: Ba
 # Modification number
 do_test(NAME test_router NO 36 ARGS "setFlag" "0" "4" "7" "0" EXPECTED "Name: Foo\nRouterId: 0\nActive: No\nWireless: No\n5 GHz: No\nModification number: 7\nFlag: 11100000 \\(224\\)\nNeighbors: \\[\\]\n")
 do_test(NAME test_router NO 37 ARGS "setFlag" "1" "4" "7" "0" EXPECTED "Name: Bar\nRouterId: 1\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 7\nFlag: 11101111 \\(239\\)\nNeighbors: \\[\\]\n")
+
+# deleteRouter
+do_test(NAME test_router NO 38 ARGS "deleteRouter" "0" EXPECTED "Neighbors: \\[2, 1\\]\nNeighbors: \\[87, 1, 3, 4, 5, 6, 7, 8, 9\\]\nNeighbors: \\[\\]\n")
+do_test(NAME test_router NO 39 ARGS "deleteRouter" "1" EXPECTED "Neighbors: \\[2, 3\\]\nNeighbors: \\[0, 2\\]\nNeighbors: \\[0\\]\n")
+do_test(NAME test_router NO 40 ARGS "deleteRouter" "2" EXPECTED "Neighbors: \\[3, 1\\]\nNeighbors: \\[87, 1, 0, 4, 5, 6, 7, 8, 9, 3\\]\nNeighbors: \\[0, 1\\]\n")
+do_test(NAME test_router NO 41 ARGS "deleteRouter" "3" EXPECTED "Neighbors: \\[2, 1\\]\nNeighbors: \\[87, 1, 0, 4, 5, 6, 7, 8, 9\\]\nNeighbors: \\[0\\]\n")
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")

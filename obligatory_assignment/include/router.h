@@ -29,7 +29,7 @@ int findFreeNeighbor(const struct Router* const router, int* const hitIdx);
 int setFlag(struct Router* const routerArray, const unsigned int N,
             const int routerId, const int flag, const int value);
 
-int deleteRouter(struct Router* routerArray, unsigned int* const N,
+int deleteRouter(struct Router** routerArray, unsigned int* const N,
                  const int routerId);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_

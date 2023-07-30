@@ -164,11 +164,11 @@ int setFlag(struct Router* const routerArray, const unsigned int N,
   return EXIT_SUCCESS;
 }
 
-int deleteRouter(struct Router* routerArray, unsigned int* const N,
+int deleteRouter(struct Router** routerArray, unsigned int* const N,
                  const int routerId) {
   // Find the correct index
   int hitIdx;
-  int success = findRouterId(routerArray, *N, routerId, &hitIdx);
+  int success = findRouterId(*routerArray, *N, routerId, &hitIdx);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Could not delete the router as routerId %d was not found\n",
@@ -179,31 +179,38 @@ int deleteRouter(struct Router* routerArray, unsigned int* const N,
   // Delete all references
   for (int r = 0; r < *N; ++r) {
     for (int i = 0; i < MAX_NEIGHBORS; ++i) {
-      if (routerArray[r].neighbors[i] == -1) {
+      if ((*routerArray)[r].neighbors[i] == -1) {
         break;
       }
-      if (routerArray[r].neighbors[i] == routerId) {
-        if (((i == 0) && (routerArray[r].neighbors[1] == -1)) ||
+      if ((*routerArray)[r].neighbors[i] == routerId) {
+        if (((i == 0) && ((*routerArray)[r].neighbors[1] == -1)) ||
             (i == (MAX_NEIGHBORS - 1))) {
           // If this is the only or last of the neighbors:
           // Simply delete the reference
-          routerArray[r].neighbors[i] = -1;
+          (*routerArray)[r].neighbors[i] = -1;
         } else {
           // Else:
           // Copy the last neighbour to the "hole" and set the "hole" to -1
           int lastNeighbor;
-          success = findFreeNeighbor(&(routerArray[r]), &lastNeighbor);
-          if (success != EXIT_SUCCESS) {
-            fprintf(stderr,
-                    "Deletion of router with routerId %d failed as "
-                    "findFreeNeighbor failed for router with routerId %c\n",
-                    routerId, routerArray[r].routerId);
-            return EXIT_FAILURE;
+          if ((*routerArray)[r].neighbors[MAX_NEIGHBORS - 1] == -1) {
+            success = findFreeNeighbor(&((*routerArray)[r]), &lastNeighbor);
+            if (success != EXIT_SUCCESS) {
+              fprintf(stderr,
+                      "Deletion of router with routerId %d failed as "
+                      "findFreeNeighbor failed for router with routerId %d\n",
+                      routerId, (int)(*routerArray)[r].routerId);
+              return EXIT_FAILURE;
+            }
+          } else {
+            // All the neighbors are filled
+            lastNeighbor = MAX_NEIGHBORS;
           }
+
           // Decrement as findFreeNeighbor finds the first available neighbor
           --lastNeighbor;
-          routerArray[r].neighbors[i] = routerArray[r].neighbors[lastNeighbor];
-          routerArray[r].neighbors[lastNeighbor] = -1;
+          (*routerArray)[r].neighbors[i] =
+              (*routerArray)[r].neighbors[lastNeighbor];
+          (*routerArray)[r].neighbors[lastNeighbor] = -1;
         }
         break;
       }
@@ -214,25 +221,26 @@ int deleteRouter(struct Router* routerArray, unsigned int* const N,
   --(*N);
 
   // Free the dynamically created string
-  free((void*)routerArray[hitIdx].producerModel);
+  free((void*)(*routerArray)[hitIdx].producerModel);
+  (*routerArray)[hitIdx].producerModel = NULL;
 
   // Delete the router itself and fill the "hole" in the array
-  if (((hitIdx == 0) && (*N == 1)) || (hitIdx == (*N - 1))) {
-    // The router is either the only or the last in the routerArray
-    routerArray =
-        (struct Router*)realloc(routerArray, (*N) * sizeof(struct Router));
-  } else {
-    // Move the last array to the "hole"
-    routerArray[hitIdx] = routerArray[(*N) - 1];
-    // Reallocate the array
-    routerArray =
-        (struct Router*)realloc(routerArray, (*N) * sizeof(struct Router));
+  if (!(((hitIdx == 0) && (*N == 1)) || (hitIdx == (*N)))) {
+    // The hitIdx is not the only in the array, nor is it the last element
+    // Hence, we must move the last element to the "hole"
+    (*routerArray)[hitIdx] = (*routerArray)[(*N)];
   }
+  // Reallocate the array
+  struct Router* tmp =
+      (struct Router*)realloc(*routerArray, (*N) * sizeof(struct Router));
 
-  if (routerArray == NULL) {
+  if (tmp == NULL) {
     perror("Could not reallocate routerArray during deletion: ");
     return EXIT_FAILURE;
   }
+
+  // Assign router array to the temporary variable
+  *routerArray = tmp;
 
   return EXIT_SUCCESS;
 }
