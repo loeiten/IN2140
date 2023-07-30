@@ -29,6 +29,10 @@ int findFreeNeighbor(const struct Router* const router, int* const hitIdx);
 int setFlag(struct Router* const routerArray, const unsigned int N,
             const int routerId, const int flag, const int value);
 
+// NOTE: Instead of moving every element, this function copies the last element
+//       of the array into the "hole" created by deletion
+//       This can be beneficial if the array is big and one of the first
+//       elements are being deleted
 int deleteRouter(struct Router** routerArray, unsigned int* const N,
                  const int routerId);
 

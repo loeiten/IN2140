@@ -87,6 +87,11 @@ int addLink(struct Router* const routerArray, const unsigned int N,
 
 int findRouterId(const struct Router* const routerArray, const unsigned int N,
                  const int routerId, int* const hitIdx) {
+  // NOTE: The current algorithm is an O(N) algorithm
+  //       If there are a lot of searches it can be improved by inputting a
+  //       sorted array, and use a binary search for O(log N)
+  //       However, the best possible case would be to use a hash-map, in which
+  //       The complexity would be O(1)
   *hitIdx = -1;
   for (size_t i = 0; i < N; ++i) {
     if (((int)routerArray[i].routerId) == routerId) {
@@ -231,6 +236,10 @@ int deleteRouter(struct Router** routerArray, unsigned int* const N,
     (*routerArray)[hitIdx] = (*routerArray)[(*N)];
   }
   // Reallocate the array
+  // NOTE: Reallocate is not strictly necessary, and includes copying of
+  //       elements
+  //       When deleting, reallocation can be useful if a lot of element are
+  //       being deleted
   struct Router* tmp =
       (struct Router*)realloc(*routerArray, (*N) * sizeof(struct Router));
 
