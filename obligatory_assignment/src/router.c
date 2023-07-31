@@ -3,7 +3,8 @@
 #include <stdio.h>   // for fprintf, stderr, printf, size_t, NULL
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE, strtol
 
-#include "../include/utils.h"  // for getBinaryString
+#include "../include/dynamic_memory.h"  // for
+#include "../include/utils.h"           // for getBinaryString
 
 int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId) {
@@ -250,6 +251,42 @@ int deleteRouter(struct Router** routerArray, unsigned int* const N,
 
   // Assign router array to the temporary variable
   *routerArray = tmp;
+
+  return EXIT_SUCCESS;
+}
+
+int setModel(struct Router** routerArray, unsigned int const N,
+             const int routerId, const char* const name) {
+  // Find the correct index
+  int hitIdx;
+  int success = findRouterId(*routerArray, N, routerId, &hitIdx);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr,
+            "Could not set the model as the routerId %d was not found\n",
+            routerId);
+    return EXIT_FAILURE;
+  }
+
+  // Reallocate the string
+  // Dynamically allocate the producerModels
+  int length = snprintf(NULL, 0, "%s", name);
+  char* producerModel = NULL;
+  if (routerArray[hitIdx]->producerModel == NULL) {
+    producerModel = malloc(length + 1);
+    if (producerModel == NULL) {
+      perror("Could not allocate memory to producerModel in the setModel: ");
+      return EXIT_FAILURE;
+    }
+  } else {
+    producerModel = realloc((void*)routerArray[hitIdx]->producerModel,
+                            (length + 1) * sizeof(char));
+    if (producerModel == NULL) {
+      perror("Could not reallocate memory to producerModel in the setModel: ");
+      return EXIT_FAILURE;
+    }
+  }
+  snprintf(producerModel, length + 1, "%s", name);
+  routerArray[hitIdx]->producerModel = producerModel;
 
   return EXIT_SUCCESS;
 }

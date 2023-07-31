@@ -36,4 +36,7 @@ int setFlag(struct Router* const routerArray, const unsigned int N,
 int deleteRouter(struct Router** routerArray, unsigned int* const N,
                  const int routerId);
 
+int setModel(struct Router** routerArray, unsigned int const N,
+             const int routerId, const char* const name);
+
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
