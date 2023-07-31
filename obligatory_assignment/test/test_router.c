@@ -99,7 +99,7 @@ void testSetNeighbor() {
 
 void testFindRouterId() {
   // Create testRouters
-  struct Router routerArray[N] = {
+  const struct Router routerArray[N] = {
       {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
 
   int hitIdx;
@@ -260,6 +260,25 @@ void testDeleteRouter(const char* const routerIdStr) {
   freeRouterArray(&routerArray, n);
 }
 
+void testSetName() {
+  // Malloc the test routers
+  struct Router* routerArray[1];
+
+  // Fill the routers
+  const char* producerModels[4] = {"Foo", "FooBar", "Baz", "Quux"};
+  routerArray[0]->routerId = 0;
+  routerArray[0]->producerModel = NULL;
+
+  // Dynamically allocate the producerModels
+  for (int i = 0; i < 4; ++i) {
+    int success = setModel(routerArray, 1, 0, producerModels[i]);
+    assert(success == EXIT_SUCCESS);
+    assert(strcmp(routerArray[0]->producerModel, producerModels[i]) == 0);
+  }
+
+  printf("Success\n");
+}
+
 int main(int argc, char** argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -285,6 +304,8 @@ int main(int argc, char** argv) {
     testSetFlag(argv[2], argv[3], argv[4], argv[5]);
   } else if (strcmp(argv[1], "deleteRouter") == 0) {
     testDeleteRouter(argv[2]);
+  } else if (strcmp(argv[1], "setName") == 0) {
+    testSetName();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

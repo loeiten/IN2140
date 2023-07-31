@@ -137,6 +137,10 @@ do_test(NAME test_router NO 39 ARGS "deleteRouter" "1" EXPECTED "Neighbors: \\[2
 do_test(NAME test_router NO 40 ARGS "deleteRouter" "2" EXPECTED "Neighbors: \\[3, 1\\]\nNeighbors: \\[87, 1, 0, 4, 5, 6, 7, 8, 9, 3\\]\nNeighbors: \\[0, 1\\]\n")
 do_test(NAME test_router NO 41 ARGS "deleteRouter" "3" EXPECTED "Neighbors: \\[2, 1\\]\nNeighbors: \\[87, 1, 0, 4, 5, 6, 7, 8, 9\\]\nNeighbors: \\[0\\]\n")
 
+# setName
+do_test(NAME test_router NO 42 ARGS "setName" EXPECTED "Success\n")
+
+
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")
 do_test(NAME test_utils NO 2 ARGS "getBinaryString" "1" "00000001" EXPECTED "Success\n")
