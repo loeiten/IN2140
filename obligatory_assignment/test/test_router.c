@@ -9,7 +9,7 @@
 #include "../include/router.h"  // for findRouterId, printNeighbors, Router
 #include "include/helpers.h"    // for strToIntArray
 
-#define N 3
+#define N (3)
 
 void testPrintRouter(const char* const routerIdStr, const char* const flagStr,
                      const char* const producerModel,

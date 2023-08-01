@@ -4,7 +4,7 @@
 #include <stdio.h>   // for printf, FILE
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 
-#define BUFFER_SIZE 65536  // 2^16
+#define BUFFER_SIZE (65536)  // 2^16
 
 int copyFile(const char* src, const char* dst) {
   // Based on

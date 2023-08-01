@@ -1,8 +1,8 @@
 #ifndef UTILS_INCLUDE_PERSON_H_
 #define UTILS_INCLUDE_PERSON_H_
 
-#define MAX_NAME_LEN 30
-#define MAX_AGE 200
+#define MAX_NAME_LEN (30)
+#define MAX_AGE (200)
 
 struct Person {
   // Without the specified buffer size, we would've need dynamic allocation

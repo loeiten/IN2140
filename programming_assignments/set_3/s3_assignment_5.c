@@ -12,7 +12,7 @@
 
 #include "../../utils/include/file_operations.h"
 
-#define MAX_LEN 100
+#define MAX_LEN (100)
 
 int printEverySecondLine(FILE* fp, const int lines) {
   char* line = NULL;

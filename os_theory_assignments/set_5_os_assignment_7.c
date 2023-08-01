@@ -7,7 +7,7 @@
 #include <sys/wait.h>  // for wait
 #include <unistd.h>    // for fork
 
-#define MAXLEN 100
+#define MAXLEN (100)
 
 // This is the structure the arguments of msgsnd and msgrcv takes
 struct msgBuf {

@@ -3,7 +3,7 @@
 #include <sys/wait.h>  // for wait
 #include <unistd.h>    // for fork, sleep, pid_t, NULL
 
-#define BUFFER_SIZE 8  // Max 8 bytes for a 64 bit number
+#define BUFFER_SIZE (8)  // Max 8 bytes for a 64 bit number
 
 int sumFromTo(const int from, const int to) {
   int curSum = 0;

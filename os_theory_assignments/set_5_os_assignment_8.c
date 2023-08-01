@@ -7,7 +7,7 @@
 #include <sys/wait.h>  // for wait
 #include <unistd.h>    // for fork
 
-#define SHMSZ 100
+#define SHMSZ (100)
 
 int main(int argc, char **argv) {
   if (argc != 2) {

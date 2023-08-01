@@ -25,19 +25,19 @@
  */
 
 #include <arpa/inet.h>   // for htons
-#include <netdb.h>       // for getnameinfo, NI_MAXHOST, NI_MAXSERV, NI_...
+#include <errno.h>       // for errno
+#include <netdb.h>       // for gai_strerror, getnameinfo, NI_MAXHOST
 #include <netinet/in.h>  // for sockaddr_in, INADDR_ANY, IPPROTO_TCP
 #include <stdio.h>       // for printf, snprintf
 #include <stdlib.h>      // for EXIT_FAILURE, atoi, free, EXIT_SUCCESS
 #include <string.h>      // for strerror, strlen
 #include <strings.h>     // for bzero
-#include <sys/errno.h>   // for errno
 #include <sys/socket.h>  // for accept, bind, listen, socket, AF_INET
 #include <unistd.h>      // for close, read, write, NULL
 
 #include "include/helper.h"  // for readLine
 
-#define BUFF_LEN 1024
+#define BUFF_LEN (1024)
 
 int main() {
   // Declaration of structures

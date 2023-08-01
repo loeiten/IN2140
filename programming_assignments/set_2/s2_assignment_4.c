@@ -14,7 +14,7 @@
 #include <stdio.h>   // for printf, fclose, fopen, NULL, ferror, fputs, fread
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, malloc
 
-#define BUFFER_SIZE 1024
+#define BUFFER_SIZE (1024)
 
 int writeFile(const char* name, const int age, const char* path) {
   // Open the file for writing

@@ -9,7 +9,7 @@
 #include "../include/binary_file.h"  // for readNewline, readRouter
 #include "../include/router.h"       // for printRouter, Router
 
-#define N 3
+#define N (3)
 
 void testReadBinaryFile() {
   struct Router* routerArray = NULL;

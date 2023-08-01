@@ -1,7 +1,7 @@
 #ifndef OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
 
-#define MAX_NEIGHBORS 10
+#define MAX_NEIGHBORS (10)
 
 struct Router {
   unsigned char routerId;  // The routerId can change when we move during delete
