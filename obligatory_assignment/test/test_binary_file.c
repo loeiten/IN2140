@@ -18,13 +18,9 @@ void testReadBinaryFile() {
                                &routerArray, &n);
   assert(success == EXIT_SUCCESS);
   printRouter(routerArray, n, 0);
-  printf("\n");
   printRouter(routerArray, n, 1);
-  printf("\n");
   printRouter(routerArray, n, 2);
-  printf("\n");
   printRouter(routerArray, n, 3);
-  printf("\n");
   printRouter(routerArray, n, 4);
 }
 

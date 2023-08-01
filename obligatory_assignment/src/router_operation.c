@@ -1,12 +1,12 @@
+#include <errno.h>   // for errno
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, NULL, stderr, size_t
-#include <stdlib.h>  // for free, EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>  // for strcmp, strrchr
+#include <stdio.h>   // for fprintf, stderr, NULL, feof
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, free
+#include <string.h>  // for strerror, strcmp, strrchr
 
 #include "../include/binary_file.h"     // for readBinaryFile
-#include "../include/command.h"         // for getCommand
-#include "../include/dynamic_memory.h"  // for freeRouterArray
-
+#include "../include/command.h"         // for getCommand, runCommand
+#include "../include/dynamic_memory.h"  // for freeRoutersAndCommand, freeRo...
 // argv is allocated by the OS, see:
 // https://stackoverflow.com/questions/2115301/where-command-line-arguments-are-stored
 // https://stackoverflow.com/questions/39626689/how-much-memory-is-allocated-for-argv?noredirect=1&lq=1
@@ -50,15 +50,56 @@ int main(int argc, char** argv) {
   char* dot = strrchr(commandArg, '.');
   if ((dot != NULL) && (strcmp(dot, ".txt") == 0)) {
     // Open the file
-    // getline
-    // for
-    // runCommand(command)
-    success = getCommand(commandArg, &command, &args, &nArgs);
-    if (success != EXIT_SUCCESS) {
-      freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
-      fprintf(stderr, "Failed to obtain command\n");
+    FILE* fp;
+    fp = fopen(commandArg, "r");
+    if (fp == NULL) {
+      fprintf(stderr, "Cannot open %s: %s\n", commandArg, strerror(errno));
       return EXIT_FAILURE;
     }
+
+    char* line = NULL;
+    size_t len = 0;
+    int i = 1;
+    while ((!feof(fp)) && (!ferror(fp))) {
+      // Read the line
+      // NOTE: getline is from POSIX.1-2008, not the C-standard, see
+      // https://pubs.opengroup.org/onlinepubs/9699919799/functions/getline.html
+      // for specification, and
+      // https://github.com/NetBSD/src/blob/trunk/tools/compat/getline.c
+      // for possible implementation
+      // ssize_t is when the output can be negative
+      ssize_t nBytes = getline(&line, &len, fp);
+      // We first get a end of stream *after* a failed read
+      if (feof(fp)) {
+        break;
+      }
+      if ((nBytes == -1) || ferror(fp)) {
+        fprintf(stderr, "Failed to read line %d of %s: %s\n", i, commandArg,
+                strerror(errno));
+        free(line);
+        freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
+        return EXIT_FAILURE;
+      }
+      ++i;
+
+      // Obtain the command
+      success = getCommand(line, &command, &args, &nArgs);
+      if (success != EXIT_SUCCESS) {
+        fprintf(stderr, "Failed to obtain command\n");
+        freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
+        return EXIT_FAILURE;
+      }
+
+      // Run the command
+      success =
+          runCommand(command, (const char* const* const)args, routerArray, N);
+      if (success != EXIT_SUCCESS) {
+        fprintf(stderr, "Failed to run %s\n", commandArg);
+        freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
+        return EXIT_FAILURE;
+      }
+    }
+    free(line);
   } else {
     success = getCommand(commandArg, &command, &args, &nArgs);
     if (success != EXIT_SUCCESS) {
@@ -69,8 +110,8 @@ int main(int argc, char** argv) {
     success =
         runCommand(command, (const char* const* const)args, routerArray, N);
     if (success != EXIT_SUCCESS) {
-      freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
       fprintf(stderr, "Failed to run %s\n", commandArg);
+      freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
       return EXIT_FAILURE;
     }
   }

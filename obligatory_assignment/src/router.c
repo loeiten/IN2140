@@ -44,6 +44,7 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
       routerArray[hitIdx].producerModel, routerId, active, wireless, fiveGHz,
       modificationNumber, binaryFlag, (int)routerArray[hitIdx].flag);
   printNeighbors(routerArray[hitIdx].neighbors);
+  printf("\n");
   return EXIT_SUCCESS;
 }
 
