@@ -291,3 +291,87 @@ int setModel(struct Router** routerArray, unsigned int const N,
 
   return EXIT_SUCCESS;
 }
+
+int existsRoute(struct Router* routerArray, unsigned int const N,
+                const int fromRouterId, const int toRouterId, int* exists) {
+  *exists = -1;
+  int* visited = (int*)malloc(sizeof(int) * N);
+  if (visited == NULL) {
+    perror("Could not allocate memory to visited: ");
+    return EXIT_FAILURE;
+  }
+
+  // Fill the visited with -1
+  for (int i = 0; i < N; ++i) {
+    visited[i] = -1;
+  }
+
+  int success = DFS(routerArray, N, fromRouterId, toRouterId, exists, &visited);
+  free(visited);
+  if (success == EXIT_FAILURE) {
+    fprintf(stderr, "DFS failed\n");
+    return EXIT_FAILURE;
+  }
+
+  // Set to not found
+  if ((*exists) == -1) {
+    (*exists) = 0;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+int DFS(struct Router* routerArray, unsigned int const N,
+        const int fromRouterId, const int toRouterId, int* exists,
+        int** visited) {
+  // Check if we've found the router
+  if (((*exists) == 1) || (fromRouterId == toRouterId)) {
+    (*exists) = 1;
+    return EXIT_SUCCESS;
+  }
+
+  // Check whether this router is in the list of the visited router
+  int nextFreeVisited = 0;
+  for (; nextFreeVisited < N; ++nextFreeVisited) {
+    if ((*visited)[nextFreeVisited] == -1) {
+      break;
+    } else if ((*visited)[nextFreeVisited] == fromRouterId) {
+      return EXIT_SUCCESS;
+    }
+  }
+
+  // Mark visited
+  for (; nextFreeVisited < N; ++nextFreeVisited) {
+    if ((*visited)[nextFreeVisited] == -1) {
+      break;
+    }
+  }
+  if (nextFreeVisited == N) {
+    fprintf(stderr, "Unexpected error: No free slots in the visited array\n");
+    return EXIT_FAILURE;
+  }
+  (*visited)[nextFreeVisited] = fromRouterId;
+
+  // Check the neighbors
+  int hitIdx;
+  int success = findRouterId(routerArray, N, fromRouterId, &hitIdx);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Could not perform search as routerId was not found");
+    return EXIT_FAILURE;
+  }
+  for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+    if (routerArray[hitIdx].neighbors[i] == -1) {
+      return EXIT_SUCCESS;
+    }
+    success = DFS(routerArray, N, routerArray[hitIdx].neighbors[i], toRouterId,
+                  exists, visited);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+    if ((*exists) == 1) {
+      return EXIT_SUCCESS;
+    }
+  }
+
+  return EXIT_SUCCESS;
+}

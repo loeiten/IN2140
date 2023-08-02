@@ -39,4 +39,11 @@ int deleteRouter(struct Router** routerArray, unsigned int* const N,
 int setModel(struct Router** routerArray, unsigned int const N,
              const int routerId, const char* const name);
 
+int existsRoute(struct Router* routerArray, unsigned int const N,
+                const int fromRouterId, const int toRouterId, int* exists);
+
+int DFS(struct Router* routerArray, unsigned int const N,
+        const int fromRouterId, const int toRouterId, int* exists,
+        int** visited);
+
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_ROUTER_H_
