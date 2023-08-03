@@ -140,6 +140,8 @@ do_test(NAME test_router NO 41 ARGS "deleteRouter" "3" EXPECTED "Neighbors: \\[2
 # setName
 do_test(NAME test_router NO 42 ARGS "setName" EXPECTED "Success\n")
 
+# existsRoute
+do_test(NAME test_router NO 43 ARGS "existsRoute" EXPECTED "Success\n")
 
 # Test utils
 do_test(NAME test_utils NO 1 ARGS "getBinaryString" "0" "00000000" EXPECTED "Success\n")

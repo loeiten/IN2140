@@ -277,6 +277,82 @@ void testSetName() {
   }
 
   printf("Success\n");
+  return;
+}
+
+void testExistsRoute() {
+  // Two nodes
+  int n = 2;
+  struct Router routerArray1[2] = {{.routerId = 0}, {.routerId = 1}};
+  for (int r = 0; r < n; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray1[r].neighbors[i] = -1;
+    }
+  }
+  routerArray1[0].neighbors[0] = 1;
+
+  int exists;
+  int success = existsRoute(routerArray1, n, 0, 1, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 1);
+  success = existsRoute(routerArray1, n, 1, 0, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 0);
+
+  // Four linear nodes
+  n = 4;
+  struct Router routerArray2[4] = {
+      {.routerId = 0}, {.routerId = 1}, {.routerId = 2}, {.routerId = 3}};
+  for (int r = 0; r < n; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray2[r].neighbors[i] = -1;
+    }
+  }
+  routerArray2[0].neighbors[0] = 1;
+  routerArray2[1].neighbors[0] = 2;
+  routerArray2[2].neighbors[0] = 3;
+
+  success = existsRoute(routerArray2, n, 0, 3, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 1);
+  success = existsRoute(routerArray2, n, 3, 2, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 0);
+
+  // Five nodes with loop
+  n = 5;
+  struct Router routerArray3[5] = {{.routerId = 0},
+                                   {.routerId = 1},
+                                   {.routerId = 2},
+                                   {.routerId = 3},
+                                   {.routerId = 4}};
+  for (int r = 0; r < n; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray3[r].neighbors[i] = -1;
+    }
+  }
+  routerArray3[0].neighbors[0] = 1;
+  routerArray3[0].neighbors[1] = 3;
+  routerArray3[1].neighbors[0] = 2;
+  routerArray3[2].neighbors[0] = 3;
+  routerArray3[2].neighbors[1] = 4;
+  routerArray3[3].neighbors[0] = 0;
+
+  // Check that route from endpoints exists
+  success = existsRoute(routerArray3, n, 0, 4, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 1);
+  // Check that the loop is closed
+  success = existsRoute(routerArray3, n, 1, 0, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 1);
+  // Check that there are no back-route
+  success = existsRoute(routerArray3, n, 4, 0, &exists);
+  assert(success == EXIT_SUCCESS);
+  assert(exists == 0);
+
+  printf("Success\n");
+  return;
 }
 
 int main(int argc, char** argv) {
@@ -306,6 +382,8 @@ int main(int argc, char** argv) {
     testDeleteRouter(argv[2]);
   } else if (strcmp(argv[1], "setName") == 0) {
     testSetName();
+  } else if (strcmp(argv[1], "existsRoute") == 0) {
+    testExistsRoute();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }
