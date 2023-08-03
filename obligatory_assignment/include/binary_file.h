@@ -31,5 +31,15 @@ int readNewline(FILE* fp);
 int readRouter(FILE* fp, struct Router* router);
 int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
                         const unsigned int N, size_t* pairNumber);
+int writeBinaryFile(const char* const binFile,
+                    const struct Router* const routerArray,
+                    unsigned int const N);
+// FIXME: Create these
+int getDirectories(const char* const binFile, const char** directories);
+int makeDirectories(const char* const directories);
+int writeNewline(FILE* fp);
+int writeRouter(FILE* fp, struct Router router);
+int writeNeighbors(FILE* fp, const struct Router* const routerArray,
+                   const unsigned int N, size_t* pairNumber);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_BINARY_FILE_H_
