@@ -1,6 +1,7 @@
 #include "../include/binary_file.h"
 
-#include <errno.h>     // for errno
+#include <errno.h>  // for errno
+#include <stddef.h>
 #include <stdio.h>     // for fprintf, ferror, fclose, stderr, fread
 #include <stdlib.h>    // for EXIT_FAILURE, EXIT_SUCCESS, free, malloc
 #include <string.h>    // for strerror, strlen
@@ -274,11 +275,32 @@ int writeBinaryFile(const char* const binFile,
   return EXIT_SUCCESS;
 }
 
-int getDirectories(const char* const binFile, const char** directories) {
+int getDirectories(const char* const binFile, char** directories) {
+  // Find the last backslash
+  size_t strLen = strlen(binFile);
+  int i = strLen - 1;
+  for (; i >= 0; --i) {
+    if (binFile[i] == '/') {
+      *directories = (char*)malloc(strLen * sizeof(char));
+      if (*directories == NULL) {
+        perror("Could not allocate memory to directories: ");
+        return EXIT_FAILURE;
+      }
+      int charWritten = snprintf(*directories, (strLen + 1), "%s", binFile);
+      if ((charWritten < 0) || (charWritten > strLen)) {
+        free(*directories);
+        fprintf(stderr, "Failed to copy to the directories\n");
+        return EXIT_FAILURE;
+      }
+    }
+  }
   return EXIT_SUCCESS;
 }
 
 int makeDirectories(const char* const directories) {
+  if (directories == NULL) {
+    return EXIT_SUCCESS;
+  }
   struct stat st = {0};
   if (stat(directories, &st) == -1) {
     int success = mkdir(directories, 0700);

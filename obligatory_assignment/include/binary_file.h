@@ -34,8 +34,7 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
 int writeBinaryFile(const char* const binFile,
                     const struct Router* const routerArray,
                     unsigned int const N);
-// FIXME: Create these
-int getDirectories(const char* const binFile, const char** directories);
+int getDirectories(const char* const binFile, char** directories);
 int makeDirectories(const char* const directories);
 int writeNewline(FILE* fp);
 int writeRouter(FILE* fp, struct Router router);
