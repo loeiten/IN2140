@@ -67,13 +67,15 @@ do_test(NAME test_binary_file NO 4 ARGS "readAndSetNeighbors" EXPECTED "Neighbor
 
 # getDirectories
 do_test(NAME test_binary_file NO 5 ARGS "getDirectories" "foo/bar.c" EXPECTED "foo\n")
-do_test(NAME test_binary_file NO 6 ARGS "getDirectories" "foo/bar/baz.c" EXPECTED "foo/bar\n")
+do_test(NAME test_binary_file NO 6 ARGS "getDirectories" "foo/bar/baz/quux.c" EXPECTED "foo/bar/baz\n")
 do_test(NAME test_binary_file NO 7 ARGS "getDirectories" "foo.c" EXPECTED "\n")
 
 # makeDirectories
 do_test(NAME test_binary_file NO 8 ARGS "makeDirectories" "foo" EXPECTED "Success\n")
 do_test(NAME test_binary_file NO 9 ARGS "makeDirectories" "foo/bar" EXPECTED "Success\n")
-do_test(NAME test_binary_file NO 10 ARGS "makeDirectories" "foo/bar/baz" EXPECTED "Success\n")
+do_test(NAME test_binary_file NO 10 ARGS "makeDirectories" "-" EXPECTED "Success\n")
+do_test(NAME test_binary_file NO 11 ARGS "makeDirectories" "foo/bar/baz/quux" EXPECTED "Success\n")
+
 
 # Test command
 # getCommand

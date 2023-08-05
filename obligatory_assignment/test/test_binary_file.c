@@ -116,13 +116,28 @@ void testGetDirectories(const char* binFile) {
 }
 
 void testMakeDirectories(const char* directories) {
+  if (directories[0] == '-') {
+    directories = NULL;
+  }
   int success = makeDirectories(directories);
   assert(success == EXIT_SUCCESS);
-  struct stat st = {0};
-  assert(stat(directories, &st) == 0);
-  // Clean-up
-  success = removeRecursively(directories);
-  assert(success == EXIT_SUCCESS);
+  if (directories != NULL) {
+    struct stat st = {0};
+    assert(stat(directories, &st) == 0);
+    // Clean-up
+    // Find the root
+    char* root = strdup(directories);
+    size_t strLen = strlen(directories);
+    for (int i = 0; i < strLen; ++i) {
+      if (root[i] == '/') {
+        root[i] = '\0';
+        break;
+      }
+    }
+    success = removeRecursively(root);
+    free(root);
+    assert(success == EXIT_SUCCESS);
+  }
   printf("Success\n");
 }
 
