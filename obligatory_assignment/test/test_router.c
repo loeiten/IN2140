@@ -209,7 +209,7 @@ void testDeleteRouter(const char* const routerIdStr) {
     // Dynamically allocate the producerModels
     int length = snprintf(NULL, 0, "%s", producerModels[i]);
     char* producerModel = NULL;
-    producerModel = malloc(length + 1);
+    producerModel = (char*)malloc(length + 1);
     if (producerModel == NULL) {
       perror("Could not allocate memory to producerModel in the testRouters: ");
       freeRouterArray(&routerArray, n);

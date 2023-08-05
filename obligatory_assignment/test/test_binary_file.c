@@ -1,13 +1,15 @@
-#include <assert.h>  // for assert
-#include <errno.h>   // for errno
-#include <libgen.h>  // for basename
-#include <stddef.h>  // for NULL
-#include <stdio.h>   // for fprintf, fopen, stderr, FILE
-#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
-#include <string.h>  // for strcmp, strerror
+#include <assert.h>    // for assert
+#include <errno.h>     // for errno
+#include <libgen.h>    // for basename
+#include <stddef.h>    // for NULL, size_t
+#include <stdio.h>     // for fprintf, fopen, printf, stderr
+#include <stdlib.h>    // for EXIT_SUCCESS, EXIT_FAILURE, free
+#include <string.h>    // for strcmp, strerror
+#include <sys/stat.h>  // for stat
 
-#include "../include/binary_file.h"  // for readNewline, readRouter
-#include "../include/router.h"       // for printRouter, Router
+#include "../include/binary_file.h"  // for readNewline, getDirectories, mak...
+#include "../include/router.h"       // for printRouter, Router, printNeighbors
+#include "include/helpers.h"         // for removeRecursively
 
 #define N (3)
 
@@ -98,14 +100,40 @@ void testReadAndSetNeighbors() {
   return;
 }
 
+void testGetDirectories(const char* binFile) {
+  char* directories = NULL;
+  int success = getDirectories(binFile, &directories);
+  assert(success == EXIT_SUCCESS);
+  if (directories != NULL) {
+    printf("%s\n", directories);
+  } else {
+    printf("\n");
+  }
+  if (directories != NULL) {
+    free(directories);
+    directories = NULL;
+  }
+}
+
+void testMakeDirectories(const char* directories) {
+  int success = makeDirectories(directories);
+  assert(success == EXIT_SUCCESS);
+  struct stat st = {0};
+  assert(stat(directories, &st) == 0);
+  // Clean-up
+  success = removeRecursively(directories);
+  assert(success == EXIT_SUCCESS);
+  printf("Success\n");
+}
+
 int main(int argc, char** argv) {
-  if (argc != 2) {
+  if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
     // https://www.unix.com/man-page/posix/3p/basename/
     // for specification and
     // https://github.com/coreutils/coreutils/blob/master/src/basename.c
     // for possible implementation
-    fprintf(stderr, "Usage: ./%s test\n", basename(argv[0]));
+    fprintf(stderr, "Usage: ./%s test args\n", basename(argv[0]));
     return EXIT_FAILURE;
   }
 
@@ -117,6 +145,10 @@ int main(int argc, char** argv) {
     testReadRouter();
   } else if (strcmp(argv[1], "readAndSetNeighbors") == 0) {
     testReadAndSetNeighbors();
+  } else if (strcmp(argv[1], "getDirectories") == 0) {
+    testGetDirectories(argv[2]);
+  } else if (strcmp(argv[1], "makeDirectories") == 0) {
+    testMakeDirectories(argv[2]);
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

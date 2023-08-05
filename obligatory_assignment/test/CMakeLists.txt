@@ -13,6 +13,7 @@ add_executable(test_binary_file
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/binary_file.c"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/router.c" # For addLinks
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/utils.c" # For getBinaryString
+    "src/helpers.c"
     "test_binary_file.c"
 )
 add_executable(test_command
@@ -37,6 +38,7 @@ add_executable(test_utils
 # Add includes
 target_include_directories(test_binary_file
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 target_include_directories(test_command
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../include"
@@ -62,6 +64,16 @@ do_test(NAME test_binary_file NO 3 ARGS "readRouter" EXPECTED "Name: Foo Bar 42\
 
 # readAndSetNeighbors
 do_test(NAME test_binary_file NO 4 ARGS "readAndSetNeighbors" EXPECTED "Neighbors: \\[7\\]\nNeighbors: \\[\\]\nNeighbors: \\[42, 7\\]\n")
+
+# getDirectories
+do_test(NAME test_binary_file NO 5 ARGS "getDirectories" "foo/bar.c" EXPECTED "foo\n")
+do_test(NAME test_binary_file NO 6 ARGS "getDirectories" "foo/bar/baz.c" EXPECTED "foo/bar\n")
+do_test(NAME test_binary_file NO 7 ARGS "getDirectories" "foo.c" EXPECTED "\n")
+
+# makeDirectories
+do_test(NAME test_binary_file NO 8 ARGS "makeDirectories" "foo" EXPECTED "Success\n")
+do_test(NAME test_binary_file NO 9 ARGS "makeDirectories" "foo/bar" EXPECTED "Success\n")
+do_test(NAME test_binary_file NO 10 ARGS "makeDirectories" "foo/bar/baz" EXPECTED "Success\n")
 
 # Test command
 # getCommand

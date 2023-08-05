@@ -201,7 +201,7 @@ int writeBinaryFile(const char* const binFile,
                     const struct Router* const routerArray,
                     unsigned int const N) {
   // Get directories
-  const char* directories = NULL;
+  char* directories = NULL;
   int success = getDirectories(binFile, &directories);
   if (success == EXIT_FAILURE) {
     fprintf(stderr, "Failed to obtain directories\n");
@@ -278,20 +278,22 @@ int writeBinaryFile(const char* const binFile,
 int getDirectories(const char* const binFile, char** directories) {
   // Find the last backslash
   size_t strLen = strlen(binFile);
-  int i = strLen - 1;
-  for (; i >= 0; --i) {
-    if (binFile[i] == '/') {
+  int curLen = strLen - 1;
+  for (; curLen >= 0; --curLen) {
+    if (binFile[curLen] == '/') {
       *directories = (char*)malloc(strLen * sizeof(char));
       if (*directories == NULL) {
         perror("Could not allocate memory to directories: ");
         return EXIT_FAILURE;
       }
-      int charWritten = snprintf(*directories, (strLen + 1), "%s", binFile);
-      if ((charWritten < 0) || (charWritten > strLen)) {
+      int charWritten = snprintf(*directories, (curLen + 1), "%s", binFile);
+      if ((charWritten < 0) || (charWritten < curLen)) {
         free(*directories);
+        *directories = NULL;
         fprintf(stderr, "Failed to copy to the directories\n");
         return EXIT_FAILURE;
       }
+      break;
     }
   }
   return EXIT_SUCCESS;
@@ -301,15 +303,57 @@ int makeDirectories(const char* const directories) {
   if (directories == NULL) {
     return EXIT_SUCCESS;
   }
+
+  // Create a duplicate string where we will replace '/' with '\0' when we make
+  // the dir
+  char* dirCopy = strdup(directories);
+  char* p = NULL;  // Pointer pointing to a character in dirCopy
+
+  size_t strLen = strlen(dirCopy);
+  // Handle dangling '\'
+  if (dirCopy[strLen - 1] == '/') {
+    dirCopy[strLen - 1] = '\0';
+  }
+
+  for (p = dirCopy + 1; *p != '\0'; ++p) {
+    if (*p == '/') {
+      // If we hit a delimiter, we temporary replace it with an "end of string"
+      // marker
+      *p = '\0';
+
+      // Check if the directory exist
+      struct stat st = {0};
+      if (stat(dirCopy, &st) == -1) {
+        // User (file owner) has read, write and execute permission
+        int success = mkdir(dirCopy, S_IRWXU);
+        if (success != 0) {
+          free(dirCopy);
+          dirCopy = NULL;
+          fprintf(stderr, "Cannot make the directories %s: %s\n", directories,
+                  strerror(errno));
+          return EXIT_FAILURE;
+        }
+      }
+      // Restore dirCpy to the original state
+      *p = '/';
+    }
+  }
+
+  // Check if the directory exist
   struct stat st = {0};
-  if (stat(directories, &st) == -1) {
-    int success = mkdir(directories, 0700);
+  if (stat(dirCopy, &st) == -1) {
+    int success = mkdir(dirCopy, S_IRWXU);
     if (success != 0) {
+      free(dirCopy);
+      dirCopy = NULL;
       fprintf(stderr, "Cannot make the directories %s: %s\n", directories,
               strerror(errno));
+      return EXIT_FAILURE;
     }
-    return EXIT_FAILURE;
   }
+
+  free(dirCopy);
+  dirCopy = NULL;
   return EXIT_SUCCESS;
 }
 

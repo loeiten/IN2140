@@ -1,10 +1,11 @@
 
 #include "../include/helpers.h"
 
-#include <stddef.h>  // for NULL, size_t
-#include <stdio.h>   // for fprintf, perror, snprintf, stderr
+#include <ftw.h>     // for nftw, FTW (ptr only), FTW_DEPTH, FTW_PHYS
+#include <stdio.h>   // for fprintf, perror, NULL, size_t, remove, stderr
 #include <stdlib.h>  // for free, atoi, malloc, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strlen
+struct stat;
 
 int strToIntArray(const char *const arrayStr, int *const intArray) {
   size_t strLen = strlen(arrayStr);
@@ -57,5 +58,32 @@ int strToIntArray(const char *const arrayStr, int *const intArray) {
     subStr = NULL;
   }
 
+  return EXIT_SUCCESS;
+}
+
+int removeFunction(const char *path, const struct stat *sb, int typeFlag,
+                   struct FTW *ftwBuf) {
+  int success = remove(path);
+  if (success != 0) {
+    perror("Failed to remove path: ");
+  }
+  return success;
+}
+
+int removeRecursively(const char *path) {
+  // ntfw will walk the file tree
+  int success = nftw(path,
+                     removeFunction,  // Function to apply to the walk
+                     64,  // Maximum number of file descriptors to be used
+                     // Flags
+                     FTW_DEPTH  // Shall report all files in a directory before
+                                // reporting the directory itself
+                         | FTW_PHYS);  // Shall perform a physical walk and
+                                       // shall not follow symbolic links
+
+  if (success != 0) {
+    fprintf(stderr, "Removing %s failed\n", path);
+    return EXIT_FAILURE;
+  }
   return EXIT_SUCCESS;
 }
