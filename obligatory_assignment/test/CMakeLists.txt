@@ -76,6 +76,8 @@ do_test(NAME test_binary_file NO 9 ARGS "makeDirectories" "foo/bar" EXPECTED "Su
 do_test(NAME test_binary_file NO 10 ARGS "makeDirectories" "-" EXPECTED "Success\n")
 do_test(NAME test_binary_file NO 11 ARGS "makeDirectories" "foo/bar/baz/quux" EXPECTED "Success\n")
 
+# writeNewline
+do_test(NAME test_binary_file NO 12 ARGS "writeNewline" EXPECTED "Success\n")
 
 # Test command
 # getCommand

@@ -32,6 +32,7 @@ void testReadNewline() {
   FILE* fp = fopen(binFile, "rb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
+    return;
   }
   int success = readNewline(fp);
   assert(success == EXIT_SUCCESS);
@@ -46,6 +47,8 @@ void testReadNewline() {
   // We will read the EOF
   success = readNewline(fp);
   assert(success == EXIT_FAILURE);
+
+  fclose(fp);
 }
 
 void testReadRouter() {
@@ -54,6 +57,7 @@ void testReadRouter() {
   FILE* fp = fopen(binFile, "rb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
+    return;
   }
   // Create the router
   struct Router routerArray[1];
@@ -66,6 +70,7 @@ void testReadRouter() {
   printRouter(routerArray,
               1,    // N
               87);  // routerId
+  fclose(fp);
 }
 
 void testReadAndSetNeighbors() {
@@ -74,6 +79,7 @@ void testReadAndSetNeighbors() {
   FILE* fp = fopen(binFile, "rb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s: %s\n", binFile, strerror(errno));
+    return;
   }
 
   // Create testRouters
@@ -97,6 +103,7 @@ void testReadAndSetNeighbors() {
     printNeighbors(routerArray[r].neighbors);
   }
 
+  fclose(fp);
   return;
 }
 
@@ -139,7 +146,42 @@ void testMakeDirectories(const char* directories) {
     assert(success == EXIT_SUCCESS);
   }
   printf("Success\n");
+  return;
 }
+
+void testWriteNewline() {
+  const char* path = "newLine/newLine";
+  const char* directory = "newline";
+  int success = makeDirectories(directory);
+  assert(success == EXIT_SUCCESS);
+
+  FILE* fp = fopen(path, "wb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s for writing: %s\n", path, strerror(errno));
+    return;
+  }
+  success = writeNewline(fp);
+  assert(success == EXIT_SUCCESS);
+  fclose(fp);
+  fp = fopen(path, "rb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s for reading: %s\n", path, strerror(errno));
+    return;
+  }
+  success = readNewline(fp);
+  assert(success == EXIT_SUCCESS);
+  success = removeRecursively(directory);
+  assert(success == EXIT_SUCCESS);
+  printf("Success\n");
+  fclose(fp);
+  return;
+}
+
+void testWriteRouter() { return; }
+
+void testWriteNeighbors() { return; }
+
+void testWriteBinaryFile() { return; }
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -164,6 +206,14 @@ int main(int argc, char** argv) {
     testGetDirectories(argv[2]);
   } else if (strcmp(argv[1], "makeDirectories") == 0) {
     testMakeDirectories(argv[2]);
+  } else if (strcmp(argv[1], "writeNewline") == 0) {
+    testWriteNewline();
+  } else if (strcmp(argv[1], "writeRouter") == 0) {
+    testWriteRouter();
+  } else if (strcmp(argv[1], "writeNeighbors") == 0) {
+    testWriteNeighbors();
+  } else if (strcmp(argv[1], "writeBinaryFile") == 0) {
+    testWriteBinaryFile();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }
