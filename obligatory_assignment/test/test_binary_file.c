@@ -155,13 +155,13 @@ void testWriteNewline() {
   const char* directory = "newline";
   int success = makeDirectories(directory);
   assert(success == EXIT_SUCCESS);
-
-  // Test
   FILE* fp = fopen(path, "wb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s for writing: %s\n", path, strerror(errno));
     return;
   }
+
+  // Test
   success = writeNewline(fp);
   assert(success == EXIT_SUCCESS);
   fclose(fp);
@@ -187,13 +187,13 @@ void testWriteRouter() {
   const char* directory = "writeRouter";
   int success = makeDirectories(directory);
   assert(success == EXIT_SUCCESS);
-
-  // Test
   FILE* fp = fopen(path, "wb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s for writing: %s\n", path, strerror(errno));
     return;
   }
+
+  // Test
   int routerId = 82;
   struct Router router = {
       .routerId = routerId, .producerModel = "Foo Bar", .flag = 135};
@@ -218,7 +218,53 @@ void testWriteRouter() {
   return;
 }
 
-void testWriteNeighbors() { return; }
+void testWriteNeighbors() {
+  // Setup
+  const char* path = "writeNeighbors/neighbors";
+  const char* directory = "writeNeighbors";
+  int success = makeDirectories(directory);
+  assert(success == EXIT_SUCCESS);
+  FILE* fp = fopen(path, "wb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s for writing: %s\n", path, strerror(errno));
+    return;
+  }
+
+  // Test
+  const struct Router routerArray[N] = {
+      {.routerId = 95,
+       .producerModel = "First",
+       .neighbors = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}},
+      {.routerId = 1,
+       .producerModel = "Second",
+       .neighbors = {95, 2, -1, -1, -1, -1, -1, -1, -1, -1}},
+      {.routerId = 2,
+       .producerModel = "Third",
+       .neighbors = {95, 2, 77, 15, -1, -1, -1, -1, -1, -1}}};
+  size_t pairNumber;
+  success = writeNeighbors(fp, routerArray, N, &pairNumber);
+  assert(success == EXIT_SUCCESS);
+  assert(pairNumber == 6);
+  fclose(fp);
+  fp = fopen(path, "rb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s for reading: %s\n", path, strerror(errno));
+    return;
+  }
+  struct Router newRouterArray[N];
+  success = readAndSetNeighbors(fp, newRouterArray, N, &pairNumber);
+  assert(success == EXIT_SUCCESS);
+  assert(pairNumber == 6);
+  printNeighbors(newRouterArray[0].neighbors);
+  printNeighbors(newRouterArray[1].neighbors);
+  printNeighbors(newRouterArray[2].neighbors);
+
+  // Teardown
+  success = removeRecursively(directory);
+  assert(success == EXIT_SUCCESS);
+  fclose(fp);
+  return;
+}
 
 void testWriteBinaryFile() { return; }
 

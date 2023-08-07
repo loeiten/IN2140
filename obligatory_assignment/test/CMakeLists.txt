@@ -82,6 +82,9 @@ do_test(NAME test_binary_file NO 12 ARGS "writeNewline" EXPECTED "Success\n")
 # writeRouter
 do_test(NAME test_binary_file NO 13 ARGS "writeRouter" EXPECTED "Name: Foo Bar\nRouterId: 82\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 1\nFlag: 10000111 \\(135\\)\nNeighbors: \\[\\]\n\n")
 
+# writeNeighbors
+do_test(NAME test_binary_file NO 14 ARGS "writeNeighbors" EXPECTED "Neighbors: \\[\\]\nNeighbors: \\[95, 2\\]\nNeighbors: \\[95, 2, 77, 15\\]\n")
+
 # Test command
 # getCommand
 do_test(NAME test_command NO 1 ARGS "getCommand" "Foo Bar" "Foo" "1" EXPECTED "Bar\n")
