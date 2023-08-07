@@ -150,11 +150,13 @@ void testMakeDirectories(const char* directories) {
 }
 
 void testWriteNewline() {
+  // Setup
   const char* path = "newLine/newLine";
   const char* directory = "newline";
   int success = makeDirectories(directory);
   assert(success == EXIT_SUCCESS);
 
+  // Test
   FILE* fp = fopen(path, "wb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s for writing: %s\n", path, strerror(errno));
@@ -170,6 +172,8 @@ void testWriteNewline() {
   }
   success = readNewline(fp);
   assert(success == EXIT_SUCCESS);
+
+  // Teardown
   success = removeRecursively(directory);
   assert(success == EXIT_SUCCESS);
   printf("Success\n");
@@ -177,7 +181,42 @@ void testWriteNewline() {
   return;
 }
 
-void testWriteRouter() { return; }
+void testWriteRouter() {
+  // Setup
+  const char* path = "writeRouter/router";
+  const char* directory = "writeRouter";
+  int success = makeDirectories(directory);
+  assert(success == EXIT_SUCCESS);
+
+  // Test
+  FILE* fp = fopen(path, "wb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s for writing: %s\n", path, strerror(errno));
+    return;
+  }
+  int routerId = 82;
+  struct Router router = {
+      .routerId = routerId, .producerModel = "Foo Bar", .flag = 135};
+  success = writeRouter(fp, router);
+  assert(success == EXIT_SUCCESS);
+  fclose(fp);
+  fp = fopen(path, "rb");
+  if (fp == NULL) {
+    fprintf(stderr, "Cannot open %s for reading: %s\n", path, strerror(errno));
+    return;
+  }
+  struct Router routerArray[1];
+  success = readRouter(fp, &(routerArray[0]));
+  assert(success == EXIT_SUCCESS);
+  printRouter(routerArray, 1, routerId);
+  free((void*)routerArray[0].producerModel);
+
+  // Teardown
+  success = removeRecursively(directory);
+  assert(success == EXIT_SUCCESS);
+  fclose(fp);
+  return;
+}
 
 void testWriteNeighbors() { return; }
 

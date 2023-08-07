@@ -79,6 +79,9 @@ do_test(NAME test_binary_file NO 11 ARGS "makeDirectories" "foo/bar/baz/quux" EX
 # writeNewline
 do_test(NAME test_binary_file NO 12 ARGS "writeNewline" EXPECTED "Success\n")
 
+# writeRouter
+do_test(NAME test_binary_file NO 13 ARGS "writeRouter" EXPECTED "Name: Foo Bar\nRouterId: 82\nActive: Yes\nWireless: Yes\n5 GHz: Yes\nModification number: 1\nFlag: 10000111 \\(135\\)\nNeighbors: \\[\\]\n\n")
+
 # Test command
 # getCommand
 do_test(NAME test_command NO 1 ARGS "getCommand" "Foo Bar" "Foo" "1" EXPECTED "Bar\n")

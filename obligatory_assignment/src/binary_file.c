@@ -380,15 +380,23 @@ int writeRouter(FILE* fp, struct Router router) {
     return EXIT_FAILURE;
   }
 
-  // Read flag
+  // Write flag
   writtenBytes = fwrite(&(router.flag), nBytes, nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to write flag: %s\n", strerror(errno));
     return EXIT_FAILURE;
   }
 
-  // Read the producerModel
-  unsigned char charLen = strlen(router.producerModel);
+  // Write the length of the string
+  // +1 for the null character
+  unsigned char charLen = strlen(router.producerModel) + 1;
+  writtenBytes = fwrite(&charLen, nBytes, nItems, fp);
+  if ((writtenBytes < nItems) || ferror(fp)) {
+    fprintf(stderr, "Failed to write charLen: %s\n", strerror(errno));
+    return EXIT_FAILURE;
+  }
+
+  // Write the producerModel
   writtenBytes = fwrite(router.producerModel, charLen, nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to write producerModel: %s\n", strerror(errno));
