@@ -154,6 +154,7 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
   unsigned char fromRouter;
   unsigned char toRouter;
 
+  *pairNumber = 0;
   while ((!feof(fp)) && (!ferror(fp))) {
     // Read the newline
     if (readNewline(fp) != EXIT_SUCCESS) {
@@ -414,6 +415,8 @@ int writeNeighbors(FILE* fp, const struct Router* const routerArray,
   unsigned char fromRouter;
   unsigned char toRouter;
 
+  *pairNumber = 0;
+
   // Loop over routers
   for (int r = 0; r < N; ++r) {
     fromRouter = routerArray[r].routerId;
@@ -447,6 +450,11 @@ int writeNeighbors(FILE* fp, const struct Router* const routerArray,
       // Increment the pairNumber
       ++(*pairNumber);
     }
+  }
+
+  // End with newline
+  if (writeNewline(fp) != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;

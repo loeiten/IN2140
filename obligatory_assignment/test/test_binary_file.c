@@ -231,7 +231,8 @@ void testWriteNeighbors() {
   }
 
   // Test
-  const struct Router routerArray[N] = {
+  // Write
+  struct Router routerArray[N] = {
       {.routerId = 95,
        .producerModel = "First",
        .neighbors = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1}},
@@ -246,18 +247,24 @@ void testWriteNeighbors() {
   assert(success == EXIT_SUCCESS);
   assert(pairNumber == 6);
   fclose(fp);
+  // Read
   fp = fopen(path, "rb");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open %s for reading: %s\n", path, strerror(errno));
     return;
   }
-  struct Router newRouterArray[N];
-  success = readAndSetNeighbors(fp, newRouterArray, N, &pairNumber);
+  // Reset the neighbors
+  for (int r = 0; r < N; ++r) {
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      routerArray[r].neighbors[i] = -1;
+    }
+  }
+  success = readAndSetNeighbors(fp, routerArray, N, &pairNumber);
   assert(success == EXIT_SUCCESS);
   assert(pairNumber == 6);
-  printNeighbors(newRouterArray[0].neighbors);
-  printNeighbors(newRouterArray[1].neighbors);
-  printNeighbors(newRouterArray[2].neighbors);
+  printNeighbors(routerArray[0].neighbors);
+  printNeighbors(routerArray[1].neighbors);
+  printNeighbors(routerArray[2].neighbors);
 
   // Teardown
   success = removeRecursively(directory);
