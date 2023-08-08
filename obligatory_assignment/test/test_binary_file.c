@@ -8,8 +8,9 @@
 #include <sys/stat.h>  // for stat
 
 #include "../include/binary_file.h"  // for readNewline, getDirectories, mak...
-#include "../include/router.h"       // for printRouter, Router, printNeighbors
-#include "include/helpers.h"         // for removeRecursively
+#include "../include/dynamic_memory.h"  // for freeRouterArray
+#include "../include/router.h"  // for printRouter, Router, printNeighbors
+#include "include/helpers.h"    // for removeRecursively
 
 #define N (3)
 
@@ -273,7 +274,54 @@ void testWriteNeighbors() {
   return;
 }
 
-void testWriteBinaryFile() { return; }
+void testWriteBinaryFile(const char* path) {
+  // We will read a file, write it and read the written file to see that we get
+  // the expected result
+
+  // Read the original file
+  struct Router* routerArray = NULL;
+  unsigned int n;
+  int success = readBinaryFile(path, &routerArray, &n);
+  assert(success == EXIT_SUCCESS);
+
+  // Write the read file to a new destination
+  const char* newPath = "writeBinaryFile/binaryFile";
+  const char* newDirectory = "writeBinaryFile";
+  success = makeDirectories(newDirectory);
+  assert(success == EXIT_SUCCESS);
+  success = writeBinaryFile(newPath, routerArray, n);
+  assert(success == EXIT_SUCCESS);
+
+  // Read the written file
+  struct Router* newRouterArray = NULL;
+  unsigned int newN;
+  success = readBinaryFile(newPath, &newRouterArray, &newN);
+  assert(success == EXIT_SUCCESS);
+
+  // Compare the contents
+  assert(n == newN);
+  for (int r = 0; r < n; ++r) {
+    assert(routerArray[r].routerId == newRouterArray[r].routerId);
+    assert(routerArray[r].flag == newRouterArray[r].flag);
+    assert(strcmp(routerArray[r].producerModel,
+                  newRouterArray[r].producerModel) == 0);
+    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+      assert(routerArray[r].neighbors[i] == newRouterArray[r].neighbors[i]);
+    }
+  }
+
+  // Clean-up
+  // Delete the directories
+  success = removeRecursively(newDirectory);
+  assert(success == EXIT_SUCCESS);
+
+  // Free the memory
+  freeRouterArray(&routerArray, n);
+  freeRouterArray(&newRouterArray, newN);
+
+  printf("Success\n");
+  return;
+}
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -305,7 +353,7 @@ int main(int argc, char** argv) {
   } else if (strcmp(argv[1], "writeNeighbors") == 0) {
     testWriteNeighbors();
   } else if (strcmp(argv[1], "writeBinaryFile") == 0) {
-    testWriteBinaryFile();
+    testWriteBinaryFile(argv[2]);
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

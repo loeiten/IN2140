@@ -236,7 +236,7 @@ int writeBinaryFile(const char* const binFile,
   // Write the number of records
   size_t nBytes = 4;  // Given in the assignment
   size_t nItems = 1;
-  int writtenBytes = fread((void*)&N, nBytes, nItems, fp);
+  int writtenBytes = fwrite((void*)&N, nBytes, nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fclose(fp);
     fprintf(stderr, "Failed write the number of records to %s: %s\n", binFile,
@@ -398,7 +398,8 @@ int writeRouter(FILE* fp, struct Router router) {
   }
 
   // Write the producerModel
-  writtenBytes = fwrite(router.producerModel, charLen, nItems, fp);
+  // NOTE: We do not add the terminating \0
+  writtenBytes = fwrite(router.producerModel, charLen - 1, nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to write producerModel: %s\n", strerror(errno));
     return EXIT_FAILURE;
