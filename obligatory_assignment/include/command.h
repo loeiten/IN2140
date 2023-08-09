@@ -15,6 +15,6 @@ int getCommand(const char* const commandStr, char** const command,
                char*** const args, size_t* const nArgs);
 // When we run the command nothing is allowed to change
 int runCommand(const char* const command, const char* const* const args,
-               const struct Router* const routerArray, const unsigned int N);
+               struct Router** routerArray, unsigned int* N);
 
 #endif  // OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_

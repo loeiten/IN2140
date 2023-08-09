@@ -66,7 +66,7 @@ int getCommand(const char *const commandStr, char **const command,
   }
 
   // Special case for set_model
-  if (strcmp(*command, "setModel") == 0) {
+  if (strcmp(*command, "set_model") == 0) {
     // We know that this function only has two argument
     *nArgs = 2;
 
@@ -107,6 +107,10 @@ int getCommand(const char *const commandStr, char **const command,
       freeCommandStrCpy(&commandStrCpy, "Failed to copy to arg[1]\n");
       return EXIT_FAILURE;
     }
+    // Remove possible newline
+    if ((*args)[1][strLen - 1] == '\n') {
+      (*args)[1][strLen - 1] = '\0';
+    }
 
     // Free the copy
     freeCommandStrCpy(&commandStrCpy, "");
@@ -139,13 +143,54 @@ int getCommand(const char *const commandStr, char **const command,
 }
 
 int runCommand(const char *const command, const char *const *const args,
-               const struct Router *const routerArray, const unsigned int N) {
+               struct Router **routerArray, unsigned int *N) {
+  int success;
   if (strcmp(command, "print") == 0) {
-    int routerId = atoi(args[0]);
-    int success = printRouter(routerArray, N, routerId);
+    const int routerId = atoi(args[0]);
+    success = printRouter(*routerArray, *N, routerId);
     if (success != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }
+  } else if (strcmp(command, "set_flag") == 0) {
+    const int routerId = atoi(args[0]);
+    const int flag = atoi(args[1]);
+    const int value = atoi(args[2]);
+    success = setFlag(*routerArray, *N, routerId, flag, value);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+  } else if (strcmp(command, "set_model") == 0) {
+    const int routerId = atoi(args[0]);
+    const char *name = args[1];
+    success = setModel(routerArray, *N, routerId, name);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+  } else if (strcmp(command, "add_link") == 0) {
+    const unsigned char fromRouter = atoi(args[0]);
+    const unsigned char toRouter = atoi(args[1]);
+    success = addLink(*routerArray, *N, fromRouter, toRouter);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+  } else if (strcmp(command, "delete_router") == 0) {
+    const int routerId = atoi(args[0]);
+    success = deleteRouter(routerArray, N, routerId);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+  } else if (strcmp(command, "exist_route") == 0) {
+    const unsigned char fromRouterId = atoi(args[0]);
+    const unsigned char toRouterId = atoi(args[1]);
+    int exists = -1;
+    success = existsRoute(*routerArray, *N, fromRouterId, toRouterId, &exists);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+    const char *existsString = (exists == 1) ? "exists" : "does not exist";
+    printf("Route from router %u to router %u %s", fromRouterId, toRouterId,
+           existsString);
   }
+
   return EXIT_SUCCESS;
 }

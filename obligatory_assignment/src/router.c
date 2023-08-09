@@ -272,14 +272,14 @@ int setModel(struct Router** routerArray, unsigned int const N,
   // Dynamically allocate the producerModels
   int length = snprintf(NULL, 0, "%s", name);
   char* producerModel = NULL;
-  if (routerArray[hitIdx]->producerModel == NULL) {
+  if ((*routerArray)[hitIdx].producerModel == NULL) {
     producerModel = (char*)malloc((length + 1) * sizeof(char));
     if (producerModel == NULL) {
       perror("Could not allocate memory to producerModel in the setModel: ");
       return EXIT_FAILURE;
     }
   } else {
-    producerModel = (char*)realloc((void*)routerArray[hitIdx]->producerModel,
+    producerModel = (char*)realloc((void*)(*routerArray)[hitIdx].producerModel,
                                    (length + 1) * sizeof(char));
     if (producerModel == NULL) {
       perror("Could not reallocate memory to producerModel in the setModel: ");
@@ -287,7 +287,7 @@ int setModel(struct Router** routerArray, unsigned int const N,
     }
   }
   snprintf(producerModel, length + 1, "%s", name);
-  routerArray[hitIdx]->producerModel = producerModel;
+  (*routerArray)[hitIdx].producerModel = producerModel;
 
   return EXIT_SUCCESS;
 }

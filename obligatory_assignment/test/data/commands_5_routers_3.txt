@@ -1,0 +1,6 @@
+set_flag 3 4 14
+print 3
+set_model 2 ASUS RT-AX89X
+print 2
+delete_router 4
+exist_route 2 0

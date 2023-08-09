@@ -96,9 +96,9 @@ do_test(NAME test_binary_file NO 17 ARGS "writeBinaryFile" "../assignment_files/
 do_test(NAME test_command NO 1 ARGS "getCommand" "Foo Bar" "Foo" "1" EXPECTED "Bar\n")
 do_test(NAME test_command NO 2 ARGS "getCommand" "Foo Bar Baz" "Foo" "2" EXPECTED "Bar\nBaz\n")
 do_test(NAME test_command NO 3 ARGS "getCommand" "Foo Bar Baz FooBar" "Foo" "3" EXPECTED "Bar\nBaz\nFooBar\n")
-do_test(NAME test_command NO 4 ARGS "getCommand" "setModel 1 Bar" "setModel" "2" EXPECTED "1\nBar\n")
-do_test(NAME test_command NO 5 ARGS "getCommand" "setModel 82 Bar Baz FooBar" "setModel" "2" EXPECTED "82\nBar Baz FooBar\n")
-do_test(NAME test_command NO 6 ARGS "getCommand" "setModel 104 Quux" "setModel" "2" EXPECTED "104\nQuux\n")
+do_test(NAME test_command NO 4 ARGS "getCommand" "set_model 1 Bar" "set_model" "2" EXPECTED "1\nBar\n")
+do_test(NAME test_command NO 5 ARGS "getCommand" "set_model 82 Bar Baz FooBar" "set_model" "2" EXPECTED "82\nBar Baz FooBar\n")
+do_test(NAME test_command NO 6 ARGS "getCommand" "set_model 104 Quux" "set_model" "2" EXPECTED "104\nQuux\n")
 
 # Test router
 # printRouter

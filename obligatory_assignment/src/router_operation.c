@@ -92,7 +92,7 @@ int main(int argc, char** argv) {
 
       // Run the command
       success =
-          runCommand(command, (const char* const* const)args, routerArray, N);
+          runCommand(command, (const char* const* const)args, &routerArray, &N);
       if (success != EXIT_SUCCESS) {
         fprintf(stderr, "Failed to run %s\n", commandArg);
         freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
       return EXIT_FAILURE;
     }
     success =
-        runCommand(command, (const char* const* const)args, routerArray, N);
+        runCommand(command, (const char* const* const)args, &routerArray, &N);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Failed to run %s\n", commandArg);
       freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
