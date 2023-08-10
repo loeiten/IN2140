@@ -25,7 +25,7 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
   // Read the number of records
   size_t nBytes = 4;  // Given in the assignment
   size_t nItems = 1;
-  int readBytes = fread(N, nBytes, nItems, fp);
+  size_t readBytes = fread(N, nBytes, nItems, fp);
   if ((readBytes < nItems) || ferror(fp)) {
     fclose(fp);
     fprintf(stderr, "Failed to obtain the number of records from %s: %s\n",
@@ -75,7 +75,7 @@ int readBinaryFile(const char* const binFile, struct Router** routerArray,
 int readNewline(FILE* fp) {
   unsigned char c;
   size_t nItems = 1;
-  int readBytes = fread(&c, sizeof(char), nItems, fp);
+  size_t readBytes = fread(&c, sizeof(char), nItems, fp);
   if ((readBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to read from file: %s\n", strerror(errno));
     return EXIT_FAILURE;
@@ -101,7 +101,7 @@ int readRouter(FILE* fp, struct Router* router) {
   }
 
   // Read router id
-  int readBytes = fread((void*)&(router->routerId), nBytes, nItems, fp);
+  size_t readBytes = fread((void*)&(router->routerId), nBytes, nItems, fp);
   if ((readBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to read routerId: %s\n", strerror(errno));
     return EXIT_FAILURE;
@@ -162,7 +162,7 @@ int readAndSetNeighbors(FILE* fp, struct Router* const routerArray,
     }
 
     // Read the from unsigned char
-    int readBytes = fread(&fromRouter, nBytes, nItems, fp);
+    size_t readBytes = fread(&fromRouter, nBytes, nItems, fp);
 
     // We first get a end of stream *after* a failed read
     if (feof(fp)) {
@@ -236,7 +236,7 @@ int writeBinaryFile(const char* const binFile,
   // Write the number of records
   size_t nBytes = 4;  // Given in the assignment
   size_t nItems = 1;
-  int writtenBytes = fwrite((void*)&N, nBytes, nItems, fp);
+  size_t writtenBytes = fwrite((void*)&N, nBytes, nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fclose(fp);
     fprintf(stderr, "Failed write the number of records to %s: %s\n", binFile,
@@ -361,7 +361,7 @@ int makeDirectories(const char* const directories) {
 int writeNewline(FILE* fp) {
   unsigned char c = '\n';
   size_t nItems = 1;
-  int writtenBytes = fwrite(&c, sizeof(char), nItems, fp);
+  size_t writtenBytes = fwrite(&c, sizeof(char), nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed write newline: %s\n", strerror(errno));
     return EXIT_FAILURE;
@@ -375,7 +375,7 @@ int writeRouter(FILE* fp, struct Router router) {
   size_t nItems = 1;
 
   // Write router id
-  int writtenBytes = fwrite(&(router.routerId), nBytes, nItems, fp);
+  size_t writtenBytes = fwrite(&(router.routerId), nBytes, nItems, fp);
   if ((writtenBytes < nItems) || ferror(fp)) {
     fprintf(stderr, "Failed to write routerId: %s\n", strerror(errno));
     return EXIT_FAILURE;
@@ -419,7 +419,7 @@ int writeNeighbors(FILE* fp, const struct Router* const routerArray,
   *pairNumber = 0;
 
   // Loop over routers
-  for (int r = 0; r < N; ++r) {
+  for (unsigned int r = 0; r < N; ++r) {
     fromRouter = routerArray[r].routerId;
     // Loop over neighbors
     for (int i = 0; i < MAX_NEIGHBORS; ++i) {
@@ -433,7 +433,7 @@ int writeNeighbors(FILE* fp, const struct Router* const routerArray,
       }
 
       // Write the first neighbor
-      int writtenBytes = fwrite(&fromRouter, nBytes, nItems, fp);
+      size_t writtenBytes = fwrite(&fromRouter, nBytes, nItems, fp);
       if ((writtenBytes < nItems) || ferror(fp)) {
         fprintf(stderr, "Failed to write the first neighbor: %s\n",
                 strerror(errno));

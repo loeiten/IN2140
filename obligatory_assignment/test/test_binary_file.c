@@ -14,7 +14,7 @@
 
 #define N (3)
 
-void testReadBinaryFile() {
+void testReadBinaryFile(void) {
   struct Router* routerArray = NULL;
   unsigned int n;
   int success = readBinaryFile("../assignment_files/5_routers_fully_connected",
@@ -27,7 +27,7 @@ void testReadBinaryFile() {
   printRouter(routerArray, n, 4);
 }
 
-void testReadNewline() {
+void testReadNewline(void) {
   // Test success
   const char* const binFile = "data/newline";
   FILE* fp = fopen(binFile, "rb");
@@ -52,7 +52,7 @@ void testReadNewline() {
   fclose(fp);
 }
 
-void testReadRouter() {
+void testReadRouter(void) {
   // Open file
   const char* const binFile = "data/testRouter";
   FILE* fp = fopen(binFile, "rb");
@@ -74,7 +74,7 @@ void testReadRouter() {
   fclose(fp);
 }
 
-void testReadAndSetNeighbors() {
+void testReadAndSetNeighbors(void) {
   // Open file
   const char* const binFile = "data/testNeighbors";
   FILE* fp = fopen(binFile, "rb");
@@ -136,7 +136,7 @@ void testMakeDirectories(const char* directories) {
     // Find the root
     char* root = strdup(directories);
     size_t strLen = strlen(directories);
-    for (int i = 0; i < strLen; ++i) {
+    for (size_t i = 0; i < strLen; ++i) {
       if (root[i] == '/') {
         root[i] = '\0';
         break;
@@ -150,7 +150,7 @@ void testMakeDirectories(const char* directories) {
   return;
 }
 
-void testWriteNewline() {
+void testWriteNewline(void) {
   // Setup
   const char* path = "newLine/newLine";
   const char* directory = "newline";
@@ -182,7 +182,7 @@ void testWriteNewline() {
   return;
 }
 
-void testWriteRouter() {
+void testWriteRouter(void) {
   // Setup
   const char* path = "writeRouter/router";
   const char* directory = "writeRouter";
@@ -219,7 +219,7 @@ void testWriteRouter() {
   return;
 }
 
-void testWriteNeighbors() {
+void testWriteNeighbors(void) {
   // Setup
   const char* path = "writeNeighbors/neighbors";
   const char* directory = "writeNeighbors";
@@ -300,12 +300,12 @@ void testWriteBinaryFile(const char* path) {
 
   // Compare the contents
   assert(n == newN);
-  for (int r = 0; r < n; ++r) {
+  for (unsigned int r = 0; r < n; ++r) {
     assert(routerArray[r].routerId == newRouterArray[r].routerId);
     assert(routerArray[r].flag == newRouterArray[r].flag);
     assert(strcmp(routerArray[r].producerModel,
                   newRouterArray[r].producerModel) == 0);
-    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+    for (unsigned int i = 0; i < MAX_NEIGHBORS; ++i) {
       assert(routerArray[r].neighbors[i] == newRouterArray[r].neighbors[i]);
     }
   }

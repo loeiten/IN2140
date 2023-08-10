@@ -1,22 +1,23 @@
 
 #include "../include/helpers.h"
 
-#include <ftw.h>     // for nftw, FTW (ptr only), FTW_DEPTH, FTW_PHYS
+#include <ftw.h>  // for nftw, FTW (ptr only), FTW_DEPTH, FTW_PHYS
+#include <stddef.h>
 #include <stdio.h>   // for fprintf, perror, NULL, size_t, remove, stderr
 #include <stdlib.h>  // for free, atoi, malloc, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strlen
 struct stat;
 
 int strToIntArray(const char *const arrayStr, int *const intArray) {
-  size_t strLen = strlen(arrayStr);
+  int strLen = strlen(arrayStr);
   size_t intCounter = 0;
-  size_t start = 0;
-  size_t end = 0;
+  int start = 0;
+  int end = 0;
   char *subStr = NULL;
   for (int i = 0; i < strLen; ++i) {
     if (arrayStr[i] == ',') {
       end = i;
-      size_t subStrLen = end - start;
+      int subStrLen = end - start;
       subStr = (char *)malloc((subStrLen + 1) * sizeof(char));
       if (subStr == NULL) {
         perror("Could not allocate memory to subStr: ");
@@ -63,6 +64,11 @@ int strToIntArray(const char *const arrayStr, int *const intArray) {
 
 int removeFunction(const char *path, const struct stat *sb, int typeFlag,
                    struct FTW *ftwBuf) {
+  // Unused parameters
+  (void)sb;
+  (void)typeFlag;
+  (void)ftwBuf;
+
   int success = remove(path);
   if (success != 0) {
     perror("Failed to remove path: ");

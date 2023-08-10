@@ -20,11 +20,11 @@
 #include <stdlib.h>  // for free, malloc
 #include <string.h>  // for strlen
 
-int main() {
+int main(void) {
   // This creates a pointer to a string literal
   // This literal will be part of the executable (which should be read-only)
   // https://stackoverflow.com/q/1011455/2786884
-  char* s = "hello world";
+  const char* s = "hello world";
   // One shouldn't modify the string literal (which is part of the executable)
   // *s = 'H';
   printf("%s\n", s);

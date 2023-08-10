@@ -16,7 +16,7 @@ int getCommand(const char *const commandStr, char **const command,
   const char *format = "%s";
 
   // Declare helper variables
-  size_t strLen;
+  int strLen;
   int charWritten;  // Number of chars not including terminating char
   char *token;
   char *savePtr;

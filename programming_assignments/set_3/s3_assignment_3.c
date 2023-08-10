@@ -19,8 +19,8 @@
 #include <stdlib.h>  // for free, malloc, EXIT_SUCCESS
 #include <string.h>  // for strlen
 
-int main() {
-  char* strLiteral =
+int main(void) {
+  const char* strLiteral =
       "I'm a string literal copied to the heap before being printed";
   int bufLen = strlen(strLiteral) + 1;
   char* msg = (char*)malloc(bufLen * sizeof(char));

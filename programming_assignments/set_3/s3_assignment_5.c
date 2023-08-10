@@ -42,7 +42,7 @@ int printEverySecondLine(FILE* fp, const int lines) {
   return EXIT_SUCCESS;
 }
 
-int main() {
+int main(void) {
   while (1) {
     // Capture input from stdin
     char path[MAX_LEN];

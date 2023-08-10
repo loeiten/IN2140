@@ -17,7 +17,7 @@ void testGetCommand(const char* const commandStr,
   assert(success == EXIT_SUCCESS);
   assert(strcmp(command, expectedCommand) == 0);
   assert(nArgs == (size_t)atoi(expectedNArgs));
-  for (int i = 0; i < nArgs; ++i) {
+  for (unsigned int i = 0; i < nArgs; ++i) {
     printf("%s\n", args[i]);
   }
   return;

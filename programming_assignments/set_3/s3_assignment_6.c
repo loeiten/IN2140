@@ -16,7 +16,7 @@
 
 #include "../../utils/include/my_math.h"  // for divide, multiply, sum
 
-int main() {
+int main(void) {
   int s = sum(1, 9);
   int m = multiply(s, 10);
   int d = divide(m, 5);

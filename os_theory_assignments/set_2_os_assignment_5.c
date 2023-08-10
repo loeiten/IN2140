@@ -65,7 +65,7 @@ int readNumber(const char* path, int* number) {
   return EXIT_SUCCESS;
 }
 
-int main() {
+int main(void) {
   pid_t pid = 1;  // The pid==0 for child processes
   int offset = 0;
 

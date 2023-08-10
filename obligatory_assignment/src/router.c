@@ -1,5 +1,6 @@
 #include "../include/router.h"
 
+#include <stddef.h>
 #include <stdio.h>   // for fprintf, stderr, printf, size_t, NULL
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE, strtol
 
@@ -49,7 +50,7 @@ int printRouter(const struct Router* const routerArray, const unsigned int N,
 }
 
 void printNeighbors(const int* const neighbors) {
-  char* delim = "";
+  const char* delim = "";
   printf("Neighbors: [");
   for (int i = 0; i < MAX_NEIGHBORS; ++i) {
     if (neighbors[i] == -1) {
@@ -184,7 +185,7 @@ int deleteRouter(struct Router** routerArray, unsigned int* const N,
   }
 
   // Delete all references
-  for (int r = 0; r < *N; ++r) {
+  for (unsigned int r = 0; r < *N; ++r) {
     for (int i = 0; i < MAX_NEIGHBORS; ++i) {
       if ((*routerArray)[r].neighbors[i] == -1) {
         break;
@@ -232,7 +233,7 @@ int deleteRouter(struct Router** routerArray, unsigned int* const N,
   (*routerArray)[hitIdx].producerModel = NULL;
 
   // Delete the router itself and fill the "hole" in the array
-  if (!(((hitIdx == 0) && (*N == 1)) || (hitIdx == (*N)))) {
+  if (!(((hitIdx == 0) && (*N == 1)) || (hitIdx == (int)(*N)))) {
     // The hitIdx is not the only in the array, nor is it the last element
     // Hence, we must move the last element to the "hole"
     (*routerArray)[hitIdx] = (*routerArray)[(*N)];
@@ -302,7 +303,7 @@ int existsRoute(struct Router* routerArray, unsigned int const N,
   }
 
   // Fill the visited with -1
-  for (int i = 0; i < N; ++i) {
+  for (unsigned int i = 0; i < N; ++i) {
     visited[i] = -1;
   }
 
@@ -331,7 +332,7 @@ int DFS(struct Router* routerArray, unsigned int const N,
   }
 
   // Check whether this router is in the list of the visited router
-  int nextFreeVisited = 0;
+  unsigned int nextFreeVisited = 0;
   for (; nextFreeVisited < N; ++nextFreeVisited) {
     if ((*visited)[nextFreeVisited] == -1) {
       break;

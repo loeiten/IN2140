@@ -5,7 +5,7 @@
 
 void writeToFile(FILE* fp, const char* text) {
   int pos;
-  printf("Address of fp=%p\n", fp);
+  printf("Address of fp=%p\n", (void*)fp);
 
   pos = ftell(fp);
   printf("Currently at %d bytes offset in the file\n", pos);
@@ -14,7 +14,7 @@ void writeToFile(FILE* fp, const char* text) {
   printf("Currently at %d bytes offset in the file\n", pos);
 }
 
-pid_t openAfterFork() {
+pid_t openAfterFork(void) {
   const char* filename = "set_4_os_assignment_7_open_after_fork.txt";
 
   pid_t pid = fork();
@@ -59,7 +59,7 @@ pid_t openAfterFork() {
   return pid;
 }
 
-void openBeforeFork() {
+void openBeforeFork(void) {
   const char* filename = "set_4_os_assignment_7_open_before_fork.txt";
 
   FILE* fp = fopen(filename, "w");
@@ -90,7 +90,7 @@ void openBeforeFork() {
   }
 }
 
-int main() {
+int main(void) {
   printf("Open file AFTER fork:\n---\n");
   fflush(stdout);  // So that only one process writes the above
   pid_t pid = openAfterFork();

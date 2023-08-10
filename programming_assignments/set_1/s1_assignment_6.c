@@ -54,7 +54,7 @@ int strcmpx(const char* s1, const char* s2) {
     return 1;
   }
 
-  for (int i = 0; i < strlen(s1); ++i) {
+  for (unsigned long i = 0; i < strlen(s1); ++i) {
     if (s1[i] < s2[i]) {
       return -1;
     }
@@ -70,7 +70,7 @@ void test(const char* s1, const char* s2) {
   printf("strcmpx(\"%s\", \"%s\") gives %d\n", s1, s2, strcmpx(s1, s2));
 }
 
-int main() {
+int main(void) {
   test("Abc", "Ab");
   test("Abc", "Abc");
   test("Abc", "Abcd");

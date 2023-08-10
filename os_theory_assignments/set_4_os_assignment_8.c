@@ -5,7 +5,7 @@
 #include <sys/stat.h>   // for S_IRWXU, S_IRWXG, S_IRWXO
 #include <unistd.h>     // for close, fsync, lseek, read, write
 
-int main() {
+int main(void) {
   const char* buf = "Hello, world!\n";
   const char* filename = "set_4_os_assignment_8.txt";
 

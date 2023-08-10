@@ -49,7 +49,7 @@ void testPrintNeighbors(const char* const neighborStr) {
   return;
 }
 
-void testSetNeighbor() {
+void testSetNeighbor(void) {
   // Create testRouters
   struct Router routerArray[N] = {
       {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
@@ -97,7 +97,7 @@ void testSetNeighbor() {
   return;
 }
 
-void testFindRouterId() {
+void testFindRouterId(void) {
   // Create testRouters
   const struct Router routerArray[N] = {
       {.routerId = 42}, {.routerId = 7}, {.routerId = 88}};
@@ -204,7 +204,7 @@ void testDeleteRouter(const char* const routerIdStr) {
   }
   // Fill the routers
   const char* producerModels[4] = {"Foo", "Bar", "Baz", "FooBar"};
-  for (int i = 0; i < n; ++i) {
+  for (unsigned int i = 0; i < n; ++i) {
     routerArray[i].routerId = i;
     // Dynamically allocate the producerModels
     int length = snprintf(NULL, 0, "%s", producerModels[i]);
@@ -220,8 +220,8 @@ void testDeleteRouter(const char* const routerIdStr) {
   }
 
   // Initialize the neighbors
-  for (int r = 0; r < n; ++r) {
-    for (int i = 0; i < MAX_NEIGHBORS; ++i) {
+  for (unsigned int r = 0; r < n; ++r) {
+    for (unsigned int i = 0; i < MAX_NEIGHBORS; ++i) {
       routerArray[r].neighbors[i] = -1;
     }
   }
@@ -260,7 +260,7 @@ void testDeleteRouter(const char* const routerIdStr) {
   freeRouterArray(&routerArray, n);
 }
 
-void testSetName() {
+void testSetName(void) {
   // Malloc the test routers
   struct Router* routerArray[1];
 
@@ -280,7 +280,7 @@ void testSetName() {
   return;
 }
 
-void testExistsRoute() {
+void testExistsRoute(void) {
   // Two nodes
   int n = 2;
   struct Router routerArray1[2] = {{.routerId = 0}, {.routerId = 1}};

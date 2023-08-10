@@ -14,7 +14,7 @@
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_SUCCESS
 
-int main(int argc, char** argv) {
+int main(void) {
   short arr[] = {2, 1, -1, 10, 22, 21};
   int arrLen = 6;
 

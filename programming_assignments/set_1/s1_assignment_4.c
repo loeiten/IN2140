@@ -16,21 +16,27 @@
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strlen
 
-#define STREQ(s1, s2)                        \
-  ({                                         \
-    int result = 1;                          \
-    if (strlen(s1) != strlen(s2)) {          \
-      result = 0;                            \
-    } else {                                 \
-      for (int i = 0; i < strlen(s1); ++i) { \
-        if ((s1[i] != s2[i])) {              \
-          result = 0;                        \
-          break;                             \
-        }                                    \
-      }                                      \
-    }                                        \
-    result;                                  \
-  })
+#define STREQ(s1, s2) (strcmp(s1, s2) == 0)
+
+/*
+ * The following uses GNU statement expression extension
+ *
+ * #define STREQ(s1, s2)                        \
+ *   ({                                         \
+ *     int result = 1;                          \
+ *     if (strlen(s1) != strlen(s2)) {          \
+ *       result = 0;                            \
+ *     } else {                                 \
+ *       for (unsigned long i = 0; i < strlen(s1); ++i) { \
+ *         if ((s1[i] != s2[i])) {              \
+ *           result = 0;                        \
+ *           break;                             \
+ *         }                                    \
+ *       }                                      \
+ *     }                                        \
+ *     result;                                  \
+ *   })
+ */
 
 int main(int argc, char** argv) {
   if (argc != 3) {

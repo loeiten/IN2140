@@ -17,7 +17,7 @@
 char strgetc(const char* c, int pos) {
   // Error checking
   // +1 as pos is zero indexed
-  if (((pos) < 0) || ((pos + 1) > strlen(c))) {
+  if (((pos) < 0) || ((pos + 1) > (long)strlen(c))) {
     // 0 is reserved for the null charater
     return 0;
   }

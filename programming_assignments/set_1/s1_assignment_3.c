@@ -31,7 +31,7 @@
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_SUCCESS
 
-int main() {
+int main(void) {
   short a = 20000;
   short b = 20000;
   short sum = a + b;
