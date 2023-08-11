@@ -41,7 +41,7 @@ int strToIntArray(const char *const arrayStr, int *const intArray) {
 
   // Add the last element (if any)
   if (end != start) {
-    size_t subStrLen = end - start;
+    int subStrLen = end - start;
     subStr = (char *)malloc((subStrLen + 1) * sizeof(char));
     if (subStr == NULL) {
       perror("Could not allocate memory to subStr: ");

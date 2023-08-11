@@ -116,8 +116,35 @@ int main(int argc, char** argv) {
     }
   }
 
+  // Store the router
+  // Copy the commandStr as strtok_r will alter the string
+  char* writeBinFile = NULL;
+  int strLen =
+      snprintf(NULL, 0, "%s/%s", "storedBinFile", basename((char*)binFile));
+  writeBinFile = (char*)malloc((strLen + 1) * sizeof(char));
+  if (writeBinFile == NULL) {
+    perror("Could not allocate memory to writeBinFile: ");
+    return EXIT_FAILURE;
+  }
+  int charWritten = snprintf(writeBinFile, (strLen + 1), "%s/%s",
+                             "storedBinFile", basename((char*)binFile));
+  if ((charWritten < 0) || (charWritten > strLen)) {
+    freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
+    free(writeBinFile);
+    return EXIT_FAILURE;
+  }
+  success = writeBinaryFile(writeBinFile, routerArray, N);
+  if (success != EXIT_SUCCESS) {
+    printf("Failed to write to %s\n", writeBinFile);
+    // Free the router
+    freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
+    free(writeBinFile);
+    return EXIT_FAILURE;
+  }
+
   // Free the router
   freeRoutersAndCommand(&routerArray, N, &command, &args, nArgs);
+  free(writeBinFile);
 
   return EXIT_SUCCESS;
 }
