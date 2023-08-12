@@ -87,9 +87,9 @@ do_test(NAME test_binary_file NO 13 ARGS "writeRouter" EXPECTED "Name: Foo Bar\n
 do_test(NAME test_binary_file NO 14 ARGS "writeNeighbors" EXPECTED "Neighbors: \\[\\]\nNeighbors: \\[95, 2\\]\nNeighbors: \\[95, 2, 77, 15\\]\n")
 
 # writeBinaryFile
-do_test(NAME test_binary_file NO 15 ARGS "writeBinaryFile" "../assignment_files/5_routers_fully_connected" EXPECTED "Success\n")
-do_test(NAME test_binary_file NO 16 ARGS "writeBinaryFile" "../assignment_files/10_routers_10_edges" EXPECTED "Success\n")
-do_test(NAME test_binary_file NO 17 ARGS "writeBinaryFile" "../assignment_files/50_routers_150_edges" EXPECTED "Success\n")
+do_test(NAME test_binary_file NO 15 ARGS "writeBinaryFile" "../assignment_files/5_routers_fully_connected" EXPECTED "Routers written to writeBinaryFile/binaryFile\n")
+do_test(NAME test_binary_file NO 16 ARGS "writeBinaryFile" "../assignment_files/10_routers_10_edges" EXPECTED "Routers written to writeBinaryFile/binaryFile\n")
+do_test(NAME test_binary_file NO 17 ARGS "writeBinaryFile" "../assignment_files/50_routers_150_edges" EXPECTED "Routers written to writeBinaryFile/binaryFile\n")
 
 # Test command
 # getCommand

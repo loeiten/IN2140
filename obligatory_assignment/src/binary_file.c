@@ -271,7 +271,7 @@ int writeBinaryFile(const char* const binFile,
     return EXIT_FAILURE;
   }
 
-  printf("Routers written to %s", binFile);
+  printf("Routers written to %s\n", binFile);
   fclose(fp);
 
   return EXIT_SUCCESS;

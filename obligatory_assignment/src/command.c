@@ -188,7 +188,7 @@ int runCommand(const char *const command, const char *const *const args,
       return EXIT_FAILURE;
     }
     const char *existsString = (exists == 1) ? "exists" : "does not exist";
-    printf("Route from router %u to router %u %s", fromRouterId, toRouterId,
+    printf("Route from router %u to router %u %s\n", fromRouterId, toRouterId,
            existsString);
   }
 

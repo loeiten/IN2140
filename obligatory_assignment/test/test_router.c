@@ -261,19 +261,20 @@ void testDeleteRouter(const char* const routerIdStr) {
 }
 
 void testSetName(void) {
-  // Malloc the test routers
-  struct Router* routerArray[1];
+  // Create the test router
+  struct Router routerArray[1];
+  struct Router* routerArrayPtr = &(routerArray[0]);
 
   // Fill the routers
   const char* producerModels[4] = {"Foo", "FooBar", "Baz", "Quux"};
-  routerArray[0]->routerId = 0;
-  routerArray[0]->producerModel = NULL;
+  routerArrayPtr->routerId = 57;
+  routerArrayPtr->producerModel = NULL;
 
   // Dynamically allocate the producerModels
   for (int i = 0; i < 4; ++i) {
-    int success = setModel(routerArray, 1, 0, producerModels[i]);
+    int success = setModel(&routerArrayPtr, 1, 57, producerModels[i]);
     assert(success == EXIT_SUCCESS);
-    assert(strcmp(routerArray[0]->producerModel, producerModels[i]) == 0);
+    assert(strcmp(routerArray[0].producerModel, producerModels[i]) == 0);
   }
 
   printf("Success\n");

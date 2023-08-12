@@ -318,8 +318,6 @@ void testWriteBinaryFile(const char* path) {
   // Free the memory
   freeRouterArray(&routerArray, n);
   freeRouterArray(&newRouterArray, newN);
-
-  printf("Success\n");
   return;
 }
 
