@@ -179,7 +179,8 @@ int runCommand(const char *const command, const char *const *const args,
     if (success != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }
-  } else if (strcmp(command, "exist_route") == 0) {
+  } else if ((strcmp(command, "exist_route") == 0) ||
+             (strcmp(command, "path_exist") == 0)) {
     const unsigned char fromRouterId = atoi(args[0]);
     const unsigned char toRouterId = atoi(args[1]);
     int exists = -1;
@@ -190,6 +191,9 @@ int runCommand(const char *const command, const char *const *const args,
     const char *existsString = (exists == 1) ? "exists" : "does not exist";
     printf("Route from router %u to router %u %s\n", fromRouterId, toRouterId,
            existsString);
+  } else {
+    fprintf(stderr, "Command '%s' not implemented\n", command);
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
