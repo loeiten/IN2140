@@ -68,7 +68,7 @@ About the realism of this experiment:
 ## The emulated network
 
 The nodes are arranged in a graph with weighted bi-directional as shown in
-[graph1](./figures/graph1.pdf).
+[graph1](./assignment_files/figures/graph1.pdf).
 These edge weights represent the cost of sending a message over this edge.
 The weights are the same in both directions.
 Each node knows some of its direct neighbors in the graph, as well as the edge
