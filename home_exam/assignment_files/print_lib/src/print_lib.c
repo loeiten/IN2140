@@ -1,4 +1,4 @@
-#include "print_lib.h"
+#include "../include/print_lib.h"
 
 #include <arpa/inet.h>
 #include <stdio.h>
@@ -18,6 +18,12 @@
 
 static unsigned int validate_packet(unsigned char* packet) {
   unsigned int minor = PACKET_OK;
+
+  // (0000 1010  0000 0000) <- short
+  // (0000 1010) 1111 0101  <- unsigned char[2]
+  // 0000 1010 1111 0101  <- &unsigned char
+  // 0000 1010 1111 0101 0000 1010 1111 0101 <- &unsigned char
+
   unsigned short length = ntohs(*(short*)&packet[0]);
 
   if (length < 6) {
@@ -77,7 +83,9 @@ static void print_msg(FILE* logfile, unsigned int chk, short ownAddress,
       length = ntohs(*(short*)&packet[0]);
     }
 
+    unsigned short msgMalloc = 0;
     if (chk & STRING_TERM_BUG) {
+      msgMalloc = 1;
       if (length - 6 > 0)
         msg = strndup((char*)&packet[6], length - 6);
       else
@@ -87,7 +95,7 @@ static void print_msg(FILE* logfile, unsigned int chk, short ownAddress,
     fprintf(logfile, "[%d] %s PKT len %d src %d dst %d FLG %x msg %s \n",
             ownAddress, operation, length, source, dest, chk, msg);
 
-    if (chk & STRING_TERM_BUG) {
+    if ((chk & STRING_TERM_BUG) && msgMalloc) {
       free(msg);
     }
   }
