@@ -17,14 +17,10 @@
 #define INCOMPLETE_PACKET 0x8000
 
 static unsigned int validate_packet(unsigned char* packet) {
+  short tmp;
   unsigned int minor = PACKET_OK;
-
-  // (0000 1010  0000 0000) <- short
-  // (0000 1010) 1111 0101  <- unsigned char[2]
-  // 0000 1010 1111 0101  <- &unsigned char
-  // 0000 1010 1111 0101 0000 1010 1111 0101 <- &unsigned char
-
-  unsigned short length = ntohs(*(short*)&packet[0]);
+  memcpy(&tmp, &packet[0], sizeof(tmp));
+  unsigned short length = ntohs(tmp);
 
   if (length < 6) {
     return INCOMPLETE_PACKET;
@@ -62,25 +58,30 @@ static unsigned int validate_packet(unsigned char* packet) {
 }
 
 static void print_msg(FILE* logfile, unsigned int chk, short ownAddress,
-                      char* operation, unsigned char* packet) {
+                      const char* operation, unsigned char* packet) {
   if (chk & INCOMPLETE_PACKET) {
     fprintf(logfile, "[1] created incomplete PKT\n");
   } else {
+    short tmp;
     unsigned short length;
     unsigned short source;
     unsigned short dest;
     char* msg;
 
-    length = ntohs(*(short*)&packet[0]);
+    memcpy(&tmp, &packet[0], sizeof(tmp));
+    length = ntohs(tmp);
     /* Switched source and dest
     source = ntohs( *(short*)&packet[2] );
     dest   = ntohs( *(short*)&packet[4] );*/
-    dest = ntohs(*(short*)&packet[2]);
-    source = ntohs(*(short*)&packet[4]);
+    memcpy(&tmp, &packet[2], sizeof(tmp));
+    dest = ntohs(tmp);
+    memcpy(&tmp, &packet[4], sizeof(tmp));
+    source = ntohs(tmp);
     msg = (char*)&packet[6];
 
     if (chk & LEN_SWAP) {
-      length = ntohs(*(short*)&packet[0]);
+      memcpy(&tmp, &packet[0], sizeof(tmp));
+      length = ntohs(tmp);
     }
 
     unsigned short msgMalloc = 0;
