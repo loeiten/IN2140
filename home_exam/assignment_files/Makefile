@@ -14,4 +14,4 @@ $(LIB_DIR)/libprint.$(LIB_EXTENSION): $(BUILD_OBJ_DIR)/print_lib.o
 # https://stackoverflow.com/a/3220288/2786884
 $(BUILD_OBJ_DIR)/print_lib.o: print_lib/src/print_lib.c print_lib/include/print_lib.h
 	mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) -c $< -o $@
+	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) -c $< -o $@
