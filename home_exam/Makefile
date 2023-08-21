@@ -5,7 +5,7 @@
 CC := clang
 CFLAGS := -g -O0 -std=gnu17
 CC_LINT_FLAGS := -Wall -Wextra -Wpedantic -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Waggregate-return -Werror
-CC_SANITIZERS := -fsanatize=address -fsanatize=undefined
+CC_SANITIZERS := -fsanitize=address -fsanitize=undefined
 
 # Setting up the paths
 SRC_DIR := $(abspath .)
@@ -39,13 +39,20 @@ all: $(EXEC_DIR)/routing_server $(EXEC_DIR)/node
 
 # Make the routing_server executable
 # FIXME: Have a directory specifically for routing_server
-$(EXEC_DIR)/routing_server: $(LIB_DIR)/libprint.$(LIB_EXTENSION)
+$(EXEC_DIR)/routing_server: $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(EXEC_DIR)/assignment_files
 	touch $(EXEC_DIR)/routing_server
 
 # Make the node executable
 # FIXME: Have directory specifically for node
-$(EXEC_DIR)/node: $(LIB_DIR)/libprint.$(LIB_EXTENSION)
+$(EXEC_DIR)/node: $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(EXEC_DIR)/assignment_files
 	touch $(EXEC_DIR)/node
+
+# Copy the files from assignment into the executable
+ASSIGNMENT_FILES := $(wildcard assignment_files/*.*)
+$(EXEC_DIR)/assignment_files: $(ASSIGNMENT_FILES)
+	mkdir -p $(EXEC_DIR)/assignment_files
+	cp $(ASSIGNMENT_FILES) $(EXEC_DIR)/assignment_files
+
 
 # Make the library
 $(LIB_DIR)/libprint.$(LIB_EXTENSION):
