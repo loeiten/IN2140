@@ -22,6 +22,16 @@ int getMinDistanceIdx(const int *const distance, const int *const visited,
   return minIdx;
 }
 
+// FIXME: Should store the shortest path as well
+//        The path would be updated when it's marked as visited
+//          At this time one can loop through all the vertices of the hit
+//          The one which is visited and has the shortest path is the prev
+//          One can then copy the path until that point (from the vertex) and
+//          add the current node to it
+//        Can be a struct with array and N so that we don't have to loop every
+//        time to find the next available slot
+//        We can then check if the from_node is in the path by checking if it's
+//        in one of the elements of shortest path from src to to_node
 int dijkstra(const int src, const int *const *const graph,
              int *const *const distance, const int n) {
   // Solve Dijkstra's algorithm using shortest path three
