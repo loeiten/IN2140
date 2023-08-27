@@ -54,8 +54,8 @@ test:
 	$(MAKE) -C test $(PROJECT_PATHS) $(PROJECT_CC_FLAGS) $(PROJECT_LIB_FLAGS) test
 
 # Run the test executables
-run-test:
-	$(MAKE) -C test $(PROJECT_PATHS) $(PROJECT_CC_FLAGS) $(PROJECT_LIB_FLAGS) run-test
+run-tests:
+	$(MAKE) -C test $(PROJECT_PATHS) $(PROJECT_CC_FLAGS) $(PROJECT_LIB_FLAGS) run-tests
 
 # Copy the files from assignment into the executable
 ASSIGNMENT_FILES := $(wildcard assignment_files/*.*)
