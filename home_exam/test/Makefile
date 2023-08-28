@@ -29,4 +29,6 @@ run-tests: run_test_dijkstra
 
 .PHONY: run_test_dijkstra
 run_test_dijkstra: $(TEST_EXEC_DIR)/test_dijkstra
+	echo "Running $<..."
 	$<
+	echo "...done"
