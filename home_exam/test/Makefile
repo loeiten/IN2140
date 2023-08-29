@@ -10,7 +10,8 @@
 #          one small change in an unrelated file).
 #		   Hence, we are adding the tests one by one
 
-.PHONY: test run-tests
+.PHONY: all clean test run-tests
+all: test run-test
 
 # Build the tests
 test: $(TEST_EXEC_DIR)/test_dijkstra
@@ -32,3 +33,6 @@ run_test_dijkstra: $(TEST_EXEC_DIR)/test_dijkstra
 	echo "Running $<..."
 	$<
 	echo "...done"
+
+clean:
+	rm -rf $(BUILD_TEST_DIR) $(TEST_EXEC_DIR)
