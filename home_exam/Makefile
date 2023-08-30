@@ -39,10 +39,11 @@ PROJECT_LIB_FLAGS := ARCHIVE="$(ARCHIVE)" LIB_EXTENSION="$(LIB_EXTENSION)" LIB_F
 
 all: $(EXEC_DIR)/routing_server $(EXEC_DIR)/node
 
+# FIXME: All could instead call all the makefiles in the subdirs
 # Make the routing_server executable
-# FIXME: Have a directory specifically for routing_server
+# FIXME: Have the correct dependencies
 $(EXEC_DIR)/routing_server: $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(EXEC_DIR)/assignment_files
-	touch $(EXEC_DIR)/routing_server
+	$(MAKE) -C routing_server $(PROJECT_PATHS) $(PROJECT_CC_FLAGS) $(PROJECT_LIB_FLAGS)
 
 # Make the node executable
 # FIXME: Have directory specifically for node

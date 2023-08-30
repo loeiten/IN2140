@@ -16,21 +16,23 @@ all: test run-test
 # Build the tests
 test: $(TEST_EXEC_DIR)/test_dijkstra
 
-$(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o
+# @ outputs the target
+# ^ outputs all prerequisites
+$(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o
 	mkdir -p $(TEST_EXEC_DIR)
-	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) $< -o $@
+	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) $^ -o $@
 
-
+# < outputs the first prerequisite
 $(BUILD_TEST_DIR)/test_dijkstra.o: test_dijkstra.c
 	mkdir -p $(BUILD_TEST_DIR)
 	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) -c $< -o $@
 
 # Run test
-run-tests: run_test_dijkstra
+run-tests: run_test_get_min_distance_idx_1
 
 .PHONY: run_test_dijkstra
-run_test_dijkstra: $(TEST_EXEC_DIR)/test_dijkstra
-	echo "Running $<..."
+run_test_get_min_distance_idx_1: $(TEST_EXEC_DIR)/test_dijkstra
+	echo "Running $@: $< getMinDistanceIdx ..."
 	$<
 	echo "...done"
 
