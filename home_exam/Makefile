@@ -61,6 +61,7 @@ run-tests:
 # Copy the files from assignment into the executable
 ASSIGNMENT_FILES := $(wildcard assignment_files/*.*)
 $(EXEC_DIR)/assignment_files: $(ASSIGNMENT_FILES)
+	echo "\n\033[92mCopying the assignment files\033[0m"
 	mkdir -p $(EXEC_DIR)/assignment_files
 	cp $(ASSIGNMENT_FILES) $(EXEC_DIR)/assignment_files
 

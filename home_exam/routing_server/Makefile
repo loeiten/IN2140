@@ -14,10 +14,12 @@ OBJECT_FILES := $(SOURCES:%.c=$(BUILD_OBJ_DIR)/%.o)
 
 # Build the final executable
 $(EXEC_DIR)/routing_server: $(OBJECT_FILES)
+	echo "\n\033[92mBuilding routing_server\033[0m"
 	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) $^ -o $@
 
 # Building the object files
 $(BUILD_OBJ_DIR)/%.o: src/%.c
+	echo "\n\033[92mBuilding the object files for routing_server\033[0m"
 	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) -c $< -o $@
 
 test:
