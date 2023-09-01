@@ -7,10 +7,14 @@
 all: $(EXEC_DIR)/routing_server
 
 SOURCE_FILES := $(wildcard src/*.c)
+$(info "SOURCE_FILES")
+$(info ${SOURCE_FILES})
 # We here use the functionality $(list:pattern=replace)
 # One could also have used $(patsubst pattern,replacement,text)
 # We are also using the % wildcard
-OBJECT_FILES := $(SOURCES:%.c=$(BUILD_OBJ_DIR)/%.o)
+OBJECT_FILES := $(SOURCES:src/%.c=$(BUILD_OBJ_DIR)/%.o)
+$(info "OBJECT_FILES")
+$(info ${OBJECT_FILES})
 
 # Build the final executable
 $(EXEC_DIR)/routing_server: $(OBJECT_FILES)
