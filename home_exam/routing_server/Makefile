@@ -1,6 +1,4 @@
-# NOTE:
-# This Makefile takes variables passed in from the "outside" (typically from the
-# parent Makefile)
+include ../common.mk
 
 .PHONY: all clean test
 
@@ -18,12 +16,12 @@ $(info ${OBJECT_FILES})
 
 # Build the final executable
 $(EXEC_DIR)/routing_server: $(OBJECT_FILES)
-	echo "\n\033[92mBuilding routing_server\033[0m"
+	$(call explain_build,Building routing_server)
 	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) $^ -o $@
 
 # Building the object files
 $(BUILD_OBJ_DIR)/%.o: src/%.c
-	echo "\n\033[92mBuilding the object files for routing_server\033[0m"
+	$(call explain_build,Building the object files for routing_server)
 	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) -c $< -o $@
 
 test:
