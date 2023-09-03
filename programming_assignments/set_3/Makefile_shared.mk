@@ -1,8 +1,8 @@
-# Usage: make -f Makefile_static
+# Usage: make -f Makefile_shared.mk
 # See https://makefiletutorial.com for tutorial
 TARGET_NAME := s3_assignment_6
 LIB_BASE := my_math
-LIB_TYPE := static
+LIB_TYPE := shared
 
 SRC_DIR := .
 BASE_DIR := ../..
@@ -15,34 +15,37 @@ BUILD_OBJ_DIR := $(BUILD_DIR)/obj_files_from_make
 LIB_NAME := lib$(LIB_BASE)_$(LIB_TYPE)
 TARGET_EXEC := $(TARGET_NAME)_$(LIB_TYPE)
 
-# Specify which archive to use
-# We're checking if empty is equal to the output of command -v <command>
-ifeq (,$(shell command -v llvm-ar))
-	ARCHIVE := ar
-else
-	ARCHIVE := llvm-ar
-endif
-
 # CC and CPP are implicit rules, but we will override them here
 # See https://makefiletutorial.com/#implicit-rules for details
 CC := clang
 
 # Flags to be used together with CC
 CCFLAGS := -std=gnu17
-LIB_EXTENSION := a
-LIB_FLAGS := rc
+LINKER_FLAGS := -Wl,-rpath $(PWD)/$(BUILD_LIB_DIR)
+
+# Detect whether we are running on Linux or OSX
+# https://stackoverflow.com/a/12099167/2786884
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	LIB_EXTENSION := so
+	LIB_FLAGS := -shared -Wl,-soname,$(LIB_NAME).$(LIB_EXTENSION)
+endif
+ifeq ($(UNAME_S),Darwin)
+	LIB_EXTENSION := dylib
+	LIB_FLAGS := -dynamiclib -install_name @rpath/$(LIB_NAME).$(LIB_EXTENSION)
+endif
 
 # The final build step
 # $(word 2,$^) is getting the second prerequisite
 # NOTE: The prerequisite order matter, as it's processed in order
 $(EXEC_DIR)/$(TARGET_EXEC): $(BUILD_LIB_DIR)/$(LIB_NAME).$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/$(TARGET_NAME).o
-	$(CC) $(CCFLAGS) $< -o $@ $(word 2,$^)
+	$(CC) $(CCFLAGS) $< -o $@ $(LINKER_FLAGS) $(word 2,$^)
 
 # Make the library
 # NOTE: We do NOT need to include the headers
 $(BUILD_LIB_DIR)/$(LIB_NAME).$(LIB_EXTENSION): $(BUILD_OBJ_DIR)/$(LIB_BASE).o
 	mkdir -p $(dir $@)
-	$(ARCHIVE) $(LIB_FLAGS) $@ $<
+	$(CC) $(CCFLAGS) -fPIC $(LIB_FLAGS) -o $@ $<
 
 # Make the executable object file
 # NOTE: We need to include the headers
@@ -55,7 +58,7 @@ $(BUILD_OBJ_DIR)/$(TARGET_NAME).o: $(SRC_DIR)/$(TARGET_NAME).c
 # https://stackoverflow.com/a/3220288/2786884
 $(BUILD_OBJ_DIR)/$(LIB_BASE).o: $(LIB_DIR)/src/$(LIB_BASE).c $(LIB_DIR)/include/$(LIB_BASE).h
 	mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) -c $< -o $@
+	$(CC) $(CCFLAGS) -fPIC -c $< -o $@
 
 .PHONY: clean
 clean:

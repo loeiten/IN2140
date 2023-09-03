@@ -6,8 +6,9 @@ CC_LINT_FLAGS := -Wall -Wextra -Wpedantic -Wfloat-equal -Wundef -Wshadow -Wpoint
 CC_SANITIZERS := -fsanitize=address -fsanitize=undefined
 
 # Setting up the paths
-SRC_DIR := $(abspath .)
-BASE_DIR := $(abspath ..)
+MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
+CUR_DIR := $(dir $(MKFILE_PATH))
+BASE_DIR := $(abspath $(CUR_DIR)/..)
 BUILD_DIR := $(abspath $(BASE_DIR)/build)
 EXEC_DIR := $(abspath $(BUILD_DIR)/home_exam)
 TEST_EXEC_DIR := $(abspath $(EXEC_DIR)/test)
@@ -27,16 +28,12 @@ endif
 LIB_EXTENSION := a
 LIB_FLAGS := rc
 
-# Bundle variables together to easier pass them on to children Makefiles
-PROJECT_PATHS := EXEC_DIR="$(EXEC_DIR)" TEST_EXEC_DIR="$(TEST_EXEC_DIR)" LIB_DIR="$(LIB_DIR)" BUILD_LIB_DIR="$(BUILD_LIB_DIR)" BUILD_OBJ_DIR="$(BUILD_OBJ_DIR)" BUILD_TEST_DIR="$(BUILD_TEST_DIR)" SRC_DIR="$(SRC_DIR)"
-PROJECT_CC_FLAGS := CC="$(CC)" CFLAGS="$(CFLAGS)" CC_LINT_FLAGS="$(CC_LINT_FLAGS)" CC_SANITIZERS="$(CC_SANITIZERS)"
-PROJECT_LIB_FLAGS := ARCHIVE="$(ARCHIVE)" LIB_EXTENSION="$(LIB_EXTENSION)" LIB_FLAGS="$(LIB_FLAGS)"
-
 # Define helper functions
 define explain_build
-	echo "\n\033[92m${1}\033[0m"
+	echo "\033[92m${1}\033[0m"
 endef
 define run_test
-	echo "\n\033[94mRunning ${1}: ${2}...\033[0m"
+	echo "\033[94mRunning ${1}: ${2}...\033[0m"
 	${2}
+	echo "\033[94m...done\033[0m"
 endef

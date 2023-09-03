@@ -9,7 +9,7 @@ include ../common.mk
 #		   Hence, we are adding the tests one by one
 
 .PHONY: all clean test run-tests
-all: test run-test
+all: test
 
 # Build the tests
 test: $(TEST_EXEC_DIR)/test_dijkstra

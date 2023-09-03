@@ -53,7 +53,7 @@ do_test(NAME s3_assignment_6 NO 1 ARGS EXPECTED "20\n")
 # https://stackoverflow.com/a/44505200/2786884
 # With a static library
 add_custom_command(OUTPUT s3_assignment_6_static_command
-                  COMMAND make -f Makefile_static
+                  COMMAND make -f Makefile_static.mk
                   DEPENDS s3_assignment_6.c my_math
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -61,7 +61,7 @@ add_custom_target(s3_assignment_6_static ALL DEPENDS s3_assignment_6_static_comm
 do_test(NAME s3_assignment_6_static NO 1 ARGS EXPECTED "20\n")
 # With a shared library
 add_custom_command(OUTPUT s3_assignment_6_shared_command
-                  COMMAND make -f Makefile_shared
+                  COMMAND make -f Makefile_shared.mk
                   DEPENDS s3_assignment_6.c my_math
                   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
