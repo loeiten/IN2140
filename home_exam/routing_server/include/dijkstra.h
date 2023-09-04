@@ -4,6 +4,10 @@
 /**
  * @brief Computes the distance from the source to all other nodes.
  *
+ * Comment: We use double pointer to represent matrices
+ * Drawback: Indirection through pointers
+ * Pro: One can access the elements by using [row][col]
+ *
  * @param src The id of the source
  * @param graph The graph to traverse given as an adjacency matrix.
  *              The adjacency matrix will have INT_MAX where if there are no

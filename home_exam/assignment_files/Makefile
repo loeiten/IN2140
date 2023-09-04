@@ -25,7 +25,7 @@ $(LIB_DIR)/libprint.$(LIB_EXTENSION): $(BUILD_LIB_DIR)/print_lib.o
 $(BUILD_LIB_DIR)/print_lib.o: print_lib/src/print_lib.c print_lib/include/print_lib.h
 	$(call explain_build,Building object files of print_lib)
 	mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) $(CC_LINT_FLAGS) $(CC_SANITIZERS) -c $< -o $@
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
 
 test:
 	$(MAKE) -C $(SRC_DIR)/test test

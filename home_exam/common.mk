@@ -2,8 +2,8 @@
 # C flag options
 CC := clang
 CFLAGS := -g -O0 -std=gnu17
-CC_LINT_FLAGS := -Wall -Wextra -Wpedantic -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Waggregate-return -Werror
-CC_SANITIZERS := -fsanitize=address -fsanitize=undefined
+C_LINT_FLAGS := -Wall -Wextra -Wpedantic -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-align -Wstrict-prototypes -Wstrict-overflow=5 -Wwrite-strings -Waggregate-return -Werror
+C_SANITIZERS := -fsanitize=address -fsanitize=undefined
 
 # Setting up the paths
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
