@@ -18,11 +18,11 @@ all:
 	done
 
 # Run the test executables
-run-tests:
+run-tests: all
 	$(MAKE) -C test run-tests
 
 # Explicitly make a test target
-test:
+test: all
 	$(MAKE) -C test
 
 clean:
