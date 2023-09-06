@@ -22,6 +22,8 @@ $(LIB_DIR)/libprint.$(LIB_EXTENSION): $(BUILD_LIB_DIR)/print_lib.o
 # $< is the first prerequisite
 # $@ is name of target to be created
 # https://stackoverflow.com/a/3220288/2786884
+# NOTE: We don't add an include path, as the path to the .h files can be found
+#       relative to the .c files
 $(BUILD_LIB_DIR)/print_lib.o: print_lib/src/print_lib.c print_lib/include/print_lib.h
 	$(call explain_build,Building object files of print_lib)
 	mkdir -p $(dir $@)

@@ -8,11 +8,13 @@ include ../common.mk
 #          one small change in an unrelated file).
 #		   Hence, we are adding the tests one by one
 
-.PHONY: all clean test run-tests
-all: test
+TESTS := run_test_get_min_distance_idx_1 \
+		 run_test_get_min_distance_idx_2
 
-# Build the tests
-test: $(TEST_EXEC_DIR)/test_dijkstra
+.PHONY: all clean test $(TESTS)
+all: $(TEST_EXEC_DIR)/test_dijkstra
+
+test: $(TESTS)
 
 # @ outputs the target
 # ^ outputs all prerequisites
@@ -22,20 +24,17 @@ $(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DI
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
 
 # < outputs the first prerequisite
+# NOTE: We don't add an include path, as the path to the .h files can be found
+#       relative to the .c files
 $(BUILD_TEST_DIR)/test_dijkstra.o: test_dijkstra.c
 	$(call explain_build,Making test_dijkstra.o)
 	mkdir -p $(BUILD_TEST_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
 
-# Run test
-run-tests: run_test_get_min_distance_idx_1 \
-		   run_test_get_min_distance_idx_2
-
-.PHONY: run_test_get_min_distance_idx_1
+# Run tests
 run_test_get_min_distance_idx_1: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< getMinDistanceIdx)
 
-.PHONY: run_test_get_min_distance_idx_2
 run_test_get_min_distance_idx_2: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< dijkstra)
 

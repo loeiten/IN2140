@@ -19,14 +19,15 @@ $(EXEC_DIR)/routing_server: $(OBJECT_FILES)
 	$(call explain_build,Building routing_server)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
 
-# FIXME: include h
 # Building the object files
+# NOTE: We don't add an include path, as the path to the .h files can be found
+#       relative to the .c files
 $(BUILD_OBJ_DIR)/%.o: $(ROUTING_SERVER_SRC)/%.c
 	$(call explain_build,Building the object files for routing_server)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
 
 test:
-	$(MAKE) -C $(SRC_DIR)/test $(PROJECT_PATHS) $(PROJECT_CC_FLAGS) $(PROJECT_LIB_FLAGS) test
+	$(MAKE) -C $(SRC_DIR)/test test
 
 clean:
 	rm -rf $(EXEC_DIR) $(BUILD_OBJ_DIR)

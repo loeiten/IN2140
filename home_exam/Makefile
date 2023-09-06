@@ -11,6 +11,7 @@ include common.mk
 # For all, we will simply call the sub-directories
 # The first $ in $$ is an escape charater.
 # So `$$dir` will expand to `$dir` instead of the variable named `dir`
+# NOTE: When you call $(MAKE) -C you are creating a new process
 COMPONENTS := assignment_files node routing_server test
 all:
 	for dir in $(COMPONENTS); do \
@@ -18,12 +19,13 @@ all:
 	done
 
 # Run the test executables
-run-tests: all
-	$(MAKE) -C test run-tests
-
-# Explicitly make a test target
+# NOTE: This depends on the target all
+#       This is in order for test/Makefile to be aware of the targets in the
+#       other directories
+#       An alternative to this was to make test/Makefile aware of the targets
+#       through include
 test: all
-	$(MAKE) -C test
+	$(MAKE) -C test test
 
 clean:
 	rm -rf $(EXEC_DIR) $(TEST_EXEC_DIR) $(LIB_DIR) $(BUILD_LIB_DIR) $(BUILD_OBJ_DIR) $(BUILD_TEST_DIR)
