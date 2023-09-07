@@ -25,11 +25,11 @@ void testGetMinDistanceIdx(void) {
 }
 
 void testDijkstra(void) {
-// Graph from
+// graphA from
 // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
 #define N (9)
   // clang-format off
-  const int graph[N][N] = {
+  const int graphA[N][N] = {
       {0, 4, 0, 0, 0, 0, 0, 8, 0},
       {4, 0, 8, 0, 0, 0, 0, 11, 0},
       {0, 8, 0, 7, 0, 4, 0, 0, 2},
@@ -43,16 +43,16 @@ void testDijkstra(void) {
   int distance[N];
   int src = 0;
 
-  // We must convert graph[9][9] to a pointer pointer
+  // We must convert graphA to a pointer pointer
   // We cannot do this directly as we cannot directly decay to pointer pointer
   // https://en.cppreference.com/w/cpp/language/array#:~:text=Multidimensional%20arrays,-When%20the%20element&text=Note%20that%20when%20array%2Dto,decay%20is%20applied%20only%20once.
-  const int *graphPtr[N];
+  const int *graphPtrA[N];
   for (int i = 0; i < N; ++i) {
     // Recall that i gives the pointer to the i'th row
-    graphPtr[i] = graph[i];
+    graphPtrA[i] = graphA[i];
   }
 
-  int success = dijkstra(src, graphPtr, distance, N);
+  int success = dijkstra(src, graphPtrA, distance, N);
   assert(success == EXIT_SUCCESS);
   assert(distance[0] == 0);
   assert(distance[1] == 4);
@@ -63,6 +63,48 @@ void testDijkstra(void) {
   assert(distance[6] == 9);
   assert(distance[7] == 8);
   assert(distance[8] == 14);
+
+  src = 8;
+  success = dijkstra(src, graphPtrA, distance, N);
+  assert(success == EXIT_SUCCESS);
+  assert(distance[0] == 14);
+  assert(distance[1] == 10);
+  assert(distance[2] == 2);
+  assert(distance[3] == 9);
+  assert(distance[4] == 16);
+  assert(distance[5] == 6);
+  assert(distance[6] == 6);
+  assert(distance[7] == 7);
+  assert(distance[8] == 0);
+#undef N
+
+#define N (6)
+  // Graph from https://www.programiz.com/dsa/dijkstra-algorithm
+  // clang-format off
+  const int graphB[N][N] = {
+      {0, 4, 0, 0, 0, 4},
+      {4, 0, 3, 6, 1, 2},
+      {0, 3, 0, 2, 0, 0},
+      {0, 6, 2, 0, 3, 0},
+      {0, 1, 0, 3, 0, 0},
+      {4, 0, 0, 0, 2, 0}};
+  // clang-format on
+
+  const int *graphPtrB[N];
+  for (int i = 0; i < N; ++i) {
+    // Recall that i gives the pointer to the i'th row
+    graphPtrB[i] = graphB[i];
+  }
+
+  src = 0;
+  success = dijkstra(src, graphPtrB, distance, N);
+  assert(success == EXIT_SUCCESS);
+  assert(distance[0] == 0);
+  assert(distance[1] == 4);
+  assert(distance[2] == 7);
+  assert(distance[3] == 8);
+  assert(distance[4] == 5);
+  assert(distance[5] == 4);
 #undef N
 }
 
