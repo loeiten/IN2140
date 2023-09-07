@@ -32,8 +32,8 @@ int getMinDistanceIdx(const int *const distance, const int *const visited,
 //        time to find the next available slot
 //        We can then check if the from_node is in the path by checking if it's
 //        in one of the elements of shortest path from src to to_node
-int dijkstra(const int src, const int *const *const graph,
-             int *const *const distance, const int n) {
+int dijkstra(const int src, const int *const *const graph, int *const distance,
+             const int n) {
   // Solve Dijkstra's algorithm using shortest path three
   // Note that this solution has time complexity O(V^2) where V is the number of
   // vertices
@@ -46,24 +46,22 @@ int dijkstra(const int src, const int *const *const graph,
     perror("Could not allocate memory to visited: ");
     return EXIT_FAILURE;
   }
-  // Mark all nodes as unvisited
   for (int i = 0; i < n; ++i) {
+    // Mark all nodes as unvisited
     visited[i] = 0;
+    // Set the distance to every node to zero
+    distance[i] = INT_MAX;
   }
 
-  // First set the distance to every node to zero
-  for (int i = 0; i < n; ++i) {
-    (*distance)[n] = INT_MAX;
-  }
   // The distance to itself is 0
-  (*distance)[src] = 0;
+  distance[src] = 0;
 
   // As we will find the shortest path to all nodes, and since we visit a new
   // node in each iteration, we need to iterate through n-1 nodes as we have
   // already found the shortest path to the node itself
   for (int iteration = 0; iteration < (n - 1); ++iteration) {
     // Pick the minumum distance from the set of vertices not yet processed
-    int minIdx = getMinDistanceIdx(*distance, visited, n);
+    int minIdx = getMinDistanceIdx(distance, visited, n);
     if (minIdx == -1) {
       free(visited);
       fprintf(stderr,
@@ -78,15 +76,15 @@ int dijkstra(const int src, const int *const *const graph,
     for (int i = 0; i < n; ++i) {
       if (
           // If this node has not been visited
-          (visited[i] != 1) &&
+          (visited[i] == 0) &&
           // There must be an edge between minIdx and i
-          (graph[minIdx][i] != INT_MAX) &&
+          (graph[minIdx][i] != 0) &&
           // A path from the source must have been registered
-          ((*distance)[minIdx] != INT_MAX) &&
+          (distance[minIdx] != INT_MAX) &&
           // The new path must be smaller than any previously recorded
-          ((*distance)[minIdx] + graph[minIdx][i] < (*distance)[i])) {
+          (distance[minIdx] + graph[minIdx][i] < distance[i])) {
         // Update the shortest distance to the current node
-        (*distance)[i] = (*distance)[minIdx] + graph[minIdx][i];
+        distance[i] = distance[minIdx] + graph[minIdx][i];
       }
     }
   }

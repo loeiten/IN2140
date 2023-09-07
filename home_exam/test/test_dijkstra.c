@@ -7,27 +7,29 @@
 #include "../routing_server/include/dijkstra.h"  // for getMinDistanceIdx, di...
 
 void testGetMinDistanceIdx(void) {
+#define N (2)
   // Easy test
-  int n = 2;
-  const int distance1[2] = {15, 7};
-  const int visited1[2] = {0, 0};
-  int minIdx = getMinDistanceIdx(distance1, visited1, n);
+  const int distance1[N] = {15, 7};
+  const int visited1[N] = {0, 0};
+  int minIdx = getMinDistanceIdx(distance1, visited1, N);
   assert(minIdx == 1);
+#undef N
 
-  // More elaborate test
-  n = 5;
-  const int distance2[5] = {15, 7, 8, 1, 7};
-  const int visited2[5] = {0, 0, 0, 1, 0};
-  minIdx = getMinDistanceIdx(distance2, visited2, n);
+// More elaborate test
+#define N (5)
+  const int distance2[N] = {15, 7, 8, 1, 7};
+  const int visited2[N] = {0, 0, 0, 1, 0};
+  minIdx = getMinDistanceIdx(distance2, visited2, N);
   assert(minIdx == 4);
+#undef N
 }
 
 void testDijkstra(void) {
-  // Graph from
-  // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
-  const int n = 9;
+// Graph from
+// https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
+#define N (9)
   // clang-format off
-  const int graph[9][9] = {
+  const int graph[N][N] = {
       {0, 4, 0, 0, 0, 0, 0, 8, 0},
       {4, 0, 8, 0, 0, 0, 0, 11, 0},
       {0, 8, 0, 7, 0, 4, 0, 0, 2},
@@ -38,20 +40,19 @@ void testDijkstra(void) {
       {8, 11, 0, 0, 0, 0, 1, 0, 7},
       {0, 0, 2, 0, 0, 0, 6, 7, 0}};
   // clang-format on
-  int distance[9];
-  int *distancePtr = &(distance[0]);
+  int distance[N];
   int src = 0;
 
   // We must convert graph[9][9] to a pointer pointer
   // We cannot do this directly as we cannot directly decay to pointer pointer
   // https://en.cppreference.com/w/cpp/language/array#:~:text=Multidimensional%20arrays,-When%20the%20element&text=Note%20that%20when%20array%2Dto,decay%20is%20applied%20only%20once.
-  const int *graphPtr[9];
-  for (int i = 0; i < n; ++i) {
+  const int *graphPtr[N];
+  for (int i = 0; i < N; ++i) {
     // Recall that i gives the pointer to the i'th row
     graphPtr[i] = graph[i];
   }
 
-  int success = dijkstra(src, graphPtr, &distancePtr, n);
+  int success = dijkstra(src, graphPtr, distance, N);
   assert(success == EXIT_SUCCESS);
   assert(distance[0] == 0);
   assert(distance[1] == 4);
@@ -62,6 +63,7 @@ void testDijkstra(void) {
   assert(distance[6] == 9);
   assert(distance[7] == 8);
   assert(distance[8] == 14);
+#undef N
 }
 
 int main(int argc, char **argv) {

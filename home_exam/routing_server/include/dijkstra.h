@@ -16,8 +16,8 @@
  * @param n The number of nodes in the graph
  * @return int 0 on success, 1 on failure
  */
-int dijkstra(const int src, const int *const *const graph,
-             int *const *const distance, const int n);
+int dijkstra(const int src, const int *const *const graph, int *const distance,
+             const int n);
 
 /**
  * @brief Helper which finds the index with the lowest distance from src
