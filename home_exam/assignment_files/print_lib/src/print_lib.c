@@ -5,16 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define PACKET_OK 0
+#define PACKET_OK (0)
 
-#define LEN_SWAP 0x0001
-#define BAD_LENGTH 0x0002
-#define MINOR_LENGTH_BUG 0x0004
-#define LENGTH_BUG 0x0008
-#define STRING_TERM_BUG 0x0010
-#define SHORT_STRING_BUG 0x0020
-#define TEST_CODE_BUG 0x0800
-#define INCOMPLETE_PACKET 0x8000
+#define LEN_SWAP (0x0001)
+#define BAD_LENGTH (0x0002)
+#define MINOR_LENGTH_BUG (0x0004)
+#define LENGTH_BUG (0x0008)
+#define STRING_TERM_BUG (0x0010)
+#define SHORT_STRING_BUG (0x0020)
+#define TEST_CODE_BUG (0x0800)
+#define INCOMPLETE_PACKET (0x8000)
 
 static unsigned int validate_packet(unsigned char* packet) {
   short tmp;
