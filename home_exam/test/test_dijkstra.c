@@ -9,17 +9,17 @@
 void testGetMinDistanceIdx(void) {
 #define N (2)
   // Easy test
-  const int distance1[N] = {15, 7};
+  const int distanceArray1[N] = {15, 7};
   const int visited1[N] = {0, 0};
-  int minIdx = getMinDistanceIdx(distance1, visited1, N);
+  int minIdx = getMinDistanceIdx(distanceArray1, visited1, N);
   assert(minIdx == 1);
 #undef N
 
 // More elaborate test
 #define N (5)
-  const int distance2[N] = {15, 7, 8, 1, 7};
+  const int distanceArray2[N] = {15, 7, 8, 1, 7};
   const int visited2[N] = {0, 0, 0, 1, 0};
-  minIdx = getMinDistanceIdx(distance2, visited2, N);
+  minIdx = getMinDistanceIdx(distanceArray2, visited2, N);
   assert(minIdx == 4);
 #undef N
 }
@@ -40,7 +40,7 @@ void testDijkstra(void) {
       {8, 11, 0, 0, 0, 0, 1, 0, 7},
       {0, 0, 2, 0, 0, 0, 6, 7, 0}};
   // clang-format on
-  int distance[N];
+  int distanceArray[N];
   int src = 0;
 
   // We must convert graphA to a pointer pointer
@@ -52,30 +52,33 @@ void testDijkstra(void) {
     graphPtrA[i] = graphA[i];
   }
 
-  int success = dijkstra(src, graphPtrA, distance, N);
+  struct Route *routeArray = NULL;
+  int success = dijkstra(src, graphPtrA, distanceArray, routeArray, N);
   assert(success == EXIT_SUCCESS);
-  assert(distance[0] == 0);
-  assert(distance[1] == 4);
-  assert(distance[2] == 12);
-  assert(distance[3] == 19);
-  assert(distance[4] == 21);
-  assert(distance[5] == 11);
-  assert(distance[6] == 9);
-  assert(distance[7] == 8);
-  assert(distance[8] == 14);
+  assert(distanceArray[0] == 0);
+  assert(distanceArray[1] == 4);
+  assert(distanceArray[2] == 12);
+  assert(distanceArray[3] == 19);
+  assert(distanceArray[4] == 21);
+  assert(distanceArray[5] == 11);
+  assert(distanceArray[6] == 9);
+  assert(distanceArray[7] == 8);
+  assert(distanceArray[8] == 14);
+  freeRouteArray(&routeArray, N);
 
   src = 8;
-  success = dijkstra(src, graphPtrA, distance, N);
+  success = dijkstra(src, graphPtrA, distanceArray, routeArray, N);
   assert(success == EXIT_SUCCESS);
-  assert(distance[0] == 14);
-  assert(distance[1] == 10);
-  assert(distance[2] == 2);
-  assert(distance[3] == 9);
-  assert(distance[4] == 16);
-  assert(distance[5] == 6);
-  assert(distance[6] == 6);
-  assert(distance[7] == 7);
-  assert(distance[8] == 0);
+  assert(distanceArray[0] == 14);
+  assert(distanceArray[1] == 10);
+  assert(distanceArray[2] == 2);
+  assert(distanceArray[3] == 9);
+  assert(distanceArray[4] == 16);
+  assert(distanceArray[5] == 6);
+  assert(distanceArray[6] == 6);
+  assert(distanceArray[7] == 7);
+  assert(distanceArray[8] == 0);
+  freeRouteArray(&routeArray, N);
 #undef N
 
 #define N (6)
@@ -97,14 +100,15 @@ void testDijkstra(void) {
   }
 
   src = 0;
-  success = dijkstra(src, graphPtrB, distance, N);
+  success = dijkstra(src, graphPtrB, distanceArray, routeArray, N);
   assert(success == EXIT_SUCCESS);
-  assert(distance[0] == 0);
-  assert(distance[1] == 4);
-  assert(distance[2] == 7);
-  assert(distance[3] == 8);
-  assert(distance[4] == 5);
-  assert(distance[5] == 4);
+  assert(distanceArray[0] == 0);
+  assert(distanceArray[1] == 4);
+  assert(distanceArray[2] == 7);
+  assert(distanceArray[3] == 8);
+  assert(distanceArray[4] == 5);
+  assert(distanceArray[5] == 4);
+  freeRouteArray(&routeArray, N);
 #undef N
 }
 
