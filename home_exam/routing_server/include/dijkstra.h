@@ -48,26 +48,32 @@ int getMinDistanceIdx(const int *const distanceArray,
 /**
  * @brief Register the route.
  *
+ * @param src The id of the source
+ * @param curVisitIdx The index of the node that just has been marked as visited
  * @param graph The graph
- * @param visitIdx The index of the node that just has been marked as visited
+ * @param n The number of nodes in the graph
+ * @param visitedArray The array marking if a node is visited
  * @param distanceArray The distance from src to all other nodes
+ * @param visitedAndNeighbourArray Array of nodes which are both visited and
+ *                                 neighbors of curVisitIdx
  * @param routeArray Array of the route to the shortest route from src the the
  *                   other nodes in the graph
  * @return int 0 on success, 1 on failure
  */
-int registerRoute(const int *const *const graph, const int visitIdx,
+int registerRoute(const int src, const int curVisitIdx, const int n,
+                  const int *const *const graph, const int *const visitedArray,
                   const int *const distanceArray,
+                  int *const visitedAndNeighbourArray,
                   struct Route *const routeArray);
 
 /**
- * @brief Free the memory from the visitedArray
+ * @brief Free the memory from a malloced array
  *
- * @param visitedArray The array marking if a node is visited.
- *                     We're passing the pointer to the pointer as we're
- *                     modifying the original pointer
- * @param n The number of nodes in the graph
+ * @param array The array to free.
+ *              We're passing the pointer to the pointer as we're
+ *              modifying the original pointer
  */
-void freeVisitedArray(int **visitedArray);
+void freeIntArray(int **array);
 
 /**
  * @brief Free the malloced memory form the route array

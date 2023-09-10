@@ -4,6 +4,7 @@
 #include <math.h>
 #include <stdio.h>  // for perror
 #include <stdlib.h>
+#include <string.h>
 
 // FIXME: Should store the shortest path as well
 //        The path would be updated when it's marked as visited
@@ -34,7 +35,7 @@ int dijkstra(const int src, const int *const *const graph,
   routeArray = (struct Route *)malloc(n * sizeof(struct Route));
   if (routeArray == NULL) {
     perror("Could not allocate memory to routeArray: ");
-    freeVisitedArray(&visitedArray);
+    freeIntArray(&visitedArray);
     return EXIT_FAILURE;
   }
 
@@ -50,7 +51,7 @@ int dijkstra(const int src, const int *const *const graph,
       perror("Could not allocate memory to routeArray[i].route: ");
       // NOTE: The freeing of routeArray will happen in the place where it was
       //       allocated
-      freeVisitedArray(&visitedArray);
+      freeIntArray(&visitedArray);
       return EXIT_FAILURE;
     }
     routeArray[i].nHops = -1;
@@ -58,6 +59,16 @@ int dijkstra(const int src, const int *const *const graph,
 
   // The distance to itself is 0
   distanceArray[src] = 0;
+
+  // Initialize the helper variable for registerRoute
+  int *visitedAndNeighbourArray = (int *)malloc(n * sizeof(int));
+  if (visitedAndNeighbourArray == NULL) {
+    perror("Could not allocate memory to visitedAndNeighbourArray: ");
+    // NOTE: The freeing of routeArray will happen in the place where it was
+    //       allocated
+    freeIntArray(&visitedArray);
+    return EXIT_FAILURE;
+  }
 
   // As we will find the shortest path to all nodes, and since we visit a new
   // node in each iteration, we need to iterate through n-1 nodes as we have
@@ -70,15 +81,18 @@ int dijkstra(const int src, const int *const *const graph,
           stderr,
           "Unexpected error: Could not find a minIdx for the %d iteration\n",
           iteration);
-      freeVisitedArray(&visitedArray);
+      freeIntArray(&visitedArray);
       return EXIT_FAILURE;
     }
 
     // Mark this node as visited
     visitedArray[minIdx] = 1;
-    int success = registerRoute(graph, minIdx, distanceArray, routeArray);
+    int success =
+        registerRoute(src, minIdx, n, graph, visitedArray, distanceArray,
+                      visitedAndNeighbourArray, routeArray);
     if (success != EXIT_SUCCESS) {
-      freeVisitedArray(&visitedArray);
+      freeIntArray(&visitedArray);
+      freeIntArray(&visitedAndNeighbourArray);
       fprintf(stderr, "Could not register route in the routeArray\n");
       return EXIT_FAILURE;
     }
@@ -99,7 +113,8 @@ int dijkstra(const int src, const int *const *const graph,
     }
   }
 
-  freeVisitedArray(&visitedArray);
+  freeIntArray(&visitedArray);
+  freeIntArray(&visitedAndNeighbourArray);
   return EXIT_SUCCESS;
 }
 
@@ -120,18 +135,64 @@ int getMinDistanceIdx(const int *const distanceArray,
   return minIdx;
 }
 
-int registerRoute(const int *const *const graph, const int visitIdx,
+int registerRoute(const int src, const int curVisitIdx, const int n,
+                  const int *const *const graph, const int *const visitedArray,
                   const int *const distanceArray,
+                  int *const visitedAndNeighbourArray,
                   struct Route *const routeArray) {
-  // FIXME: Needs implementation
-  (void)graph;
-  (void)visitIdx;
-  (void)distanceArray;
-  (void)routeArray;
+  // Our strategy:
+  // 1. Check the union of neighbors and visitedArray
+  // 2. For each node in the union, check the minimum distance
+  // 3. Copy the route from the minimum to the current route
+  // 4. Add the curVisitIdx
+
+  // Special case for the first node
+  if (src == curVisitIdx) {
+    routeArray[curVisitIdx].route[0] = src;
+    routeArray[curVisitIdx].nHops = 1;
+    return EXIT_SUCCESS;
+  }
+
+  // Step 1.
+  int nVisitedAndNeighbour = 0;
+  for (int neighbor = 0; neighbor < n; ++neighbor) {
+    // Check if the node has a neighbor
+    if (graph[curVisitIdx][neighbor] != 0) {
+      // Check if this neighbor is visited
+      if (visitedArray[neighbor] == 1) {
+        visitedAndNeighbourArray[nVisitedAndNeighbour] = neighbor;
+        ++nVisitedAndNeighbour;
+      }
+    }
+  }
+
+  // Step 2.
+  int minDistNeighbor = INT_MAX;
+  int minDistNeighborIdx = INT_MAX;
+  for (int i = 0; i < nVisitedAndNeighbour; ++i) {
+    if ((distanceArray[i] + graph[curVisitIdx][i]) < minDistNeighbor) {
+      minDistNeighbor = distanceArray[i] + graph[curVisitIdx][i];
+      minDistNeighborIdx = i;
+    }
+  }
+  if (minDistNeighbor == INT_MAX || minDistNeighborIdx == INT_MAX) {
+    fprintf(stderr, "Failed to find the shortest path to %d\n", curVisitIdx);
+    return EXIT_FAILURE;
+  }
+
+  // Step 3.
+  memcpy(routeArray[curVisitIdx].route, routeArray[minDistNeighborIdx].route,
+         routeArray[minDistNeighborIdx].nHops * sizeof(int));
+  routeArray[curVisitIdx].nHops = routeArray[minDistNeighborIdx].nHops;
+
+  // Step 4.
+  routeArray[curVisitIdx].route[routeArray[curVisitIdx].nHops] = curVisitIdx;
+  ++routeArray[curVisitIdx].nHops;
+
   return EXIT_SUCCESS;
 }
 
-void freeVisitedArray(int **visitedArray) {
+void freeIntArray(int **visitedArray) {
   if ((*visitedArray) != NULL) {
     free(*visitedArray);
     *visitedArray = NULL;

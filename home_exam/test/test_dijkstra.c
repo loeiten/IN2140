@@ -27,6 +27,8 @@ void testGetMinDistanceIdx(void) {
 void testDijkstra(void) {
 // graphA from
 // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
+// FIXME: Add route tests to these, note that whatever is after
+//        routeArray[i].nHops is invalid
 #define N (9)
   // clang-format off
   const int graphA[N][N] = {
