@@ -170,9 +170,12 @@ int registerRoute(const int src, const int curVisitIdx, const int n,
   int minDistNeighbor = INT_MAX;
   int minDistNeighborIdx = INT_MAX;
   for (int i = 0; i < nVisitedAndNeighbour; ++i) {
-    if ((distanceArray[i] + graph[curVisitIdx][i]) < minDistNeighbor) {
-      minDistNeighbor = distanceArray[i] + graph[curVisitIdx][i];
-      minDistNeighborIdx = i;
+    int neighborId = visitedAndNeighbourArray[i];
+    if ((distanceArray[neighborId] + graph[curVisitIdx][neighborId]) <
+        minDistNeighbor) {
+      minDistNeighbor =
+          distanceArray[neighborId] + graph[curVisitIdx][neighborId];
+      minDistNeighborIdx = neighborId;
     }
   }
   if (minDistNeighbor == INT_MAX || minDistNeighborIdx == INT_MAX) {
