@@ -1,10 +1,11 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
+#include <limits.h>  // for INT_MAX
 #include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_S...
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/dijkstra.h"  // for getMinDistanceIdx, di...
+#include "../routing_server/include/dijkstra.h"  // for Route, dijkstra, fre...
 
 void testGetMinDistanceIdx(void) {
 #define N (2)
@@ -24,11 +25,45 @@ void testGetMinDistanceIdx(void) {
 #undef N
 }
 
+void testRegisterRoute(void) {
+// This test only checks that the function works with a simple test
+// For a more elaborate test, see testDijkstra
+#define N (2)
+  const int graph[N][N] = {{0, 1}, {1, 0}};
+  const int visitedArray[N] = {1, 0};
+  const int distanceArray[N] = {0, INT_MAX};
+  int visitedAndNeighbourArray[N] = {0, 0};
+  int route1[N] = {0, INT_MAX};
+  int route2[N] = {INT_MAX, INT_MAX};
+  struct Route routeArray[2] = {{.nHops = 0, .route = route1},
+                                {.nHops = -1, .route = route2}};
+
+  // We must convert graph to a pointer pointer
+  // We cannot do this directly as we cannot directly decay to pointer pointer
+  // https://en.cppreference.com/w/cpp/language/array#:~:text=Multidimensional%20arrays,-When%20the%20element&text=Note%20that%20when%20array%2Dto,decay%20is%20applied%20only%20once.
+  const int *graphPtr[N];
+  for (int i = 0; i < N; ++i) {
+    // Recall that i gives the pointer to the i'th row
+    graphPtr[i] = graph[i];
+  }
+
+  int *visitedAndNeighbourArrayPtr = visitedAndNeighbourArray;
+  struct Route *routeArrayPtr = routeArray;
+
+  int success = registerRoute(0, 1, N, graphPtr, visitedArray, distanceArray,
+                              visitedAndNeighbourArrayPtr, routeArrayPtr);
+  assert(success == EXIT_SUCCESS);
+  assert(routeArray[0].nHops == 0);
+  assert(routeArray[0].route[0] == 0);
+  assert(routeArray[1].nHops == 1);
+  assert(routeArray[1].route[0] == 0);
+  assert(routeArray[1].route[1] == 1);
+#undef N
+}
+
 void testDijkstra(void) {
 // graphA from
 // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
-// FIXME: Add route tests to these, note that whatever is after
-//        routeArray[i].nHops is invalid
 #define N (9)
   // clang-format off
   const int graphA[N][N] = {
@@ -230,6 +265,8 @@ int main(int argc, char **argv) {
 
   if (strcmp(argv[1], "getMinDistanceIdx") == 0) {
     testGetMinDistanceIdx();
+  } else if (strcmp(argv[1], "registerRoute") == 0) {
+    testRegisterRoute();
   } else if (strcmp(argv[1], "dijkstra") == 0) {
     testDijkstra();
   } else {

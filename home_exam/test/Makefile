@@ -9,7 +9,8 @@ include ../common.mk
 #		   Hence, we are adding the tests one by one
 
 TESTS := run_test_get_min_distance_idx_1 \
-		 run_test_get_min_distance_idx_2
+		 run_test_get_min_distance_idx_2 \
+		 run_test_get_min_distance_idx_3
 
 .PHONY: all clean test $(TESTS)
 all: $(TEST_EXEC_DIR)/test_dijkstra
@@ -36,6 +37,9 @@ run_test_get_min_distance_idx_1: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< getMinDistanceIdx)
 
 run_test_get_min_distance_idx_2: $(TEST_EXEC_DIR)/test_dijkstra
+	$(call run_test,$@,$< registerRoute)
+
+run_test_get_min_distance_idx_3: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< dijkstra)
 
 clean:

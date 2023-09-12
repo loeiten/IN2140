@@ -1,21 +1,10 @@
 #include "../include/dijkstra.h"
 
-#include <limits.h>
-#include <math.h>
-#include <stdio.h>  // for perror
-#include <stdlib.h>
-#include <string.h>
+#include <limits.h>  // for INT_MAX
+#include <stdio.h>   // for perror, NULL, fprintf, stderr
+#include <stdlib.h>  // for malloc, free, EXIT_FAILURE, EXIT_SUCCESS
+#include <string.h>  // for memcpy
 
-// FIXME: Should store the shortest path as well
-//        The path would be updated when it's marked as visited
-//          At this time one can loop through all the vertices of the hit
-//          The one which is visited and has the shortest path is the prev
-//          One can then copy the path until that point (from the vertex) and
-//          add the current node to it
-//        Can be a struct with array and N so that we don't have to loop every
-//        time to find the next available slot
-//        We can then check if the from_node is in the path by checking if it's
-//        in one of the elements of shortest path from src to to_node
 int dijkstra(const int src, const int *const *const graph,
              int *const distanceArray, struct Route **const routeArray,
              const int n) {
