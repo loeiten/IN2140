@@ -109,6 +109,7 @@ void testDijkstra(void) {
 
   src = 8;
   success = dijkstra(src, graphPtrA, distanceArray, &routeArray, N);
+  // Check that the distances are correct
   assert(success == EXIT_SUCCESS);
   assert(distanceArray[0] == 14);
   assert(distanceArray[1] == 10);
@@ -119,6 +120,46 @@ void testDijkstra(void) {
   assert(distanceArray[6] == 6);
   assert(distanceArray[7] == 7);
   assert(distanceArray[8] == 0);
+  // Check that the routes are correct
+  assert(routeArray[0].nHops == 3);
+  assert(routeArray[0].route[0] == 8);
+  assert(routeArray[0].route[1] == 2);
+  assert(routeArray[0].route[2] == 1);
+  assert(routeArray[0].route[3] == 0);
+  assert(routeArray[1].nHops == 2);
+  assert(routeArray[1].route[0] == 8);
+  assert(routeArray[1].route[1] == 2);
+  assert(routeArray[1].route[2] == 1);
+  assert(routeArray[2].nHops == 1);
+  assert(routeArray[2].route[0] == 8);
+  assert(routeArray[2].route[1] == 2);
+  assert(routeArray[3].nHops == 2);
+  assert(routeArray[3].route[0] == 8);
+  assert(routeArray[3].route[1] == 2);
+  assert(routeArray[3].route[2] == 3);
+  assert(routeArray[4].nHops == 3);
+  assert(routeArray[4].route[0] == 8);
+  assert(routeArray[4].route[1] == 2);
+  assert(routeArray[4].route[2] == 5);
+  assert(routeArray[4].route[3] == 4);
+  assert(routeArray[5].nHops == 2);
+  assert(routeArray[5].route[0] == 8);
+  assert(routeArray[5].route[1] == 2);
+  assert(routeArray[5].route[2] == 5);
+  assert(routeArray[6].nHops == 1);
+  assert(routeArray[6].route[0] == 8);
+  assert(routeArray[6].route[1] == 6);
+  // NOTE: There are two routes with equal shortest path which leads to node 7
+  //       Either 8 -> 7
+  //       Or     8 -> 6 -> 7
+  //       The latter will be chosen as we have a strict < when setting new
+  //       minDistNeighborIdx, and because the index 6 comes before 7
+  assert(routeArray[7].nHops == 2);
+  assert(routeArray[7].route[0] == 8);
+  assert(routeArray[7].route[1] == 6);
+  assert(routeArray[7].route[2] == 7);
+  assert(routeArray[8].nHops == 0);
+  assert(routeArray[8].route[0] == 8);
   freeRouteArray(&routeArray, N);
 #undef N
 
@@ -142,6 +183,7 @@ void testDijkstra(void) {
 
   src = 0;
   success = dijkstra(src, graphPtrB, distanceArray, &routeArray, N);
+  // Check that the distances are correct
   assert(success == EXIT_SUCCESS);
   assert(distanceArray[0] == 0);
   assert(distanceArray[1] == 4);
@@ -149,6 +191,28 @@ void testDijkstra(void) {
   assert(distanceArray[3] == 8);
   assert(distanceArray[4] == 5);
   assert(distanceArray[5] == 4);
+  // Check that the routes are correct
+  assert(routeArray[0].nHops == 0);
+  assert(routeArray[0].route[0] == 0);
+  assert(routeArray[1].nHops == 1);
+  assert(routeArray[1].route[0] == 0);
+  assert(routeArray[1].route[1] == 1);
+  assert(routeArray[2].nHops == 2);
+  assert(routeArray[2].route[0] == 0);
+  assert(routeArray[2].route[1] == 1);
+  assert(routeArray[2].route[2] == 2);
+  assert(routeArray[3].nHops == 3);
+  assert(routeArray[3].route[0] == 0);
+  assert(routeArray[3].route[1] == 1);
+  assert(routeArray[3].route[2] == 4);
+  assert(routeArray[3].route[3] == 3);
+  assert(routeArray[4].nHops == 2);
+  assert(routeArray[4].route[0] == 0);
+  assert(routeArray[4].route[1] == 1);
+  assert(routeArray[4].route[2] == 4);
+  assert(routeArray[5].nHops == 1);
+  assert(routeArray[5].route[0] == 0);
+  assert(routeArray[5].route[1] == 5);
   freeRouteArray(&routeArray, N);
 #undef N
 }
