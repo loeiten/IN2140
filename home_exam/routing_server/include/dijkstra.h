@@ -29,7 +29,7 @@ struct Route {
  * @return int 0 on success, 1 on failure
  */
 int dijkstra(const int src, const int *const *const graph,
-             int *const distanceArray, struct Route *const routeArray,
+             int *const distanceArray, struct Route **const routeArray,
              const int n);
 
 /**

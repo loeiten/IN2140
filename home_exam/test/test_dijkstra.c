@@ -55,8 +55,9 @@ void testDijkstra(void) {
   }
 
   struct Route *routeArray = NULL;
-  int success = dijkstra(src, graphPtrA, distanceArray, routeArray, N);
+  int success = dijkstra(src, graphPtrA, distanceArray, &routeArray, N);
   assert(success == EXIT_SUCCESS);
+  // Check that the distances are correct
   assert(distanceArray[0] == 0);
   assert(distanceArray[1] == 4);
   assert(distanceArray[2] == 12);
@@ -66,10 +67,48 @@ void testDijkstra(void) {
   assert(distanceArray[6] == 9);
   assert(distanceArray[7] == 8);
   assert(distanceArray[8] == 14);
+  // Check that the routes are correct
+  assert(routeArray[0].nHops == 0);
+  assert(routeArray[0].route[0] == 0);
+  assert(routeArray[1].nHops == 1);
+  assert(routeArray[1].route[0] == 0);
+  assert(routeArray[1].route[1] == 1);
+  assert(routeArray[2].nHops == 2);
+  assert(routeArray[2].route[0] == 0);
+  assert(routeArray[2].route[1] == 1);
+  assert(routeArray[2].route[2] == 2);
+  assert(routeArray[3].nHops == 3);
+  assert(routeArray[3].route[0] == 0);
+  assert(routeArray[3].route[1] == 1);
+  assert(routeArray[3].route[2] == 2);
+  assert(routeArray[3].route[3] == 3);
+  assert(routeArray[4].nHops == 4);
+  assert(routeArray[4].route[0] == 0);
+  assert(routeArray[4].route[1] == 7);
+  assert(routeArray[4].route[2] == 6);
+  assert(routeArray[4].route[3] == 5);
+  assert(routeArray[4].route[4] == 4);
+  assert(routeArray[5].nHops == 3);
+  assert(routeArray[5].route[0] == 0);
+  assert(routeArray[5].route[1] == 7);
+  assert(routeArray[5].route[2] == 6);
+  assert(routeArray[5].route[3] == 5);
+  assert(routeArray[6].nHops == 2);
+  assert(routeArray[6].route[0] == 0);
+  assert(routeArray[6].route[1] == 7);
+  assert(routeArray[6].route[2] == 6);
+  assert(routeArray[7].nHops == 1);
+  assert(routeArray[7].route[0] == 0);
+  assert(routeArray[7].route[1] == 7);
+  assert(routeArray[8].nHops == 3);
+  assert(routeArray[8].route[0] == 0);
+  assert(routeArray[8].route[1] == 1);
+  assert(routeArray[8].route[2] == 2);
+  assert(routeArray[8].route[3] == 8);
   freeRouteArray(&routeArray, N);
 
   src = 8;
-  success = dijkstra(src, graphPtrA, distanceArray, routeArray, N);
+  success = dijkstra(src, graphPtrA, distanceArray, &routeArray, N);
   assert(success == EXIT_SUCCESS);
   assert(distanceArray[0] == 14);
   assert(distanceArray[1] == 10);
@@ -102,7 +141,7 @@ void testDijkstra(void) {
   }
 
   src = 0;
-  success = dijkstra(src, graphPtrB, distanceArray, routeArray, N);
+  success = dijkstra(src, graphPtrB, distanceArray, &routeArray, N);
   assert(success == EXIT_SUCCESS);
   assert(distanceArray[0] == 0);
   assert(distanceArray[1] == 4);
