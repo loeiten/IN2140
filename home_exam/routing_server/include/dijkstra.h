@@ -1,16 +1,13 @@
 #ifndef HOME_EXAM_ROUTING_SERVER_INCLUDE_DIJKSTRA_H_
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_DIJKSTRA_H_
 
-/**
- *  @brief Representation of a route to an endpoint
- */
-struct Route {
-  int nHops;  /**< Number of hops from the starting point */
-  int *route; /**< The route taken */
-};
+struct Route;
 
 /**
  * @brief Computes the distance from the source to all other nodes.
+ *
+ * The algorithm is visualized in
+ * https://www.freecodecamp.org/news/dijkstras-shortest-path-algorithm-visual-introduction/
  *
  * Comment: We use double pointer to represent matrices
  * Drawback: Indirection through pointers

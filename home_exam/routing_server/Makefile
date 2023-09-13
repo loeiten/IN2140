@@ -15,16 +15,19 @@ ROUTING_SERVER_SRC := $(word 1, $(dir $(ROUTING_SERVER_SOURCE_FILES)))
 OBJECT_FILES := $(patsubst $(ROUTING_SERVER_SRC)%.c,$(BUILD_OBJ_DIR)/%.o,$(ROUTING_SERVER_SOURCE_FILES))
 
 # Build the final executable
-$(EXEC_DIR)/routing_server: $(OBJECT_FILES)
+$(EXEC_DIR)/routing_server: $(OBJECT_FILES) $(LIB_DIR)/libprint.$(LIB_EXTENSION)
 	$(call explain_build,Building routing_server)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
 
 # Building the object files
-# NOTE: We don't add an include path, as the path to the .h files can be found
-#       relative to the .c files
-$(BUILD_OBJ_DIR)/%.o: $(ROUTING_SERVER_SRC)/%.c
+# NOTE: The only reason why we add an include path is because we have pretended
+#       that print_lib.h comes from an external library
+#       Since we use statements like
+#       #include "print_lib.h", and since print_lib.h doesn't reside in "this"
+#       directory, we need to make sure that the compiler can find it
+$(BUILD_OBJ_DIR)%.o: $(ROUTING_SERVER_SRC)%.c
 	$(call explain_build,Building the object files for routing_server)
-	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(PRINT_LIB_INCLUDE) -c $< -o $@
 
 test:
 	$(MAKE) -C $(SRC_DIR)/test test

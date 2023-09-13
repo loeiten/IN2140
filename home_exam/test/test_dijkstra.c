@@ -5,7 +5,8 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/dijkstra.h"  // for Route, dijkstra, fre...
+#include "../routing_server/include/dijkstra.h"  // for dijkstra, freeRouteA...
+#include "../routing_server/include/route.h"     // for Route
 
 void testGetMinDistanceIdx(void) {
 #define N (2)

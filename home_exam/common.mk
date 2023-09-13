@@ -16,6 +16,8 @@ LIB_DIR := $(abspath $(EXEC_DIR)/lib)
 BUILD_LIB_DIR := $(abspath $(EXEC_DIR)/obj_files)
 BUILD_OBJ_DIR := $(abspath $(EXEC_DIR)/obj_files)
 BUILD_TEST_DIR := $(abspath $(EXEC_DIR)/obj_files)
+ASSIGNMENT_FILES_DIR := $(abspath $(EXEC_DIR)/assignment_files)
+PRINT_LIB_INCLUDE := $(abspath $(CUR_DIR)/assignment_files/print_lib/include)
 
 # Setting up the libraries (we"re here using static libraries)
 # Specify which archive to use

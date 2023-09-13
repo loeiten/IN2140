@@ -6,10 +6,10 @@ all: $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(EXEC_DIR)/assignment_files
 
 # Copy the files from assignment into the executable
 ASSIGNMENT_FILES := $(wildcard *.*)
-$(EXEC_DIR)/assignment_files: $(ASSIGNMENT_FILES)
+$(ASSIGNMENT_FILES_DIR): $(ASSIGNMENT_FILES)
 	$(call explain_build,Copying the assingment files)
-	mkdir -p $(EXEC_DIR)/assignment_files
-	cp $(ASSIGNMENT_FILES) $(EXEC_DIR)/assignment_files
+	mkdir -p $(ASSIGNMENT_FILES_DIR)
+	cp $(ASSIGNMENT_FILES) $(ASSIGNMENT_FILES_DIR)
 
 # Make the complete library
 # NOTE: We do NOT need to include the headers

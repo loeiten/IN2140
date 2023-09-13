@@ -5,6 +5,8 @@
 #include <stdlib.h>  // for malloc, free, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for memcpy
 
+#include "../include/route.h"  // for Route
+
 int dijkstra(const int src, const int *const *const graph,
              int *const distanceArray, struct Route **const routeArray,
              const int n) {
