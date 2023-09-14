@@ -38,11 +38,15 @@ repos:
         - id: cppcheck
           args:
             - "--inline-suppr"  # Enable inline suppression
+            - "-Ihome_exam/assignment_files"
         - id: cpplint
           args: ["--filter=-legal/copyright,-build/include_order,-whitespace/comments,-readability/casting"]
         - id: include-what-you-use
           args:
-             - "-Xiwyu"
-             - "--error"
-             - "-Xiwyu"
-             - "--mapping_file=.linters/iwyu.imp"
+            - "-Xiwyu"  # Xiwyu comes befor iwyu arguments
+            - "--error"
+            - "-Xiwyu"
+            - "--mapping_file=.linters/iwyu.imp"
+            - "-Xiwyu"
+            - "--update_comments"
+            - "-I$(PWD)/home_exam/assignment_files"  # This is a clang argument as it's not preceded by iwyu

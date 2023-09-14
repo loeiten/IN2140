@@ -12,7 +12,6 @@ struct Route {
 /**
  * @brief Print the edges from the source route to all other nodes
  *
- * @param src The id of the source
  * @param distanceArray The distance from src to all other nodes
  * @param routeArray Array of the route to the shortest route from src the the
  *                   other nodes in the graph.

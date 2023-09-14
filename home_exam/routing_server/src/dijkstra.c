@@ -24,8 +24,12 @@ int dijkstra(const int src, const int *const *const graph,
   }
 
   // Allocate memory to the routeArray
-  struct Route *routeArrayTmp =
-      (struct Route *)malloc(n * sizeof(struct Route));
+  // NOTE: Difference between malloc and calloc is that calloc is zero
+  //       initializing the array
+  //       If we don't do this, and we want to check if
+  //       routeArrayTmp[i].route == NULL
+  //       Then routeArrayTmp[i].route pointer has an indeterminate value
+  struct Route *routeArrayTmp = (struct Route *)calloc(n, sizeof(struct Route));
   if (routeArrayTmp == NULL) {
     perror("Could not allocate memory to routeArray: ");
     freeIntArray(&visitedArray);
@@ -78,6 +82,7 @@ int dijkstra(const int src, const int *const *const graph,
           "Unexpected error: Could not find a minIdx for the %d iteration\n",
           iteration);
       freeIntArray(&visitedArray);
+      freeIntArray(&visitedAndNeighbourArray);
       freeRouteArray(&routeArrayTmp, n);
       return EXIT_FAILURE;
     }

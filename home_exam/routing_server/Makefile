@@ -23,11 +23,12 @@ $(EXEC_DIR)/routing_server: $(OBJECT_FILES) $(LIB_DIR)/libprint.$(LIB_EXTENSION)
 # NOTE: The only reason why we add an include path is because we have pretended
 #       that print_lib.h comes from an external library
 #       Since we use statements like
-#       #include "print_lib.h", and since print_lib.h doesn't reside in "this"
-#       directory, we need to make sure that the compiler can find it
+#       #include "print_lib/include/print_lib.h", and since print_lib doesn't
+#       reside in "this" directory, we need to make sure that the compiler can
+#       find it
 $(BUILD_OBJ_DIR)%.o: $(ROUTING_SERVER_SRC)%.c
 	$(call explain_build,Building the object files for routing_server)
-	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(PRINT_LIB_INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(ASSIGNMENT_FILES_SRC) -c $< -o $@
 
 test:
 	$(MAKE) -C $(SRC_DIR)/test test

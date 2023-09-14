@@ -9,6 +9,7 @@ C_SANITIZERS := -fsanitize=address -fsanitize=undefined
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 CUR_DIR := $(dir $(MKFILE_PATH))
 BASE_DIR := $(abspath $(CUR_DIR)/..)
+ASSIGNMENT_FILES_SRC := $(abspath $(CUR_DIR)/assignment_files)
 BUILD_DIR := $(abspath $(BASE_DIR)/build)
 EXEC_DIR := $(abspath $(BUILD_DIR)/home_exam)
 TEST_EXEC_DIR := $(abspath $(EXEC_DIR)/test)
@@ -17,7 +18,6 @@ BUILD_LIB_DIR := $(abspath $(EXEC_DIR)/obj_files)
 BUILD_OBJ_DIR := $(abspath $(EXEC_DIR)/obj_files)
 BUILD_TEST_DIR := $(abspath $(EXEC_DIR)/obj_files)
 ASSIGNMENT_FILES_DIR := $(abspath $(EXEC_DIR)/assignment_files)
-PRINT_LIB_INCLUDE := $(abspath $(CUR_DIR)/assignment_files/print_lib/include)
 
 # Setting up the libraries (we"re here using static libraries)
 # Specify which archive to use
