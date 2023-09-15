@@ -36,7 +36,7 @@ void testRegisterRoute(void) {
   int visitedAndNeighbourArray[N] = {0, 0};
   int route1[N] = {0, INT_MAX};
   int route2[N] = {INT_MAX, INT_MAX};
-  struct Route routeArray[2] = {{.nHops = 0, .route = route1},
+  struct Route routeArray[N] = {{.nHops = 0, .route = route1},
                                 {.nHops = -1, .route = route2}};
 
   // We must convert graph to a pointer pointer

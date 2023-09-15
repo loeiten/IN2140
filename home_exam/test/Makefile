@@ -8,19 +8,23 @@ include ../common.mk
 #          one small change in an unrelated file).
 #		   Hence, we are adding the tests one by one
 
-TESTS := run_test_get_min_distance_idx_1 \
-		 run_test_get_min_distance_idx_2 \
-		 run_test_get_min_distance_idx_3
+TESTS := run_test_dijkstra_1 \
+		 run_test_dijkstra_2 \
+		 run_test_dijkstra_3 \
+		 run_test_route_1
 
 .PHONY: all clean test $(TESTS)
-all: $(TEST_EXEC_DIR)/test_dijkstra
+all: $(TEST_EXEC_DIR)/test_dijkstra \
+	 $(TEST_EXEC_DIR)/test_route
 
 test: $(TESTS)
 
+# DIJKSTRA
+# ==============================================================================
 # @ outputs the target
 # ^ outputs all prerequisites
 $(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o
-	$(call explain_build,Making test_dijkstra)
+	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
 
@@ -28,19 +32,37 @@ $(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DI
 # NOTE: We don't add an include path, as the path to the .h files can be found
 #       relative to the .c files
 $(BUILD_TEST_DIR)/test_dijkstra.o: test_dijkstra.c
-	$(call explain_build,Making test_dijkstra.o)
+	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(BUILD_TEST_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
 
-# Run tests
-run_test_get_min_distance_idx_1: $(TEST_EXEC_DIR)/test_dijkstra
+# Tests
+run_test_dijkstra_1: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< getMinDistanceIdx)
 
-run_test_get_min_distance_idx_2: $(TEST_EXEC_DIR)/test_dijkstra
+run_test_dijkstra_2: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< registerRoute)
 
-run_test_get_min_distance_idx_3: $(TEST_EXEC_DIR)/test_dijkstra
+run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< dijkstra)
+# ==============================================================================
+
+# ROUTE
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/route.o $(LIB_DIR)/libprint.$(LIB_EXTENSION)
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
+$(BUILD_TEST_DIR)/test_route.o: test_route.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+
+# Tests
+run_test_route_1: $(TEST_EXEC_DIR)/test_route
+	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges)
+# ==============================================================================
 
 clean:
 	rm -rf $(BUILD_TEST_DIR) $(TEST_EXEC_DIR)

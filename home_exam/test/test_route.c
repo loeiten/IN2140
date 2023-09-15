@@ -5,8 +5,7 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/dijkstra.h"  // for dijkstra, freeRouteA...
-#include "../routing_server/include/route.h"     // for Route
+#include "../routing_server/include/route.h"  // for Route
 
 void testPrintEdges(void) {
 #define N (5)
@@ -17,8 +16,23 @@ void testPrintEdges(void) {
   //   1   3
   // 1  \ /  3
   //     0
-  // FIXME:
-  // const int distanceArray[N] = {0, 1, 2, 3 ,4};
+  const int distanceArray[N] = {0, 1, 2, 3, 4};
+
+  int route0[N] = {0, INT_MAX, INT_MAX, INT_MAX, INT_MAX};
+  int route1[N] = {0, 1, INT_MAX, INT_MAX, INT_MAX};
+  int route2[N] = {0, 1, 2, INT_MAX, INT_MAX};
+  int route3[N] = {0, 3, INT_MAX, INT_MAX, INT_MAX};
+  int route4[N] = {0, 3, 4, INT_MAX, INT_MAX};
+  const struct Route routeArray[N] = {{.nHops = 0, .route = route0},
+                                      {.nHops = 1, .route = route1},
+                                      {.nHops = 2, .route = route2},
+                                      {.nHops = 1, .route = route3},
+                                      {.nHops = 2, .route = route4}};
+
+  printEdges(distanceArray, routeArray, N);
+  // FIXME: Nodes have (int) id, need to map index to id and vice versa
+  // FIXME: Remove this once problem are fixed
+  assert(1 == 2);
 #undef N
 }
 

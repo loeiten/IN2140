@@ -1,9 +1,11 @@
 #include "../include/print_lib.h"
 
-#include <arpa/inet.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <arpa/inet.h>  // for ntohs
+#include <errno.h>      // for errno
+#include <stdio.h>      // for fprintf, fclose, NULL, FILE, fopen, perror
+#include <stdlib.h>     // for free, exit, EXIT_FAILURE, EXIT_SUCCESS, getenv
+#include <string.h>     // for strlen, strdup, strerror, memcpy, strndup
+#include <sys/stat.h>   // for stat, mkdir, S_IRWXU
 
 #define PACKET_OK (0)
 
@@ -105,7 +107,7 @@ static void print_msg(FILE* logfile, unsigned int chk, short ownAddress,
 void print_pkt(unsigned char* packet) {
   unsigned int chk = validate_packet(packet);
 
-  FILE* logfile = fopen("logfile.txt", "a");
+  FILE* logfile = get_logfile("a");
   print_msg(logfile, chk, 1, "CREATE", packet);
   fclose(logfile);
 }
@@ -113,7 +115,7 @@ void print_pkt(unsigned char* packet) {
 void print_received_pkt(short ownAddress, unsigned char* packet) {
   unsigned int chk = validate_packet(packet);
 
-  FILE* logfile = fopen("logfile.txt", "a");
+  FILE* logfile = get_logfile("a");
   print_msg(logfile, chk, ownAddress, "RCV", packet);
   fclose(logfile);
 }
@@ -121,13 +123,13 @@ void print_received_pkt(short ownAddress, unsigned char* packet) {
 void print_forwarded_pkt(short ownAddress, unsigned char* packet) {
   unsigned int chk = validate_packet(packet);
 
-  FILE* logfile = fopen("logfile.txt", "a");
+  FILE* logfile = get_logfile("a");
   print_msg(logfile, chk, ownAddress, "FWD", packet);
   fclose(logfile);
 }
 
 void print_weighted_edge(short from_node, short to_node, int weight) {
-  FILE* logfile = fopen("logfile.txt", "a");
+  FILE* logfile = get_logfile("a");
   if (weight < 0) {
     fprintf(logfile, "[C]: %d IS NOT on path from 1 to %d\n", from_node,
             to_node);
@@ -139,6 +141,123 @@ void print_weighted_edge(short from_node, short to_node, int weight) {
 }
 
 void print_clear_logfile(void) {
-  FILE* logfile = fopen("logfile.txt", "w");
+  FILE* logfile = get_logfile("w");
   fclose(logfile);
+}
+
+FILE* get_logfile(const char* mode) {
+  int success;
+  char* path = NULL;
+
+  // Create the directory if its not created
+  const char* log_dir = getenv("LOG_DIR");
+  // If LOG_DIR is empty
+  if (log_dir == NULL) {
+    success = concatenate_path(&path, "", "%s%s");
+    if (success == EXIT_FAILURE) {
+      if (path != NULL) {
+        free(path);
+        exit(1);
+      }
+    }
+  } else {
+    // LOG_DIR is not empty
+    int strLen = strlen(log_dir);
+    success = make_directories(log_dir);
+    if (success == EXIT_FAILURE) {
+      exit(1);
+    }
+    if (log_dir[strLen - 1] == '/') {
+      // LOG_DIR ends with /
+      success = concatenate_path(&path, log_dir, "%s%s");
+    } else {
+      // LOG_DIR does not end with /
+      success = concatenate_path(&path, log_dir, "%s/%s");
+    }
+    if (success == EXIT_FAILURE) {
+      if (path != NULL) {
+        free(path);
+        exit(1);
+      }
+    }
+  }
+
+  FILE* logfile = fopen(path, mode);
+  free(path);
+  return logfile;
+}
+
+int make_directories(const char* const directories) {
+  if (directories == NULL) {
+    return EXIT_SUCCESS;
+  }
+
+  // Create a duplicate string where we will replace '/' with '\0' when we make
+  // the dir
+  char* dirCopy = strdup(directories);
+  char* p = NULL;  // Pointer pointing to a character in dirCopy
+
+  size_t strLen = strlen(dirCopy);
+  // Handle dangling '\'
+  if (dirCopy[strLen - 1] == '/') {
+    dirCopy[strLen - 1] = '\0';
+  }
+
+  for (p = dirCopy + 1; *p != '\0'; ++p) {
+    if (*p == '/') {
+      // If we hit a delimiter, we temporary replace it with an "end of string"
+      // marker
+      *p = '\0';
+
+      // Check if the directory exist
+      struct stat st = {0};
+      if (stat(dirCopy, &st) == -1) {
+        // User (file owner) has read, write and execute permission
+        int success = mkdir(dirCopy, S_IRWXU);
+        if (success != 0) {
+          free(dirCopy);
+          dirCopy = NULL;
+          fprintf(stderr, "Cannot make the directories %s: %s\n", directories,
+                  strerror(errno));
+          return EXIT_FAILURE;
+        }
+      }
+      // Restore dirCpy to the original state
+      *p = '/';
+    }
+  }
+
+  // Check if the directory exist
+  struct stat st = {0};
+  if (stat(dirCopy, &st) == -1) {
+    int success = mkdir(dirCopy, S_IRWXU);
+    if (success != 0) {
+      free(dirCopy);
+      dirCopy = NULL;
+      fprintf(stderr, "Cannot make the directories %s: %s\n", directories,
+              strerror(errno));
+      return EXIT_FAILURE;
+    }
+  }
+
+  free(dirCopy);
+  dirCopy = NULL;
+  return EXIT_SUCCESS;
+}
+
+int concatenate_path(char** const path, const char* const log_dir,
+                     const char* const format) {
+  int strLen = snprintf(NULL, 0, format, log_dir, "logfile.txt");
+  (*path) = (char*)malloc((strLen + 1) * sizeof(char));
+  if (*path == NULL) {
+    perror("Could not allocate memory to the string path: ");
+    return EXIT_FAILURE;
+  }
+  int charWritten =
+      snprintf(*path, (strLen + 1), format, log_dir, "logfile.txt");
+  if ((charWritten < 0) || (charWritten > strLen)) {
+    fprintf(stderr, "%s", "Failed to copy to the path string\n");
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
 }

@@ -67,6 +67,7 @@ dkms.conf
 build/
 .cache/
 slides/
+logfile.txt
 
 # macOS
 .DS_Store
