@@ -10,12 +10,17 @@
 void testPrintEdges(void) {
 #define N (5)
   // Graph
-  // The weight are written on the vertices
-  //   2   4
-  // 1 |   | 1
-  //   1   3
-  // 1  \ /  3
-  //     0
+  // The weight are written on the edges
+  // The ids are written on the vertices
+  // The indices are written in square brackets
+  //   10 [2]   17 [4]
+  //   1 |        | 1
+  //   3 [1]   5 [3]
+  //   1  \     /  3
+  //       1 [0]
+  int map[N] = {1, 3, 10, 5, 17};
+  const struct IndexToId indexToIdMap = {.n = N, .map = map};
+
   const int distanceArray[N] = {0, 1, 2, 3, 4};
 
   int route0[N] = {0, INT_MAX, INT_MAX, INT_MAX, INT_MAX};
@@ -29,7 +34,7 @@ void testPrintEdges(void) {
                                       {.nHops = 1, .route = route3},
                                       {.nHops = 2, .route = route4}};
 
-  printEdges(distanceArray, routeArray, N);
+  printEdges(distanceArray, routeArray, &indexToIdMap, N);
   // FIXME: Nodes have (int) id, need to map index to id and vice versa
   // FIXME: Remove this once problem are fixed
   assert(1 == 2);

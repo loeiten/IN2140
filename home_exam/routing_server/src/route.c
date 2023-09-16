@@ -11,7 +11,8 @@
 #include "print_lib/include/print_lib.h"
 
 void printEdges(const int *const distanceArray,
-                const struct Route *const routeArray, const int n) {
+                const struct Route *const routeArray,
+                const struct IndexToId *const indexToIdMap, const int n) {
   for (int fromNode = 0; fromNode < n; ++fromNode) {
     for (int toNode = 0; toNode < n; ++toNode) {
       // Check if fromNode is on the shortest path from the source to the toNode
@@ -28,7 +29,8 @@ void printEdges(const int *const distanceArray,
       }
 
       // Print the value
-      print_weighted_edge(fromNode, toNode, pathLen);
+      print_weighted_edge(indexToIdMap->map[fromNode],
+                          indexToIdMap->map[toNode], pathLen);
     }
   }
 }
