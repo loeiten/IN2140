@@ -1,0 +1,36 @@
+[C]: distance from 1 to 1 is 0
+[C]: 1 IS on path from 1 to 1
+[C]: distance from 1 to 1 is 0
+[C]: 1 IS on path from 1 to 3
+[C]: distance from 1 to 1 is 0
+[C]: 1 IS on path from 1 to 10
+[C]: distance from 1 to 1 is 0
+[C]: 1 IS on path from 1 to 5
+[C]: distance from 1 to 1 is 0
+[C]: 1 IS on path from 1 to 17
+[C]: 3 IS NOT on path from 1 to 1
+[C]: distance from 1 to 3 is 1
+[C]: 3 IS on path from 1 to 3
+[C]: distance from 1 to 3 is 1
+[C]: 3 IS on path from 1 to 10
+[C]: 3 IS NOT on path from 1 to 5
+[C]: 3 IS NOT on path from 1 to 17
+[C]: 10 IS NOT on path from 1 to 1
+[C]: 10 IS NOT on path from 1 to 3
+[C]: distance from 1 to 10 is 2
+[C]: 10 IS on path from 1 to 10
+[C]: 10 IS NOT on path from 1 to 5
+[C]: 10 IS NOT on path from 1 to 17
+[C]: 5 IS NOT on path from 1 to 1
+[C]: 5 IS NOT on path from 1 to 3
+[C]: 5 IS NOT on path from 1 to 10
+[C]: distance from 1 to 5 is 3
+[C]: 5 IS on path from 1 to 5
+[C]: distance from 1 to 5 is 3
+[C]: 5 IS on path from 1 to 17
+[C]: 17 IS NOT on path from 1 to 1
+[C]: 17 IS NOT on path from 1 to 3
+[C]: 17 IS NOT on path from 1 to 10
+[C]: 17 IS NOT on path from 1 to 5
+[C]: distance from 1 to 17 is 4
+[C]: 17 IS on path from 1 to 17

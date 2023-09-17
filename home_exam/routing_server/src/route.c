@@ -1,5 +1,7 @@
 #include "../include/route.h"
 
+#include <stdio.h>
+
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler

@@ -7,6 +7,16 @@
 
 #include "../routing_server/include/route.h"  // for Route
 
+// NOTE: We are not specifying the full path here
+//       As a consequence we have to do the following
+//       1. Use -I in the compilation to expand the include path of the compiler
+//       2. If you use compile_commands.json for code completion,
+//          compile errors, go-to definition etc. you need to create compile
+//          command
+//          You can do this with for example
+//          bear --output ../build/compile_commands.json --append -- make -B
+#include "print_lib/include/print_lib.h"
+
 void testPrintEdges(void) {
 #define N (5)
   // Graph
@@ -34,10 +44,8 @@ void testPrintEdges(void) {
                                       {.nHops = 1, .route = route3},
                                       {.nHops = 2, .route = route4}};
 
+  print_clear_logfile();
   printEdges(distanceArray, routeArray, &indexToIdMap, N);
-  // FIXME: Nodes have (int) id, need to map index to id and vice versa
-  // FIXME: Remove this once problem are fixed
-  assert(1 == 2);
 #undef N
 }
 

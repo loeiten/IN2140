@@ -54,14 +54,21 @@ $(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/rou
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
 
+# Building the object files
+# NOTE: The only reason why we add an include path is because we have pretended
+#       that print_lib.h comes from an external library
+#       Since we use statements like
+#       #include "print_lib/include/print_lib.h", and since print_lib doesn't
+#       reside in "this" directory, we need to make sure that the compiler can
+#       find it
 $(BUILD_TEST_DIR)/test_route.o: test_route.c
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(BUILD_TEST_DIR)
-	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(ASSIGNMENT_FILES_SRC) -c $< -o $@
 
 # Tests
 run_test_route_1: $(TEST_EXEC_DIR)/test_route
-	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges)
+	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges && diff data/test_route_1_logfile.txt $(TEST_EXEC_DIR)/logfile.txt)
 # ==============================================================================
 
 clean:
