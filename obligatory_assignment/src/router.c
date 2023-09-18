@@ -1,11 +1,9 @@
 #include "../include/router.h"
 
-#include <stddef.h>
-#include <stdio.h>   // for fprintf, stderr, printf, size_t, NULL
-#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE, strtol
+#include <stdio.h>   // for fprintf, printf, stderr, perror, NULL
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE, free, malloc
 
-#include "../include/dynamic_memory.h"  // for
-#include "../include/utils.h"           // for getBinaryString
+#include "../include/utils.h"  // for getBinaryString
 
 int printRouter(const struct Router* const routerArray, const unsigned int N,
                 const int routerId) {

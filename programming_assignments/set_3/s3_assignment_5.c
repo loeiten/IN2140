@@ -6,11 +6,11 @@
  * Exit the program if the given filename is "QUIT"
  */
 
-#include <stdio.h>   // for printf, snprintf
-#include <stdlib.h>  // for free, malloc, EXIT_SUCCESS
-#include <string.h>  // for strlen
+#include <stdio.h>   // for printf, fclose, fgets
+#include <stdlib.h>  // for free, EXIT_SUCCESS
+#include <string.h>  // for strcmp, strcspn
 
-#include "../../utils/include/file_operations.h"
+#include "../../utils/include/file_operations.h"  // for getNumberOfLines
 
 #define MAX_LEN (100)
 

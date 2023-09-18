@@ -2,15 +2,15 @@
 #include <errno.h>     // for errno
 #include <libgen.h>    // for basename
 #include <stddef.h>    // for NULL, size_t
-#include <stdio.h>     // for fprintf, fopen, printf, stderr
-#include <stdlib.h>    // for EXIT_SUCCESS, EXIT_FAILURE, free
-#include <string.h>    // for strcmp, strerror
+#include <stdio.h>     // for fprintf, fclose, fopen, printf
+#include <stdlib.h>    // for EXIT_SUCCESS, free, EXIT_FAILURE
+#include <string.h>    // for strcmp, strerror, strdup, strlen
 #include <sys/stat.h>  // for stat
 
-#include "../include/binary_file.h"  // for readNewline, getDirectories, mak...
+#include "../include/binary_file.h"     // for makeDirectories, readNewline
 #include "../include/dynamic_memory.h"  // for freeRouterArray
-#include "../include/router.h"  // for printRouter, Router, printNeighbors
-#include "include/helpers.h"    // for removeRecursively
+#include "../include/router.h"          // for Router, printRouter, printNei...
+#include "include/helpers.h"            // for removeRecursively
 
 #define N (3)
 

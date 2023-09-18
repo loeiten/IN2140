@@ -1,10 +1,10 @@
 #include "../include/person.h"
 
-#include <stdio.h>   // for printf, fclose, fopen, NULL, ferror, fputs, fread
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, malloc
-#include <string.h>  // for strlen, strncpy, strcmp
+#include <stdio.h>   // for printf, NULL, fclose, fopen
+#include <stdlib.h>  // for EXIT_FAILURE, free, EXIT_SUC...
+#include <string.h>  // for strlen, strcmp, strncpy
 
-#include "../include/file_operations.h"
+#include "../include/file_operations.h"  // for getNumberOfLines
 
 int setName(struct Person* person, const char* name) {
   if (person == NULL) {

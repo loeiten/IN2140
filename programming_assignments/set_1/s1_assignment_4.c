@@ -14,7 +14,7 @@
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>  // for strlen
+#include <string.h>  // for strcmp
 
 #define STREQ(s1, s2) (strcmp(s1, s2) == 0)
 

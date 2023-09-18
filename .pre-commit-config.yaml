@@ -43,7 +43,7 @@ repos:
           args: ["--filter=-legal/copyright,-build/include_order,-whitespace/comments,-readability/casting"]
         - id: include-what-you-use
           args:
-            - "-Xiwyu"  # Xiwyu comes befor iwyu arguments
+            - "-Xiwyu"  # Xiwyu comes before iwyu arguments
             - "--error"
             - "-Xiwyu"
             - "--mapping_file=.linters/iwyu.imp"

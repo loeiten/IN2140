@@ -1,7 +1,5 @@
 #include "../include/route.h"
 
-#include <stdio.h>
-
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -10,7 +8,7 @@
 //          command
 //          You can do this with for example
 //          bear --output ../build/compile_commands.json --append -- make -B
-#include "print_lib/include/print_lib.h"
+#include "print_lib/include/print_lib.h"  // for print_weighted_edge
 
 void printEdges(const int *const distanceArray,
                 const struct Route *const routeArray,

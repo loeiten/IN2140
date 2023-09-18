@@ -15,7 +15,7 @@
 //          command
 //          You can do this with for example
 //          bear --output ../build/compile_commands.json --append -- make -B
-#include "print_lib/include/print_lib.h"
+#include "print_lib/include/print_lib.h"  // for print_weighted_edge
 
 void testPrintEdges(void) {
 #define N (5)

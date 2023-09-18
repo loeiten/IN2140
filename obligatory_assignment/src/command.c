@@ -1,11 +1,11 @@
 #include "../include/command.h"
 
-#include <stdio.h>   // for perror, snprintf
-#include <stdlib.h>  // for malloc, EXIT_FAILURE, EXIT_SU...
-#include <string.h>  // for strlen, strtok_r, strcmp
+#include <stdio.h>   // for perror, snprintf, fprintf
+#include <stdlib.h>  // for atoi, malloc, EXIT_FAILURE
+#include <string.h>  // for strcmp, strlen, strtok_r
 
 #include "../include/dynamic_memory.h"  // for freeCommandStrCpy
-#include "../include/router.h"          // for printRouter
+#include "../include/router.h"          // for addLink, deleteRouter, exists...
 
 int getCommand(const char *const commandStr, char **const command,
                char ***const args, size_t *const nArgs) {
