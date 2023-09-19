@@ -2,10 +2,10 @@
 #include <libgen.h>  // for basename
 #include <limits.h>  // for INT_MAX
 #include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/route.h"  // for Route
+#include "../routing_server/include/route.h"  // for printEdges, IndexToId
 
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
@@ -56,6 +56,8 @@ void testCreateRoutingTables(void) {
   // FIXME: Make a choice whether one should use label or indices on the labels
   //        Easy could be to use a 1 to 1 map and use labels, or use a label
   //        like (i*10 + i/2) for all nodes except node 1
+  //        NOTE: In general it's dangerous to rely on the index as there is no
+  //        guarantee what order the responses come in
   // Check for 0th index node
   assert(routingTable[0].n == 8);
   assert(routingTable[0].table[0].destination == 1);

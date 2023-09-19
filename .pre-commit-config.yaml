@@ -49,4 +49,4 @@ repos:
             - "--mapping_file=.linters/iwyu.imp"
             - "-Xiwyu"
             - "--update_comments"
-            - "-I$(PWD)/home_exam/assignment_files"  # This is a clang argument as it's not preceded by iwyu
+            - "-Ihome_exam/assignment_files"  # This is a clang argument as it's not preceded by iwyu
