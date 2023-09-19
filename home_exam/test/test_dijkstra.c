@@ -200,7 +200,7 @@ void testDijkstra(void) {
 #undef N
 
 #define N (6)
-  // Graph from https://www.programiz.com/dsa/dijkstra-algorithm
+  // graphB from https://www.programiz.com/dsa/dijkstra-algorithm
   // clang-format off
   const int graphB[N][N] = {
       {0, 4, 0, 0, 0, 4},

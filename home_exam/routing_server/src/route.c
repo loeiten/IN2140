@@ -1,5 +1,7 @@
 #include "../include/route.h"
 
+#include <stdlib.h>
+
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -33,4 +35,9 @@ void printEdges(const int *const distanceArray,
                           indexToIdMap->map[toNode], pathLen);
     }
   }
+}
+
+int createRoutingTables(void) {
+  // FIXME:
+  return EXIT_SUCCESS;
 }

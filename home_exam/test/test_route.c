@@ -49,6 +49,155 @@ void testPrintEdges(void) {
 #undef N
 }
 
+void testCreateRoutingTables(void) {
+  // Graph from
+  // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
+
+  // FIXME: Make a choice whether one should use label or indices on the labels
+  //        Easy could be to use a 1 to 1 map and use labels, or use a label
+  //        like (i*10 + i/2) for all nodes except node 1
+  // Check for 0th index node
+  assert(routingTable[0].n == 8);
+  assert(routingTable[0].table[0].destination == 1);
+  assert(routingTable[0].table[0].nextHop == 1);
+  assert(routingTable[0].table[1].destination == 2);
+  assert(routingTable[0].table[1].nextHop == 1);
+  assert(routingTable[0].table[2].destination == 3);
+  assert(routingTable[0].table[2].nextHop == 1);
+  assert(routingTable[0].table[3].destination == 4);
+  assert(routingTable[0].table[3].nextHop == 7);
+  assert(routingTable[0].table[4].destination == 5);
+  assert(routingTable[0].table[4].nextHop == 7);
+  assert(routingTable[0].table[5].destination == 6);
+  assert(routingTable[0].table[5].nextHop == 7);
+  assert(routingTable[0].table[6].destination == 7);
+  assert(routingTable[0].table[6].nextHop == 7);
+  assert(routingTable[0].table[7].destination == 8);
+  assert(routingTable[0].table[7].nextHop == 1);
+  // Check for 1st index node
+  assert(routingTable[1].n == 3);
+  assert(routingTable[1].table[0].destination == 2);
+  assert(routingTable[1].table[0].nextHop == 2);
+  assert(routingTable[1].table[1].destination == 3);
+  assert(routingTable[1].table[1].nextHop == 2);
+  assert(routingTable[1].table[2].destination == 8);
+  assert(routingTable[1].table[2].nextHop == 2);
+  // Check for 2nd index node
+  assert(routingTable[2].n == 2);
+  assert(routingTable[2].table[0].destination == 3);
+  assert(routingTable[2].table[0].nextHop == 3);
+  assert(routingTable[2].table[1].destination == 8);
+  assert(routingTable[2].table[1].nextHop == 8);
+  // Check for 3rd index node
+  assert(routingTable[3].n == 0);
+  // Check for 4th index node
+  assert(routingTable[4].n == 0);
+  // Check for 5th index node
+  assert(routingTable[5].n == 1);
+  assert(routingTable[5].table[0].destination == 4);
+  assert(routingTable[5].table[0].nextHop == 4);
+  // Check for 6th index node
+  assert(routingTable[6].n == 2);
+  assert(routingTable[6].table[0].destination == 4);
+  assert(routingTable[6].table[0].nextHop == 4);
+  assert(routingTable[6].table[1].destination == 5);
+  assert(routingTable[6].table[1].nextHop == 4);
+  // Check for 7th index node
+  assert(routingTable[7].n == 3);
+  assert(routingTable[7].table[0].destination == 4);
+  assert(routingTable[7].table[0].nextHop == 6);
+  assert(routingTable[7].table[1].destination == 5);
+  assert(routingTable[7].table[1].nextHop == 6);
+  assert(routingTable[7].table[2].destination == 6);
+  assert(routingTable[7].table[2].nextHop == 6);
+  // Check for 8th index node
+  assert(routingTable[8].n == 0);
+
+  // Using 8 as the source
+  // Check for 0th index node
+  assert(routingTable[0].n == 0);
+  // Check for 1st index node
+  assert(routingTable[1].n == 1);
+  assert(routingTable[1].table[0].destination == 0);
+  assert(routingTable[1].table[0].nextHop == 0);
+  // Check for 2nd index node
+  assert(routingTable[2].n == 4);
+  assert(routingTable[2].table[0].destination == 0);
+  assert(routingTable[2].table[0].nextHop == 1);
+  assert(routingTable[2].table[1].destination == 1);
+  assert(routingTable[2].table[1].nextHop == 1);
+  assert(routingTable[2].table[2].destination == 3);
+  assert(routingTable[2].table[2].nextHop == 3);
+  assert(routingTable[2].table[3].destination == 5);
+  assert(routingTable[2].table[3].nextHop == 5);
+  // Check for 3rd index node
+  assert(routingTable[3].n == 0);
+  // Check for 4th index node
+  assert(routingTable[4].n == 0);
+  // Check for 5th index node
+  assert(routingTable[5].n == 1);
+  assert(routingTable[5].table[0].destination == 4);
+  assert(routingTable[5].table[0].nextHop == 4);
+  // Check for 6th index node
+  assert(routingTable[6].n == 1);
+  assert(routingTable[6].table[0].destination == 7);
+  assert(routingTable[6].table[0].nextHop == 7);
+  // Check for 7th index node
+  assert(routingTable[7].n == 0);
+  // Check for 8th index node
+  assert(routingTable[8].n == 8);
+  assert(routingTable[8].table[0].destination == 0);
+  assert(routingTable[8].table[0].nextHop == 2);
+  assert(routingTable[8].table[1].destination == 1);
+  assert(routingTable[8].table[1].nextHop == 2);
+  assert(routingTable[8].table[2].destination == 2);
+  assert(routingTable[8].table[2].nextHop == 2);
+  assert(routingTable[8].table[3].destination == 3);
+  assert(routingTable[8].table[3].nextHop == 2);
+  assert(routingTable[8].table[4].destination == 4);
+  assert(routingTable[8].table[4].nextHop == 2);
+  assert(routingTable[8].table[5].destination == 5);
+  assert(routingTable[8].table[5].nextHop == 2);
+  assert(routingTable[8].table[6].destination == 6);
+  assert(routingTable[8].table[6].nextHop == 6);
+  assert(routingTable[8].table[7].destination == 7);
+  assert(routingTable[8].table[7].nextHop == 6);
+
+  // Graph from https://www.programiz.com/dsa/dijkstra-algorithm
+  // Check for 0th index node
+  assert(routingTable[0].n == 5);
+  assert(routingTable[0].table[0].destination == 1);
+  assert(routingTable[0].table[0].nextHop == 1);
+  assert(routingTable[0].table[1].destination == 2);
+  assert(routingTable[0].table[1].nextHop == 1);
+  assert(routingTable[0].table[2].destination == 3);
+  assert(routingTable[0].table[2].nextHop == 1);
+  assert(routingTable[0].table[3].destination == 4);
+  assert(routingTable[0].table[3].nextHop == 1);
+  assert(routingTable[0].table[4].destination == 5);
+  assert(routingTable[0].table[4].nextHop == 5);
+  // Check for 1st index node
+  assert(routingTable[1].n == 4);
+  assert(routingTable[1].table[0].destination == 2);
+  assert(routingTable[1].table[0].nextHop == 2);
+  assert(routingTable[1].table[1].destination == 3);
+  assert(routingTable[1].table[1].nextHop == 4);
+  assert(routingTable[1].table[2].destination == 4);
+  assert(routingTable[1].table[2].nextHop == 4);
+  assert(routingTable[1].table[3].destination == 5);
+  assert(routingTable[1].table[3].nextHop == 5);
+  // Check for 2nd index node
+  assert(routingTable[2].n == 0);
+  // Check for 3rd index node
+  assert(routingTable[3].n == 0);
+  // Check for 4th index node
+  assert(routingTable[4].n == 1);
+  assert(routingTable[4].table[0].destination == 3);
+  assert(routingTable[4].table[0].nextHop == 3);
+  // Check for 5th index node
+  assert(routingTable[5].n == 0);
+}
+
 int main(int argc, char **argv) {
   if (argc < 2) {
     // NOTE: Base is from POSIX.1-2008, not the C-standard, see
@@ -62,6 +211,8 @@ int main(int argc, char **argv) {
 
   if (strcmp(argv[1], "printEdges") == 0) {
     testPrintEdges();
+  } else if (strcmp(argv[1], "createRoutingTables") == 0) {
+    testCreateRoutingTables();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
   }

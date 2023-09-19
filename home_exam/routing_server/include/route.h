@@ -2,7 +2,7 @@
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
 
 /**
- *  @brief Representation of a route to an endpoint using indices
+ * @brief Representation of a route to an endpoint using indices
  */
 struct Route {
   int nHops;  /**< Number of hops from the starting point */
@@ -10,11 +10,19 @@ struct Route {
 };
 
 /**
- *  @brief Map from index to node id
+ * @brief Map from index to node id
  */
 struct IndexToId {
   int n;    /**< Number of elements */
   int *map; /**< The index to id map */
+};
+
+/**
+ * @brief Elements in the routing table
+ */
+struct DestinationNextPair {
+  int destination; /**< Destination of package */
+  int nextHop;     /**< The next hop needed in order to reach the destination */
 };
 
 /**
