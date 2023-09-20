@@ -1,6 +1,7 @@
 #include "../include/route.h"
 
-#include <stdlib.h>
+#include <stdio.h>   // for perror
+#include <stdlib.h>  // for free, NULL, calloc, EXIT_FA...
 
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
@@ -37,7 +38,47 @@ void printEdges(const int *const distanceArray,
   }
 }
 
-int createRoutingTables(void) {
+int createRoutingTables(struct Route *routeArray,
+                        struct RoutingTable **const routingTable, int n) {
   // FIXME:
+  (void)routeArray;
+  (void)n;
+
+  // Zero allocate the routing table
+  struct RoutingTable *routingTableTmp =
+      (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
+  if (routingTableTmp == NULL) {
+    perror("Could not allocate memory to the routingTable: ");
+    return EXIT_FAILURE;
+  }
+
+  // Pseudo code:
+  // Brute force algorithm
+  // Let's say we want to find all destination from node i
+  // 1. In the route array, find all routes which have i in it (where i is not
+  //    the final destination)
+  // 2. For each of these routes:
+  //    i.   Look at the proceeding node after i and call it j
+  //    ii.  Create an array, and put all the nodes proceeding j in this array.
+  //         These nodes will have j as their nextHop
+  //    iii. Sort this array...
+  //    ii.
+  // 3.
+
+  // Finally assign the local temporary to the output value
+  *routingTable = routingTableTmp;
   return EXIT_SUCCESS;
+}
+
+void freeRoutingTable(struct RoutingTable **routingTable, int n) {
+  if ((*routingTable) != NULL) {
+    for (int i = 0; i < n; ++i) {
+      if ((*routingTable[i]).table != NULL) {
+        free((*routingTable[i]).table);
+        (*routingTable[i]).table = NULL;
+      }
+    }
+    free(*routingTable);
+    (*routingTable) = NULL;
+  }
 }

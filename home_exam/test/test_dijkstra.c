@@ -63,9 +63,9 @@ void testRegisterRoute(void) {
 }
 
 void testDijkstra(void) {
-// graphA from
-// https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
 #define N (9)
+  // graphA from
+  // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
   // clang-format off
   const int graphA[N][N] = {
       {0, 4, 0, 0, 0, 0, 0, 8, 0},

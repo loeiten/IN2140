@@ -50,9 +50,29 @@ void testPrintEdges(void) {
 }
 
 void testCreateRoutingTables(void) {
-  // Graph from
+#define N (9)
+  // GraphA from
   // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
 
+  int routeA0[1] = {0};
+  int routeA1[2] = {0, 1};
+  int routeA2[3] = {0, 1, 2};
+  int routeA3[4] = {0, 1, 2, 3};
+  int routeA4[5] = {0, 7, 6, 5, 4};
+  int routeA5[5] = {0, 7, 6, 5};
+  int routeA6[3] = {0, 7, 6};
+  int routeA7[2] = {0, 7};
+  int routeA8[4] = {0, 1, 2, 8};
+  struct Route routeArrayA[N] = {
+      {.nHops = 0, .route = routeA0}, {.nHops = 1, .route = routeA1},
+      {.nHops = 2, .route = routeA2}, {.nHops = 3, .route = routeA3},
+      {.nHops = 4, .route = routeA4}, {.nHops = 3, .route = routeA5},
+      {.nHops = 2, .route = routeA6}, {.nHops = 1, .route = routeA7},
+      {.nHops = 3, .route = routeA8},
+  };
+  struct RoutingTable *routingTable = NULL;
+  int success = createRoutingTables(routeArrayA, &routingTable, N);
+  assert(success == EXIT_SUCCESS);
   // FIXME: Make a choice whether one should use label or indices on the labels
   //        Easy could be to use a 1 to 1 map and use labels, or use a label
   //        like (i*10 + i/2) for all nodes except node 1
@@ -114,8 +134,27 @@ void testCreateRoutingTables(void) {
   assert(routingTable[7].table[2].nextHop == 6);
   // Check for 8th index node
   assert(routingTable[8].n == 0);
+  freeRoutingTable(&routingTable, N);
 
   // Using 8 as the source
+  int routeB0[4] = {8, 2, 1, 0};
+  int routeB1[3] = {8, 2, 1};
+  int routeB2[2] = {8, 2};
+  int routeB3[3] = {8, 2, 3};
+  int routeB4[4] = {8, 2, 5, 4};
+  int routeB5[3] = {8, 2, 5};
+  int routeB6[2] = {8, 6};
+  int routeB7[3] = {8, 6, 7};
+  int routeB8[1] = {8};
+  struct Route routeArrayB[N] = {
+      {.nHops = 3, .route = routeB0}, {.nHops = 2, .route = routeB1},
+      {.nHops = 1, .route = routeB2}, {.nHops = 2, .route = routeB3},
+      {.nHops = 3, .route = routeB4}, {.nHops = 2, .route = routeB5},
+      {.nHops = 1, .route = routeB6}, {.nHops = 2, .route = routeB7},
+      {.nHops = 0, .route = routeB8},
+  };
+  success = createRoutingTables(routeArrayB, &routingTable, N);
+  assert(success == EXIT_SUCCESS);
   // Check for 0th index node
   assert(routingTable[0].n == 0);
   // Check for 1st index node
@@ -164,9 +203,26 @@ void testCreateRoutingTables(void) {
   assert(routingTable[8].table[6].nextHop == 6);
   assert(routingTable[8].table[7].destination == 7);
   assert(routingTable[8].table[7].nextHop == 6);
+  freeRoutingTable(&routingTable, N);
+#undef N
 
+#define N (6)
   // Graph from https://www.programiz.com/dsa/dijkstra-algorithm
   // Check for 0th index node
+  int routeC0[1] = {0};
+  int routeC1[2] = {0, 1};
+  int routeC2[3] = {0, 1, 2};
+  int routeC3[4] = {0, 1, 4, 3};
+  int routeC4[3] = {0, 1, 4};
+  int routeC5[2] = {0, 5};
+  struct Route routeArrayC[N] = {
+      {.nHops = 0, .route = routeC0}, {.nHops = 1, .route = routeC1},
+      {.nHops = 2, .route = routeC2}, {.nHops = 3, .route = routeC3},
+      {.nHops = 2, .route = routeC4}, {.nHops = 1, .route = routeC5},
+  };
+  success = createRoutingTables(routeArrayC, &routingTable, N);
+  assert(success == EXIT_SUCCESS);
+
   assert(routingTable[0].n == 5);
   assert(routingTable[0].table[0].destination == 1);
   assert(routingTable[0].table[0].nextHop == 1);
@@ -198,6 +254,8 @@ void testCreateRoutingTables(void) {
   assert(routingTable[4].table[0].nextHop == 3);
   // Check for 5th index node
   assert(routingTable[5].n == 0);
+  freeRoutingTable(&routingTable, N);
+#undef N
 }
 
 int main(int argc, char **argv) {
