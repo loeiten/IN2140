@@ -53,17 +53,27 @@ int createRoutingTables(struct Route *routeArray,
   }
 
   // Pseudo code:
-  // Brute force algorithm
-  // Let's say we want to find all destination from node i
-  // 1. In the route array, find all routes which have i in it (where i is not
-  //    the final destination)
-  // 2. For each of these routes:
-  //    i.   Look at the proceeding node after i and call it j
-  //    ii.  Create an array, and put all the nodes proceeding j in this array.
-  //         These nodes will have j as their nextHop
-  //    iii. Sort this array...
-  //    ii.
-  // 3.
+  // 1. Create a n x n matrix called visited, the rows will be the source
+  //    indices and the rows will be the destination indices
+  // 2. Loop through the routeArray and
+  //    i.   Set the destination pointer to the last element
+  //    ii.  Set the source pointer to the second to last element
+  //    iii. Loop through the elements of the route and
+  //         a. Check if visited[*sourcePtr][*destinationPtr] is true, if yes
+  //            go to step 2.iii.f
+  //         b. Allocate a DestinationNextPair to
+  //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n]
+  //         c. Set
+  //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n].destination
+  //            = *destinationPtr
+  //         c. Set
+  //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n].nextHop
+  //            = *(sourcePtr + 1)
+  //         d. ++routingTable[*sourcePtr].n
+  //         e. Mark visited[*sourcePtr][*destinationPtr] as true
+  //         f. Decrement destination pointer, if *destinationPtr == *sourcePtr,
+  //            go to the next element of routingArray, else go to step
+  //            2.iii.a
 
   // Finally assign the local temporary to the output value
   *routingTable = routingTableTmp;
