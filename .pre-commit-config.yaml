@@ -35,6 +35,8 @@ repos:
         - id: clang-tidy
           args:
             - "-p=build/"
+            - "--"
+            - "-Ihome_exam/assignment_files"
         - id: cppcheck
           args:
             - "--inline-suppr"  # Enable inline suppression

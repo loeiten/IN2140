@@ -69,7 +69,7 @@ int createRoutingTables(struct Route *routeArray,
   //         c. Set
   //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n].nextHop
   //            = *(sourcePtr + 1)
-  //         d. ++routingTable[*sourcePtr].n
+  //         d. ++(routingTable[*sourcePtr].n)
   //         e. Mark visited[*sourcePtr][*destinationPtr] as true
   //         f. Decrement destination pointer, if *destinationPtr == *sourcePtr,
   //            go to the next element of routingArray, else go to step
