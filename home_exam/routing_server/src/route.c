@@ -40,7 +40,31 @@ void printEdges(const int *const distanceArray,
 
 int createRoutingTables(struct Route *routeArray,
                         struct RoutingTable **const routingTable, int n) {
+  // Allocate the visited matrix
+  int **visited = NULL;
+  // Allocate memory for the array of pointers
+  visited = (int **)calloc(n, sizeof(int *));
+  if (visited == NULL) {
+    perror("Could not allocate memory to the *visited array: ");
+    return EXIT_FAILURE;
+  }
+  // Allocate memory for each row individually
+  for (int i = 0; i < n; i++) {
+    visited[i] = (int *)malloc(n * sizeof(int));
+    if (visited[i] == NULL) {
+      fprintf(stderr, "Memory allocation failed for row %d.\n", i);
+      return 1;
+    }
+  }
+  // Initialize and use the matrix
+  for (int row = 0; row < n; ++row) {
+    for (int col = 0; col < n; ++col) {
+      visited[row][col] = 0;
+    }
+  }
+
   // FIXME:
+  (void)visited;
   (void)routeArray;
   (void)n;
 
@@ -90,5 +114,18 @@ void freeRoutingTable(struct RoutingTable **routingTable, int n) {
     }
     free(*routingTable);
     (*routingTable) = NULL;
+  }
+}
+
+void freeVisited(int ***visited, int n) {
+  if ((*visited) != NULL) {
+    for (int i = 0; i < n; ++i) {
+      if ((*visited)[i] != NULL) {
+        free((*visited)[i]);
+        (*visited)[i] = NULL;
+      }
+    }
+    free(*visited);
+    *visited = NULL;
   }
 }

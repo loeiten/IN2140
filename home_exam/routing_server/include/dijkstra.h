@@ -11,6 +11,7 @@ struct Route;
  *
  * Comment: We use double pointer to represent matrices
  * Drawback: Indirection through pointers
+ * Drawback: Less cache friendly
  * Pro: One can access the elements by using [row][col]
  *
  * @param src The id of the source

@@ -47,8 +47,7 @@ int dijkstra(const int src, const int *const *const graph,
     if (routeArrayTmp[i].route == NULL) {
       perror("Could not allocate memory to routeArrayTmp[i].route: ");
       // NOTE: The freeing of routeArrayTmp will happen in the place where it
-      // was
-      //       allocated
+      // was allocated
       freeIntArray(&visitedArray);
       // NOTE: Need to free the temporary as it's local, and not yet assigned to
       //       routeArray
@@ -206,10 +205,10 @@ int registerRoute(const int src, const int curVisitIdx, const int n,
   return EXIT_SUCCESS;
 }
 
-void freeIntArray(int **visitedArray) {
-  if ((*visitedArray) != NULL) {
-    free(*visitedArray);
-    *visitedArray = NULL;
+void freeIntArray(int **intArray) {
+  if ((*intArray) != NULL) {
+    free(*intArray);
+    *intArray = NULL;
   }
 }
 
