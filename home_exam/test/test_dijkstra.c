@@ -7,6 +7,7 @@
 
 #include "../routing_server/include/dijkstra.h"  // for dijkstra, freeRouteA...
 #include "../routing_server/include/route.h"     // for Route
+#include "../utils/include/dynamic_memory.h"     // for dijkstra, freeRouteA...
 
 void testGetMinDistanceIdx(void) {
 #define N (2)

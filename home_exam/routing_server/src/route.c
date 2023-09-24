@@ -103,29 +103,3 @@ int createRoutingTables(struct Route *routeArray,
   *routingTable = routingTableTmp;
   return EXIT_SUCCESS;
 }
-
-void freeRoutingTable(struct RoutingTable **routingTable, int n) {
-  if ((*routingTable) != NULL) {
-    for (int i = 0; i < n; ++i) {
-      if ((*routingTable[i]).table != NULL) {
-        free((*routingTable[i]).table);
-        (*routingTable[i]).table = NULL;
-      }
-    }
-    free(*routingTable);
-    (*routingTable) = NULL;
-  }
-}
-
-void freeVisited(int ***visited, int n) {
-  if ((*visited) != NULL) {
-    for (int i = 0; i < n; ++i) {
-      if ((*visited)[i] != NULL) {
-        free((*visited)[i]);
-        (*visited)[i] = NULL;
-      }
-    }
-    free(*visited);
-    *visited = NULL;
-  }
-}

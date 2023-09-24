@@ -5,7 +5,8 @@
 #include <stdlib.h>  // for malloc, free, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for memcpy
 
-#include "../include/route.h"  // for Route
+#include "../../utils/include/dynamic_memory.h"  // for Route
+#include "../include/route.h"                    // for Route
 
 int dijkstra(const int src, const int *const *const graph,
              int *const distanceArray, struct Route **const routeArray,
@@ -203,24 +204,4 @@ int registerRoute(const int src, const int curVisitIdx, const int n,
   routeArray[curVisitIdx].route[routeArray[curVisitIdx].nHops] = curVisitIdx;
 
   return EXIT_SUCCESS;
-}
-
-void freeIntArray(int **intArray) {
-  if ((*intArray) != NULL) {
-    free(*intArray);
-    *intArray = NULL;
-  }
-}
-
-void freeRouteArray(struct Route **routeArray, const int n) {
-  if ((*routeArray) != NULL) {
-    for (int i = 0; i < n; ++i) {
-      if ((*routeArray)[i].route != NULL) {
-        free((*routeArray)[i].route);
-        (*routeArray)[i].route = NULL;
-      }
-    }
-    free(*routeArray);
-    (*routeArray) = NULL;
-  }
 }

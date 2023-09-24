@@ -15,7 +15,10 @@ include common.mk
 # The first $ in $$ is an escape charater.
 # So `$$dir` will expand to `$dir` instead of the variable named `dir`
 # NOTE: When you call $(MAKE) -C you are creating a new process
-COMPONENTS := assignment_files node routing_server test
+# NOTE: The order does matter: We need dynamic_memory.o as a dependency.
+#       This file is created in utils, and consumed as a dependency in for
+#       example route.c, hence this needs to be processed first
+COMPONENTS := utils assignment_files node routing_server test
 all:
 	for dir in $(COMPONENTS); do \
 		$(MAKE) -C $$dir; \

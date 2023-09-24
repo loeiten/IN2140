@@ -23,7 +23,7 @@ test: $(TESTS)
 # ==============================================================================
 # @ outputs the target
 # ^ outputs all prerequisites
-$(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o
+$(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o $(BUILD_OBJ_DIR)/dynamic_memory.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
@@ -49,7 +49,7 @@ run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 
 # ROUTE
 # ==============================================================================
-$(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/route.o $(LIB_DIR)/libprint.$(LIB_EXTENSION)
+$(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/route.o $(BUILD_OBJ_DIR)/dynamic_memory.o $(LIB_DIR)/libprint.$(LIB_EXTENSION)
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
