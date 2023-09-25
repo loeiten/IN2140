@@ -1,7 +1,7 @@
 #include "../include/route.h"
 
-#include <stdio.h>   // for perror
-#include <stdlib.h>  // for free, NULL, calloc, EXIT_FA...
+#include <stdio.h>   // for perror, NULL, fprintf, stderr
+#include <stdlib.h>  // for calloc, malloc, EXIT_FAILURE
 
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following

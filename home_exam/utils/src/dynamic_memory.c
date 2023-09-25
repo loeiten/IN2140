@@ -1,9 +1,7 @@
-#include <limits.h>  // for INT_MAX
-#include <stdio.h>   // for perror, NULL, fprintf, stderr
-#include <stdlib.h>  // for malloc, free, EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>  // for memcpy
+#include <stdio.h>   // for NULL
+#include <stdlib.h>  // for free
 
-#include "../../routing_server/include/route.h"  // for Route
+#include "../../routing_server/include/route.h"  // for Route, RoutingTable
 
 void freeIntArray(int **intArray) {
   if ((*intArray) != NULL) {

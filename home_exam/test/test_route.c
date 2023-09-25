@@ -1,11 +1,11 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
 #include <limits.h>  // for INT_MAX
-#include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
+#include <stdio.h>   // for fprintf, stderr, NULL
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/route.h"  // for printEdges, IndexToId
+#include "../routing_server/include/route.h"  // for RoutingTable, Destinati...
 
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following

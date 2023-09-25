@@ -1,11 +1,11 @@
 #include "../include/dijkstra.h"
 
 #include <limits.h>  // for INT_MAX
-#include <stdio.h>   // for perror, NULL, fprintf, stderr
-#include <stdlib.h>  // for malloc, free, EXIT_FAILURE, EXIT_SUCCESS
+#include <stdio.h>   // for perror, fprintf, NULL
+#include <stdlib.h>  // for malloc, EXIT_FAILURE
 #include <string.h>  // for memcpy
 
-#include "../../utils/include/dynamic_memory.h"  // for Route
+#include "../../utils/include/dynamic_memory.h"  // for freeIntArray, freeRo...
 #include "../include/route.h"                    // for Route
 
 int dijkstra(const int src, const int *const *const graph,
