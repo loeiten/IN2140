@@ -69,6 +69,17 @@ int allocateRouteArray(struct Route **routeArray, const int n,
 void freeRouteArray(struct Route **routeArray, const int n);
 
 /**
+ * @brief Allocate space to the routing table
+ *
+ * @param routingTable The routing table, one for each node
+ * @param n The number of nodes in the graph
+ * @param name Name of the routing table
+ * @returns 0 on success, 1 on error
+ */
+int allocateRoutingTable(struct RoutingTable **routingTable, int n,
+                         const char *name);
+
+/**
  * @brief Free the routing table and its contents
  *
  * @param routingTable The routing table, one for each node

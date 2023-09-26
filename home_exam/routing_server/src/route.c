@@ -42,35 +42,9 @@ void printEdges(const int *const distanceArray,
 
 int createRoutingTables(struct Route *routeArray,
                         struct RoutingTable **const routingTable, int n) {
-  // Allocate the visited matrix
-  int **visited = NULL;
-  int success = allocateIntMatrix(&visited, n, "visited");
-  if (success != EXIT_SUCCESS) {
-    return EXIT_FAILURE;
-  }
-  // Initialize and use the matrix
-  for (int row = 0; row < n; ++row) {
-    for (int col = 0; col < n; ++col) {
-      visited[row][col] = 0;
-    }
-  }
-
-  // FIXME:
-  (void)visited;
-  (void)routeArray;
-  (void)n;
-
-  // Zero allocate the routing table
-  struct RoutingTable *routingTableTmp =
-      (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
-  if (routingTableTmp == NULL) {
-    perror("Could not allocate memory to the routingTable: ");
-    return EXIT_FAILURE;
-  }
-
   // Pseudo code:
   // 1. Create a n x n matrix called visited, the rows will be the source
-  //    indices and the rows will be the destination indices
+  //    indices and the cols will be the destination indices
   // 2. Loop through the routeArray and
   //    i.   Set the destination pointer to the last element
   //    ii.  Set the source pointer to the second to last element
@@ -90,6 +64,53 @@ int createRoutingTables(struct Route *routeArray,
   //         f. Decrement destination pointer, if *destinationPtr == *sourcePtr,
   //            go to the next element of routingArray, else go to step
   //            2.iii.a
+
+  // Step 1
+  // Allocate the visited matrix
+  int **visited = NULL;
+  int success = allocateIntMatrix(&visited, n, "visited");
+  if (success != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
+  }
+  // Initialize and use the matrix
+  for (int row = 0; row < n; ++row) {
+    for (int col = 0; col < n; ++col) {
+      visited[row][col] = 0;
+    }
+  }
+
+  // Zero allocate the routing table
+  struct RoutingTable *routingTableTmp = NULL;
+  success = allocateRoutingTable(&routingTableTmp, n, "routingTableTmp");
+  if (success != EXIT_SUCCESS) {
+    freeIntMatrix(&visited, n);
+    return EXIT_FAILURE;
+  }
+
+  // Step 2
+  // Loop through all the routes
+  // NOTE: There will be one for each node unless there are any orphan nodes
+  for (int routeIdx = 0; routeIdx < n; ++routeIdx) {
+    // Start at the end of the route and go backwards
+    int sourceIdx = routeArray[routeIdx].nHops - 1;
+    while (sourceIdx != -1) {
+      int destinationIdx = routeArray[routeIdx].nHops;
+      int nextHopIdx = sourceIdx + 1;
+      int i = 0;
+      // Loop through the destinations
+      while (destinationIdx != sourceIdx) {
+        // Set the destination and next
+        routingTableTmp[sourceIdx].table[i].destination = destinationIdx;
+        routingTableTmp[sourceIdx].table[i].nextHop = nextHopIdx;
+        // Increment the number of DestinationNextPair in the table
+        ++(routingTableTmp->n);
+        // Update the counters
+        ++i;
+        --destinationIdx;
+      }
+      --sourceIdx;
+    }
+  }
 
   // Finally assign the local temporary to the output value
   *routingTable = routingTableTmp;

@@ -69,9 +69,8 @@ int allocateRouteArray(struct Route **routeArray, const int n,
     return EXIT_FAILURE;
   }
 
-  // Initialize the data
+  // Allocate the RouteArray
   for (int i = 0; i < n; ++i) {
-    // Allocate the RouteArray
     (*routeArray)[i].route = (int *)malloc(n * sizeof(int));
     if ((*routeArray)[i].route == NULL) {
       fprintf(stderr,
@@ -98,6 +97,36 @@ void freeRouteArray(struct Route **routeArray, const int n) {
     free(*routeArray);
     (*routeArray) = NULL;
   }
+}
+
+int allocateRoutingTable(struct RoutingTable **routingTable, int n,
+                         const char *name) {
+  // Zero allocate the routing table
+  *routingTable = (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
+  if ((*routingTable) == NULL) {
+    fprintf(stderr, "Memory allocation for %s failed", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+
+  // Allocate the RoutingTable
+  for (int i = 0; i < n; ++i) {
+    // There will be at max one table for each node
+    (*routingTable)[i].table = (struct DestinationNextPair *)malloc(
+        n * sizeof(struct DestinationNextPair));
+    (*routingTable)[i].n = 0;
+    if ((*routingTable)[i].table == NULL) {
+      fprintf(stderr,
+              "Memory allocation for %s failed for routeArrayTmp[%d].route",
+              name, i);
+      perror(": ");
+      // NOTE: The freeing of routeArray will happen in the place where it
+      // was allocated
+      freeRoutingTable(routingTable, n);
+      return EXIT_FAILURE;
+    }
+  }
+  return EXIT_SUCCESS;
 }
 
 void freeRoutingTable(struct RoutingTable **routingTable, int n) {
