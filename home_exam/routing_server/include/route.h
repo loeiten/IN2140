@@ -58,12 +58,4 @@ void printEdges(const int *const distanceArray,
 int createRoutingTables(struct Route *routeArray,
                         struct RoutingTable **const routingTable, int n);
 
-/**
- * @brief Free the routing table and its contents
- *
- * @param routingTable The routing table, one for each node
- * @param n The number of nodes in the graph
- */
-void freeRoutingTable(struct RoutingTable **routingTable, int n);
-
 #endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_

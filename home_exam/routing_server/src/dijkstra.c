@@ -18,22 +18,18 @@ int dijkstra(const int src, const int *const *const graph,
   // of edges
 
   // Allocate memory to the array of visited nodes
-  int *visitedArray = (int *)malloc(n * sizeof(int));
-  if (visitedArray == NULL) {
-    perror("Could not allocate memory to visitedArray: ");
+  int *visitedArray = NULL;
+  int success = allocateIntArray(&visitedArray, n, "visitedArray");
+  if (success != EXIT_SUCCESS) {
     return EXIT_FAILURE;
   }
 
   // Allocate memory to the routeArray
-  // NOTE: Difference between malloc and calloc is that calloc is zero
-  //       initializing the array
-  //       If we don't do this, and we want to check if
-  //       routeArrayTmp[i].route == NULL
-  //       Then routeArrayTmp[i].route pointer has an indeterminate value
-  struct Route *routeArrayTmp = (struct Route *)calloc(n, sizeof(struct Route));
-  if (routeArrayTmp == NULL) {
-    perror("Could not allocate memory to routeArray: ");
+  struct Route *routeArrayTmp = NULL;
+  success = allocateRouteArray(&routeArrayTmp, n, "routeArrayTmp");
+  if (success != EXIT_SUCCESS) {
     freeIntArray(&visitedArray);
+    freeRouteArray(&routeArrayTmp, n);
     return EXIT_FAILURE;
   }
 
@@ -44,17 +40,6 @@ int dijkstra(const int src, const int *const *const graph,
     // Set the distance to every node to zero
     distanceArray[i] = INT_MAX;
     // Init the RouteArray
-    routeArrayTmp[i].route = (int *)malloc(n * sizeof(int));
-    if (routeArrayTmp[i].route == NULL) {
-      perror("Could not allocate memory to routeArrayTmp[i].route: ");
-      // NOTE: The freeing of routeArrayTmp will happen in the place where it
-      // was allocated
-      freeIntArray(&visitedArray);
-      // NOTE: Need to free the temporary as it's local, and not yet assigned to
-      //       routeArray
-      freeRouteArray(&routeArrayTmp, n);
-      return EXIT_FAILURE;
-    }
     routeArrayTmp[i].nHops = -1;
   }
 
@@ -62,11 +47,10 @@ int dijkstra(const int src, const int *const *const graph,
   distanceArray[src] = 0;
 
   // Initialize the helper variable for registerRoute
-  int *visitedAndNeighbourArray = (int *)malloc(n * sizeof(int));
-  if (visitedAndNeighbourArray == NULL) {
-    perror("Could not allocate memory to visitedAndNeighbourArray: ");
-    // NOTE: The freeing of routeArray will happen in the place where it was
-    //       allocated
+  int *visitedAndNeighbourArray = NULL;
+  success = allocateIntArray(&visitedAndNeighbourArray, n,
+                             "visitedAndNeighbourArray");
+  if (success != EXIT_SUCCESS) {
     freeIntArray(&visitedArray);
     freeRouteArray(&routeArrayTmp, n);
     return EXIT_FAILURE;
@@ -89,9 +73,8 @@ int dijkstra(const int src, const int *const *const graph,
 
     // Mark this node as visited
     visitedArray[minIdx] = 1;
-    int success =
-        registerRoute(src, minIdx, n, graph, visitedArray, distanceArray,
-                      visitedAndNeighbourArray, routeArrayTmp);
+    success = registerRoute(src, minIdx, n, graph, visitedArray, distanceArray,
+                            visitedAndNeighbourArray, routeArrayTmp);
     if (success != EXIT_SUCCESS) {
       freeIntArray(&visitedArray);
       freeIntArray(&visitedAndNeighbourArray);

@@ -3,6 +3,8 @@
 #include <stdio.h>   // for perror, NULL, fprintf, stderr
 #include <stdlib.h>  // for calloc, malloc, EXIT_FAILURE
 
+#include "../../utils/include/dynamic_memory.h"
+
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -42,19 +44,9 @@ int createRoutingTables(struct Route *routeArray,
                         struct RoutingTable **const routingTable, int n) {
   // Allocate the visited matrix
   int **visited = NULL;
-  // Allocate memory for the array of pointers
-  visited = (int **)calloc(n, sizeof(int *));
-  if (visited == NULL) {
-    perror("Could not allocate memory to the *visited array: ");
+  int success = allocateIntMatrix(&visited, n, "visited");
+  if (success != EXIT_SUCCESS) {
     return EXIT_FAILURE;
-  }
-  // Allocate memory for each row individually
-  for (int i = 0; i < n; i++) {
-    visited[i] = (int *)malloc(n * sizeof(int));
-    if (visited[i] == NULL) {
-      fprintf(stderr, "Memory allocation failed for row %d.\n", i);
-      return 1;
-    }
   }
   // Initialize and use the matrix
   for (int row = 0; row < n; ++row) {
