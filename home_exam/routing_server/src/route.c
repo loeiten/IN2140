@@ -49,19 +49,19 @@ int createRoutingTables(struct Route *routeArray,
   //    i.   Set the destination pointer to the last element
   //    ii.  Set the source pointer to the second to last element
   //    iii. Loop through the elements of the route and
-  //         a. Check if visited[*sourcePtr][*destinationPtr] is true, if yes
+  //         a. Check if visited[sourceNode][destinationNode] is true, if yes
   //            go to step 2.iii.f
   //         b. Allocate a DestinationNextPair to
-  //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n]
+  //            routingTable[sourceNode].table[routingTable[sourceNode].n]
   //         c. Set
-  //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n].destination
+  //            routingTable[sourceNode].table[routingTable[sourceNode].n].destination
   //            = *destinationPtr
   //         c. Set
-  //            routingTable[*sourcePtr].table[routingTable[*sourcePtr].n].nextHop
+  //            routingTable[sourceNode].table[routingTable[sourceNode].n].nextHop
   //            = *(sourcePtr + 1)
-  //         d. ++(routingTable[*sourcePtr].n)
-  //         e. Mark visited[*sourcePtr][*destinationPtr] as true
-  //         f. Decrement destination pointer, if *destinationPtr == *sourcePtr,
+  //         d. ++(routingTable[sourceNode].n)
+  //         e. Mark visited[sourceNode][destinationNode] as true
+  //         f. Decrement destination pointer, if destinationNode == sourceNode,
   //            go to the next element of routingArray, else go to step
   //            2.iii.a
 
@@ -79,7 +79,7 @@ int createRoutingTables(struct Route *routeArray,
     }
   }
 
-  // Zero allocate the routing table
+  // Allocate the routing table
   struct RoutingTable *routingTableTmp = NULL;
   success = allocateRoutingTable(&routingTableTmp, n, "routingTableTmp");
   if (success != EXIT_SUCCESS) {
@@ -92,25 +92,63 @@ int createRoutingTables(struct Route *routeArray,
   // NOTE: There will be one for each node unless there are any orphan nodes
   for (int routeIdx = 0; routeIdx < n; ++routeIdx) {
     // Start at the end of the route and go backwards
-    int sourceIdx = routeArray[routeIdx].nHops - 1;
+    int nextHopIdx = routeArray[routeIdx].nHops;
+    int sourceIdx = nextHopIdx - 1;
+
+    printf("\n\nrouteIdx=%d, sourceIdx=%d, nextHopIdx=%d\n", routeIdx,
+           sourceIdx, nextHopIdx);
+
     while (sourceIdx != -1) {
+      // (Re)set the destinationIdx
       int destinationIdx = routeArray[routeIdx].nHops;
-      int nextHopIdx = sourceIdx + 1;
-      int i = 0;
+
+      // Fix the node values while looping over the destination nodes
+      int sourceNode = routeArray[routeIdx].route[sourceIdx];
+      int nextHopNode = routeArray[routeIdx].route[nextHopIdx];
+      printf("  sourceIdx=%d, destinationIdx=%d\n", sourceIdx, destinationIdx);
+      printf("  sourceNode=%d, nextHopNode=%d\n", sourceNode, nextHopNode);
+
       // Loop through the destinations
       while (destinationIdx != sourceIdx) {
+        // Update the destination node
+        int destinationNode = routeArray[routeIdx].route[destinationIdx];
+        printf("    destinationIdx=%d\n", destinationIdx);
+        printf("    destinationNode=%d\n", destinationNode);
+
+        if (visited[sourceNode][destinationNode] == 1) {
+          printf("    cache hit on sourceNode=%d and destinationNode=%d\n",
+                 sourceNode, destinationNode);
+          --destinationIdx;
+          continue;
+        }
         // Set the destination and next
-        routingTableTmp[sourceIdx].table[i].destination = destinationIdx;
-        routingTableTmp[sourceIdx].table[i].nextHop = nextHopIdx;
+        printf("    routingTableTmp[%d].table[%d].destination = %d\n",
+               sourceNode, routingTableTmp[sourceNode].n, destinationNode);
+        printf("    routingTableTmp[%d].table[%d].nextHop = %d\n", sourceNode,
+               routingTableTmp[sourceNode].n, nextHopNode);
+        routingTableTmp[sourceNode]
+            .table[routingTableTmp[sourceNode].n]
+            .destination = destinationNode;
+        routingTableTmp[sourceNode]
+            .table[routingTableTmp[sourceNode].n]
+            .nextHop = nextHopNode;
+        // Mark visited
+        visited[sourceNode][destinationNode] = 1;
         // Increment the number of DestinationNextPair in the table
-        ++(routingTableTmp->n);
-        // Update the counters
-        ++i;
+        ++(routingTableTmp[sourceNode].n);
+
+        // Shift the destination left
         --destinationIdx;
       }
+
+      // Shift the source and nextHop left
       --sourceIdx;
+      --nextHopIdx;
     }
   }
+
+  // Free allocated memory
+  freeIntMatrix(&visited, n);
 
   // Finally assign the local temporary to the output value
   *routingTable = routingTableTmp;

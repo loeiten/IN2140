@@ -132,9 +132,9 @@ int allocateRoutingTable(struct RoutingTable **routingTable, int n,
 void freeRoutingTable(struct RoutingTable **routingTable, int n) {
   if ((*routingTable) != NULL) {
     for (int i = 0; i < n; ++i) {
-      if ((*routingTable[i]).table != NULL) {
-        free((*routingTable[i]).table);
-        (*routingTable[i]).table = NULL;
+      if ((*routingTable)[i].table != NULL) {
+        free((*routingTable)[i].table);
+        (*routingTable)[i].table = NULL;
       }
     }
     free(*routingTable);

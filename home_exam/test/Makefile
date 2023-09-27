@@ -11,7 +11,8 @@ include ../common.mk
 TESTS := run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
-		 run_test_route_1
+		 run_test_route_1 \
+		 run_test_route_2
 
 .PHONY: all clean test $(TESTS)
 all: $(TEST_EXEC_DIR)/test_dijkstra \
@@ -69,6 +70,9 @@ $(BUILD_TEST_DIR)/test_route.o: test_route.c
 # Tests
 run_test_route_1: $(TEST_EXEC_DIR)/test_route
 	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges && diff data/test_route_1_logfile.txt $(TEST_EXEC_DIR)/logfile.txt)
+
+run_test_route_2: $(TEST_EXEC_DIR)/test_route
+	$(call run_test,$@,$< createRoutingTables)
 # ==============================================================================
 
 clean:
