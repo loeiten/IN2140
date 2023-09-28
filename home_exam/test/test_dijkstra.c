@@ -31,7 +31,7 @@ void testRegisterRoute(void) {
 // This test only checks that the function works with a simple test
 // For a more elaborate test, see testDijkstra
 #define N (2)
-  const int graph[N][N] = {{0, 1}, {1, 0}};
+  const int adjacencyMatrix[N][N] = {{0, 1}, {1, 0}};
   const int visitedArray[N] = {1, 0};
   const int distanceArray[N] = {0, INT_MAX};
   int visitedAndNeighbourArray[N] = {0, 0};
@@ -40,20 +40,21 @@ void testRegisterRoute(void) {
   struct Route routeArray[N] = {{.nHops = 0, .route = route1},
                                 {.nHops = -1, .route = route2}};
 
-  // We must convert graph to a pointer pointer
+  // We must convert adjacencyMatrix to a pointer pointer
   // We cannot do this directly as we cannot directly decay to pointer pointer
   // https://en.cppreference.com/w/cpp/language/array#:~:text=Multidimensional%20arrays,-When%20the%20element&text=Note%20that%20when%20array%2Dto,decay%20is%20applied%20only%20once.
-  const int *graphPtr[N];
+  const int *adjacencyMatrixPtr[N];
   for (int i = 0; i < N; ++i) {
     // Recall that i gives the pointer to the i'th row
-    graphPtr[i] = graph[i];
+    adjacencyMatrixPtr[i] = adjacencyMatrix[i];
   }
 
   int *visitedAndNeighbourArrayPtr = visitedAndNeighbourArray;
   struct Route *routeArrayPtr = routeArray;
 
-  int success = registerRoute(0, 1, N, graphPtr, visitedArray, distanceArray,
-                              visitedAndNeighbourArrayPtr, routeArrayPtr);
+  int success =
+      registerRoute(0, 1, N, adjacencyMatrixPtr, visitedArray, distanceArray,
+                    visitedAndNeighbourArrayPtr, routeArrayPtr);
   assert(success == EXIT_SUCCESS);
   assert(routeArray[0].nHops == 0);
   assert(routeArray[0].route[0] == 0);
@@ -65,10 +66,10 @@ void testRegisterRoute(void) {
 
 void testDijkstra(void) {
 #define N (9)
-  // graphA from
+  // GraphA from
   // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
   // clang-format off
-  const int graphA[N][N] = {
+  const int adjacencyMatrixA[N][N] = {
       {0, 4, 0, 0, 0, 0, 0, 8, 0},
       {4, 0, 8, 0, 0, 0, 0, 11, 0},
       {0, 8, 0, 7, 0, 4, 0, 0, 2},
@@ -82,17 +83,18 @@ void testDijkstra(void) {
   int distanceArray[N];
   int src = 0;
 
-  // We must convert graphA to a pointer pointer
+  // We must convert adjacencyMatrixA to a pointer pointer
   // We cannot do this directly as we cannot directly decay to pointer pointer
   // https://en.cppreference.com/w/cpp/language/array#:~:text=Multidimensional%20arrays,-When%20the%20element&text=Note%20that%20when%20array%2Dto,decay%20is%20applied%20only%20once.
-  const int *graphPtrA[N];
+  const int *adjacencyMatrixPtrA[N];
   for (int i = 0; i < N; ++i) {
     // Recall that i gives the pointer to the i'th row
-    graphPtrA[i] = graphA[i];
+    adjacencyMatrixPtrA[i] = adjacencyMatrixA[i];
   }
 
   struct Route *routeArray = NULL;
-  int success = dijkstra(src, graphPtrA, distanceArray, &routeArray, N);
+  int success =
+      dijkstra(src, adjacencyMatrixPtrA, distanceArray, &routeArray, N);
   assert(success == EXIT_SUCCESS);
   // Check that the distances are correct
   assert(distanceArray[0] == 0);
@@ -145,7 +147,7 @@ void testDijkstra(void) {
   freeRouteArray(&routeArray, N);
 
   src = 8;
-  success = dijkstra(src, graphPtrA, distanceArray, &routeArray, N);
+  success = dijkstra(src, adjacencyMatrixPtrA, distanceArray, &routeArray, N);
   // Check that the distances are correct
   assert(success == EXIT_SUCCESS);
   assert(distanceArray[0] == 14);
@@ -201,9 +203,9 @@ void testDijkstra(void) {
 #undef N
 
 #define N (6)
-  // graphB from https://www.programiz.com/dsa/dijkstra-algorithm
+  // GraphB from https://www.programiz.com/dsa/dijkstra-algorithm
   // clang-format off
-  const int graphB[N][N] = {
+  const int adjacencyMatrixB[N][N] = {
       {0, 4, 0, 0, 0, 4},
       {4, 0, 3, 6, 1, 2},
       {0, 3, 0, 2, 0, 0},
@@ -212,14 +214,14 @@ void testDijkstra(void) {
       {4, 0, 0, 0, 2, 0}};
   // clang-format on
 
-  const int *graphPtrB[N];
+  const int *adjacencyMatrixPtrB[N];
   for (int i = 0; i < N; ++i) {
     // Recall that i gives the pointer to the i'th row
-    graphPtrB[i] = graphB[i];
+    adjacencyMatrixPtrB[i] = adjacencyMatrixB[i];
   }
 
   src = 0;
-  success = dijkstra(src, graphPtrB, distanceArray, &routeArray, N);
+  success = dijkstra(src, adjacencyMatrixPtrB, distanceArray, &routeArray, N);
   // Check that the distances are correct
   assert(success == EXIT_SUCCESS);
   assert(distanceArray[0] == 0);

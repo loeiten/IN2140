@@ -15,7 +15,7 @@ struct Route;
  * Pro: One can access the elements by using [row][col]
  *
  * @param src The id of the source
- * @param graph The graph to traverse given as an adjacency matrix.
+ * @param adjacencyMatrix The graph to traverse given as an adjacency matrix.
  *              The adjacency matrix will have INT_MAX where if there are no
  *              connection between the nodes
  * @param distanceArray The distance from src to all other nodes
@@ -26,7 +26,7 @@ struct Route;
  * @param n The number of nodes in the graph
  * @return int 0 on success, 1 on failure
  */
-int dijkstra(const int src, const int *const *const graph,
+int dijkstra(const int src, const int *const *const adjacencyMatrix,
              int *const distanceArray, struct Route **const routeArray,
              const int n);
 
@@ -48,7 +48,7 @@ int getMinDistanceIdx(const int *const distanceArray,
  *
  * @param src The id of the source
  * @param curVisitIdx The index of the node that just has been marked as visited
- * @param graph The graph
+ * @param adjacencyMatrix The adjacency matrix
  * @param n The number of nodes in the graph
  * @param visitedArray The array marking if a node is visited
  * @param distanceArray The distance from src to all other nodes
@@ -59,8 +59,8 @@ int getMinDistanceIdx(const int *const distanceArray,
  * @return int 0 on success, 1 on failure
  */
 int registerRoute(const int src, const int curVisitIdx, const int n,
-                  const int *const *const graph, const int *const visitedArray,
-                  const int *const distanceArray,
+                  const int *const *const adjacencyMatrix,
+                  const int *const visitedArray, const int *const distanceArray,
                   int *const visitedAndNeighbourArray,
                   struct Route *const routeArray);
 

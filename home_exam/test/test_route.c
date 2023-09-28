@@ -73,11 +73,7 @@ void testCreateRoutingTables(void) {
   struct RoutingTable *routingTable = NULL;
   int success = createRoutingTables(routeArrayA, &routingTable, N);
   assert(success == EXIT_SUCCESS);
-  // FIXME: Make a choice whether one should use label or indices on the labels
-  //        Easy could be to use a 1 to 1 map and use labels, or use a label
-  //        like (i*10 + i/2) for all nodes except node 1
-  //        NOTE: In general it's dangerous to rely on the index as there is no
-  //        guarantee what order the responses come in
+
   // Check for 0th index node
   assert(routingTable[0].n == 8);
   assert(routingTable[0].table[0].destination == 1);
@@ -209,7 +205,7 @@ void testCreateRoutingTables(void) {
 #undef N
 
 #define N (6)
-  // Graph from https://www.programiz.com/dsa/dijkstra-algorithm
+  // GraphB from https://www.programiz.com/dsa/dijkstra-algorithm
   // Check for 0th index node
   int routeC0[1] = {0};
   int routeC1[2] = {0, 1};

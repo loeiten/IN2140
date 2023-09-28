@@ -8,7 +8,7 @@
 #include "../../utils/include/dynamic_memory.h"  // for freeIntArray, freeRo...
 #include "../include/route.h"                    // for Route
 
-int dijkstra(const int src, const int *const *const graph,
+int dijkstra(const int src, const int *const *const adjacencyMatrix,
              int *const distanceArray, struct Route **const routeArray,
              const int n) {
   // Solve Dijkstra's algorithm using shortest path three
@@ -73,8 +73,9 @@ int dijkstra(const int src, const int *const *const graph,
 
     // Mark this node as visited
     visitedArray[minIdx] = 1;
-    success = registerRoute(src, minIdx, n, graph, visitedArray, distanceArray,
-                            visitedAndNeighbourArray, routeArrayTmp);
+    success =
+        registerRoute(src, minIdx, n, adjacencyMatrix, visitedArray,
+                      distanceArray, visitedAndNeighbourArray, routeArrayTmp);
     if (success != EXIT_SUCCESS) {
       freeIntArray(&visitedArray);
       freeIntArray(&visitedAndNeighbourArray);
@@ -92,13 +93,14 @@ int dijkstra(const int src, const int *const *const graph,
             // If this node has not been visited
             (visitedArray[i] == 0) &&
             // There must be an edge between minIdx and i
-            (graph[minIdx][i] != 0) &&
+            (adjacencyMatrix[minIdx][i] != 0) &&
             // A path from the source must have been registered
             (distanceArray[minIdx] != INT_MAX) &&
             // The new path must be smaller than any previously recorded
-            (distanceArray[minIdx] + graph[minIdx][i] < distanceArray[i])) {
+            (distanceArray[minIdx] + adjacencyMatrix[minIdx][i] <
+             distanceArray[i])) {
           // Update the shortest distance to the current node
-          distanceArray[i] = distanceArray[minIdx] + graph[minIdx][i];
+          distanceArray[i] = distanceArray[minIdx] + adjacencyMatrix[minIdx][i];
         }
       }
     }
@@ -130,8 +132,8 @@ int getMinDistanceIdx(const int *const distanceArray,
 }
 
 int registerRoute(const int src, const int curVisitIdx, const int n,
-                  const int *const *const graph, const int *const visitedArray,
-                  const int *const distanceArray,
+                  const int *const *const adjacencyMatrix,
+                  const int *const visitedArray, const int *const distanceArray,
                   int *const visitedAndNeighbourArray,
                   struct Route *const routeArray) {
   // Our strategy:
@@ -151,7 +153,7 @@ int registerRoute(const int src, const int curVisitIdx, const int n,
   int nVisitedAndNeighbour = 0;
   for (int neighbor = 0; neighbor < n; ++neighbor) {
     // Check if the node has a neighbor
-    if (graph[curVisitIdx][neighbor] != 0) {
+    if (adjacencyMatrix[curVisitIdx][neighbor] != 0) {
       // Check if this neighbor is visited
       if (visitedArray[neighbor] == 1) {
         visitedAndNeighbourArray[nVisitedAndNeighbour] = neighbor;
@@ -165,10 +167,10 @@ int registerRoute(const int src, const int curVisitIdx, const int n,
   int minDistNeighborIdx = INT_MAX;
   for (int i = 0; i < nVisitedAndNeighbour; ++i) {
     int neighborId = visitedAndNeighbourArray[i];
-    if ((distanceArray[neighborId] + graph[curVisitIdx][neighborId]) <
+    if ((distanceArray[neighborId] + adjacencyMatrix[curVisitIdx][neighborId]) <
         minDistNeighbor) {
       minDistNeighbor =
-          distanceArray[neighborId] + graph[curVisitIdx][neighborId];
+          distanceArray[neighborId] + adjacencyMatrix[curVisitIdx][neighborId];
       minDistNeighborIdx = neighborId;
     }
   }
