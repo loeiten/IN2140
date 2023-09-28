@@ -95,9 +95,6 @@ int createRoutingTables(struct Route *routeArray,
     int nextHopIdx = routeArray[routeIdx].nHops;
     int sourceIdx = nextHopIdx - 1;
 
-    printf("\n\nrouteIdx=%d, sourceIdx=%d, nextHopIdx=%d\n", routeIdx,
-           sourceIdx, nextHopIdx);
-
     while (sourceIdx != -1) {
       // (Re)set the destinationIdx
       int destinationIdx = routeArray[routeIdx].nHops;
@@ -105,27 +102,17 @@ int createRoutingTables(struct Route *routeArray,
       // Fix the node values while looping over the destination nodes
       int sourceNode = routeArray[routeIdx].route[sourceIdx];
       int nextHopNode = routeArray[routeIdx].route[nextHopIdx];
-      printf("  sourceIdx=%d, destinationIdx=%d\n", sourceIdx, destinationIdx);
-      printf("  sourceNode=%d, nextHopNode=%d\n", sourceNode, nextHopNode);
 
       // Loop through the destinations
       while (destinationIdx != sourceIdx) {
         // Update the destination node
         int destinationNode = routeArray[routeIdx].route[destinationIdx];
-        printf("    destinationIdx=%d\n", destinationIdx);
-        printf("    destinationNode=%d\n", destinationNode);
 
         if (visited[sourceNode][destinationNode] == 1) {
-          printf("    cache hit on sourceNode=%d and destinationNode=%d\n",
-                 sourceNode, destinationNode);
           --destinationIdx;
           continue;
         }
         // Set the destination and next
-        printf("    routingTableTmp[%d].table[%d].destination = %d\n",
-               sourceNode, routingTableTmp[sourceNode].n, destinationNode);
-        printf("    routingTableTmp[%d].table[%d].nextHop = %d\n", sourceNode,
-               routingTableTmp[sourceNode].n, nextHopNode);
         routingTableTmp[sourceNode]
             .table[routingTableTmp[sourceNode].n]
             .destination = destinationNode;
