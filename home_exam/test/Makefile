@@ -11,6 +11,8 @@ include ../common.mk
 TESTS := run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
+		 run_test_receiver_1 \
+		 run_test_receiver_2 \
 		 run_test_route_1 \
 		 run_test_route_2
 
@@ -46,6 +48,27 @@ run_test_dijkstra_2: $(TEST_EXEC_DIR)/test_dijkstra
 
 run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< dijkstra)
+# ==============================================================================
+
+# RECEIVER
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_receiver: $(BUILD_TEST_DIR)/test_receiver.o $(BUILD_OBJ_DIR)/receiver.o
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
+# Building the object files
+$(BUILD_TEST_DIR)/test_receiver.o: test_receiver.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+
+# Tests
+run_test_receiver_1: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< checkAllNodesReceived)
+
+run_test_receiver_2: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,$< createAdjacencyMatrix)
 # ==============================================================================
 
 # ROUTE
