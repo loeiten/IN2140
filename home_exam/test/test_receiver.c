@@ -7,11 +7,63 @@
 #include "../routing_server/include/receiver.h"  // for checkAllNodesReceived
 
 void testCheckAllNodesReceived(void) {
-#define N (1)
-  struct ReceivedNode* receivedNodeArray = NULL;
-  struct EdgeArray* nonValidEdgesArray = NULL;
-  int success = checkAllNodesReceived(receivedNodeArray, nonValidEdgesArray, N);
+#define N (5)
+// NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
+#define MAX_EDGES (N * (N - 1) / 2)
+  // Graph
+  // The weight are written on the edges
+  // The ids are written on the vertices
+  // The indices are written in square brackets
+  //   10 [2]   17 [4]
+  //   1 |   2    | 1
+  //   3 [1] - 5 [3]
+  //   1  \     /  3
+  //       1 [0]
+  int neighborAddress1[2] = {3, 5};
+  int neighborWeights1[2] = {1, 3};
+  int neighborAddress3[3] = {1, 5, 10};
+  int neighborWeights3[3] = {1, 1, 2};
+  int neighborAddress5[3] = {3, 0, 17};
+  int neighborWeights5[3] = {2, 3, 1};
+  int neighborAddress10[1] = {3};
+  int neighborWeights10[1] = {1};
+  int neighborAddress17[1] = {3};
+  int neighborWeights17[1] = {1};
+  struct ReceivedNode receivedNodeArray[N] = {
+      {.address = 1,
+       .nNeighbors = 2,
+       .neighborAddresses = neighborAddress1,
+       .neighborWeights = neighborWeights1},
+      {.address = 3,
+       .nNeighbors = 3,
+       .neighborAddresses = neighborAddress3,
+       .neighborWeights = neighborWeights3},
+      {.address = 5,
+       .nNeighbors = 3,
+       .neighborAddresses = neighborAddress5,
+       .neighborWeights = neighborWeights5},
+      {.address = 10,
+       .nNeighbors = 1,
+       .neighborAddresses = neighborAddress10,
+       .neighborWeights = neighborWeights10},
+      {.address = 17,
+       .nNeighbors = 1,
+       .neighborAddresses = neighborAddress17,
+       .neighborWeights = neighborWeights17},
+  };
+  struct Edge edgeArray[MAX_EDGES];
+  // Initialize the edgeArray
+  for (int i = 0; i < MAX_EDGES; ++i) {
+    edgeArray[i].nodeAddressA = -1;
+    edgeArray[i].nodeAddressB = -1;
+  }
+  struct EdgeArray nonValidEdgesArray = {.array = edgeArray, .n = MAX_EDGES};
+
+  struct EdgeArray* nonValidEdgesArrayPtr = &nonValidEdgesArray;
+  int success =
+      checkAllNodesReceived(receivedNodeArray, nonValidEdgesArrayPtr, N);
   assert(success == EXIT_SUCCESS);
+#undef MAX_EDGES
 #undef N
 }
 
