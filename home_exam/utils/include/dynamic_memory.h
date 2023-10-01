@@ -3,6 +3,7 @@
 
 struct Route;
 struct RoutingTable;
+struct EdgeCounter;
 
 /**
  * @brief Allocate an int array
@@ -86,5 +87,26 @@ int allocateRoutingTable(struct RoutingTable **routingTable, int n,
  * @param n The number of nodes in the graph
  */
 void freeRoutingTable(struct RoutingTable **routingTable, int n);
+
+int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray, int n,
+                             const char *name);
+
+/**
+ * @brief Allocate memory to the edge counter array
+ *
+ * @param edgeCounterArray The array of edge counters
+ * @param maxEdges The maximum number of edges in the graph
+ * @param name Name of the edge counter
+ * @returns 0 on success, 1 on error
+ */
+int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray, int n,
+                             const char *name);
+
+/**
+ * @brief Free the memory of the edge counter array
+ *
+ * @param edgeCounterArray The array of edge counters
+ */
+void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray);
 
 #endif  // HOME_EXAM_UTILS_INCLUDE_DYNAMIC_MEMORY_H_

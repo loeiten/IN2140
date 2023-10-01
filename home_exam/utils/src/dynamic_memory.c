@@ -3,7 +3,8 @@
 #include <stdio.h>   // for NULL
 #include <stdlib.h>  // for free
 
-#include "../../routing_server/include/route.h"  // for Route, RoutingTable
+#include "../../routing_server/include/receiver.h"  // for EdgeCounterArray
+#include "../../routing_server/include/route.h"     // for Route, RoutingTable
 
 int allocateIntArray(int **intArray, const int n, const char *name) {
   *intArray = (int *)malloc(n * sizeof(int));
@@ -139,5 +140,24 @@ void freeRoutingTable(struct RoutingTable **routingTable, int n) {
     }
     free(*routingTable);
     (*routingTable) = NULL;
+  }
+}
+
+int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
+                             int maxEdges, const char *name) {
+  *edgeCounterArray =
+      (struct EdgeCounter *)malloc(maxEdges * sizeof(struct EdgeCounter));
+  if ((*edgeCounterArray) == NULL) {
+    fprintf(stderr, "Could not allocate memory to %s", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray) {
+  if ((*edgeCounterArray) != NULL) {
+    free((*edgeCounterArray));
+    (*edgeCounterArray) = NULL;
   }
 }

@@ -54,15 +54,22 @@ void testCheckAllNodesReceived(void) {
   struct Edge edgeArray[MAX_EDGES];
   // Initialize the edgeArray
   for (int i = 0; i < MAX_EDGES; ++i) {
-    edgeArray[i].nodeAddressA = -1;
-    edgeArray[i].nodeAddressB = -1;
+    edgeArray[i].lowNodeAddress = -1;
+    edgeArray[i].highNodeAddress = -1;
   }
-  struct EdgeArray nonValidEdgesArray = {.array = edgeArray, .n = MAX_EDGES};
+  struct EdgeArray invalidEdgesArray = {
+      .array = edgeArray, .firstAvailablePosition = 0, .maxEdges = MAX_EDGES};
 
-  struct EdgeArray* nonValidEdgesArrayPtr = &nonValidEdgesArray;
+  struct EdgeArray* invalidEdgesArrayPtr = &invalidEdgesArray;
   int success =
-      checkAllNodesReceived(receivedNodeArray, nonValidEdgesArrayPtr, N);
+      checkAllNodesReceived(receivedNodeArray, invalidEdgesArrayPtr, N);
+  // Check that the test went successful
   assert(success == EXIT_SUCCESS);
+  // Check that all the nodes are valid
+  for (int i = 0; i < MAX_EDGES; ++i) {
+    assert(edgeArray[i].lowNodeAddress == -1);
+    assert(edgeArray[i].highNodeAddress == -1);
+  }
 #undef MAX_EDGES
 #undef N
 }
@@ -70,9 +77,9 @@ void testCheckAllNodesReceived(void) {
 void testCreateAdjacencyMatrix(void) {
 #define N (1)
   struct ReceivedNode* receivedNodeArray = NULL;
-  struct EdgeArray* nonValidEdgesArray = NULL;
+  struct EdgeArray* invalidEdgesArray = NULL;
   int** adjacencyMatrix = NULL;
-  int success = createAdjacencyMatrix(receivedNodeArray, nonValidEdgesArray,
+  int success = createAdjacencyMatrix(receivedNodeArray, invalidEdgesArray,
                                       &adjacencyMatrix, N);
   assert(success == EXIT_SUCCESS);
 #undef N
