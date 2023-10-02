@@ -8,7 +8,7 @@ struct ReceivedNode {
   int address;            /**< The address of this node */
   int nNeighbors;         /**< The number of neighbors */
   int* neighborAddresses; /**< Addresses to the other neighbors */
-  int* neighborWeights;   /**< Weight to the neighbors */
+  int* edgeWeights;       /**< Weight to the neighbors */
 };
 
 /**
@@ -67,6 +67,57 @@ struct EdgeCounterArray {
  */
 int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
                           struct EdgeArray* invalidEdgesArray, int n);
+
+/**
+ * @brief Check for invalid edges, add to invalidEdgesArray and print warning.
+ *
+ * @param lowAddress The low address of the edge
+ * @param highAddress The high address of the edge
+ * @param addressOfFirstIndex The address of the first recorded edge
+ * @param edgeWeight The weight of the edge
+ * @param invalidEdgesArray The edge array to fill
+ * @param edgeCounter The edge counter to use for the checks
+ * @returns 0 on success, 1 on error
+ */
+int checkIfEdgeIsValid(const int lowAddress, const int highAddress,
+                       const int addressOfFirstIndex, const int edgeWeight,
+                       const struct EdgeCounter* const edgeCounter,
+                       struct EdgeArray* invalidEdgesArray);
+
+/**
+ * @brief Add an edge to the invalid edges array and print a warning
+ *
+ * @param lowAddress The low address of the edge
+ * @param highAddress The high address of the edge
+ * @param invalidEdgesArray The edge array to fill
+ * @param reason The reason for why this is an invalid edge
+ * @returns 0 on success, 1 on error
+ */
+int addInvalidEdge(const int lowAddress, const int highAddress,
+                   struct EdgeArray* invalidEdgesArray, const char* reason);
+
+/**
+ * @brief Check if an edge is present in the edge array
+ *
+ * @param lowAddress The low address of the edge
+ * @param highAddress The high address of the edge
+ * @param edgesArray The edge array to check for the edge
+ * @return 1 if the edge is present, 0 if the edge is absent
+ */
+int isEdgePresent(const int lowAddress, const int highAddress,
+                  struct EdgeArray const* edgeArray);
+
+/**
+ * @brief Adds an edge to an edge counter array
+ *
+ * @param lowAddress The low address of the edge
+ * @param highAddress The high address of the edge
+ * @param edgeCounterArray The edge counter array
+ * @return 0 on success, 1 on error
+ */
+int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
+                              int addressOfFirstIndex, int edgeWeight,
+                              struct EdgeCounterArray* edgeCounterArray);
 
 /**
  * @brief Create the adjacency matrix

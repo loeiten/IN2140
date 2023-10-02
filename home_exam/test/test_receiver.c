@@ -20,36 +20,36 @@ void testCheckAllNodesReceived(void) {
   //   1  \     /  3
   //       1 [0]
   int neighborAddress1[2] = {3, 5};
-  int neighborWeights1[2] = {1, 3};
+  int edgeWeights1[2] = {1, 3};
   int neighborAddress3[3] = {1, 5, 10};
-  int neighborWeights3[3] = {1, 1, 2};
+  int edgeWeights3[3] = {1, 1, 2};
   int neighborAddress5[3] = {3, 0, 17};
-  int neighborWeights5[3] = {2, 3, 1};
+  int edgeWeights5[3] = {2, 3, 1};
   int neighborAddress10[1] = {3};
-  int neighborWeights10[1] = {1};
+  int edgeWeights10[1] = {1};
   int neighborAddress17[1] = {3};
-  int neighborWeights17[1] = {1};
+  int edgeWeights17[1] = {1};
   struct ReceivedNode receivedNodeArray[N] = {
       {.address = 1,
        .nNeighbors = 2,
        .neighborAddresses = neighborAddress1,
-       .neighborWeights = neighborWeights1},
+       .edgeWeights = edgeWeights1},
       {.address = 3,
        .nNeighbors = 3,
        .neighborAddresses = neighborAddress3,
-       .neighborWeights = neighborWeights3},
+       .edgeWeights = edgeWeights3},
       {.address = 5,
        .nNeighbors = 3,
        .neighborAddresses = neighborAddress5,
-       .neighborWeights = neighborWeights5},
+       .edgeWeights = edgeWeights5},
       {.address = 10,
        .nNeighbors = 1,
        .neighborAddresses = neighborAddress10,
-       .neighborWeights = neighborWeights10},
+       .edgeWeights = edgeWeights10},
       {.address = 17,
        .nNeighbors = 1,
        .neighborAddresses = neighborAddress17,
-       .neighborWeights = neighborWeights17},
+       .edgeWeights = edgeWeights17},
   };
   struct Edge edgeArray[MAX_EDGES];
   // Initialize the edgeArray

@@ -26,8 +26,7 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
          ++neighborIdx) {
       int neighborAddress =
           receivedNodeArray[addressIdx].neighborAddresses[neighborIdx];
-      int neighborWeight =
-          receivedNodeArray[addressIdx].neighborWeights[neighborIdx];
+      int edgeWeight = receivedNodeArray[addressIdx].edgeWeights[neighborIdx];
       int searchLowAddress = addressOfFirstIndex
                                  ? addressOfFirstIndex < neighborAddress
                                  : neighborAddress;
@@ -60,99 +59,23 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
             ++(curEdgeCounter.encounters);
             foundMatch = 1;
 
-            // To validate that the match is valid we need to check that
-            // - It has not been reported more than twice
-            // - The addressOfFirstIndex is different (if not this means that
-            //   the same edge is reported twice which might indicate data
-            //   corruption)
-            // - That the reported weight is the same (as the graph we are
-            //   working with are undirected)
-            // FIXME: We also need to check that this edge has not been reported
-            // as invalid
-            if (curEdgeCounter.encounters > 2) {
-              // FIXME: Check invalid
-              // If this is an invalid edge we don't want to report it twice,
-              // hence we check that it's not reported before
-              // FIXME: Extract: addInvalidEdge function
-              printf(
-                  "WARNING: The edge %d <-> %d has been reported more than "
-                  "twice. This may be due to data corruption. Will therefore "
-                  "mark the edge invalid",
-                  searchLowAddress, searchHighAddress);
-              invalidEdgesArray
-                  ->array[invalidEdgesArray->firstAvailablePosition]
-                  .lowNodeAddress = searchLowAddress;
-              invalidEdgesArray
-                  ->array[invalidEdgesArray->firstAvailablePosition]
-                  .highNodeAddress = searchHighAddress;
-              // FIXME: Check that we are not out of bounds
-              ++(invalidEdgesArray->firstAvailablePosition);
-              // No need to do more processing of this edge
-              continue;
-            }
-            if (curEdgeCounter.addressOfFirstIndex == addressOfFirstIndex) {
-              printf(
-                  "WARNING: The edge %d <-> %d has been reported in the exact "
-                  "same way before. This may be due to data corruption. Will "
-                  "therefore mark the edge invalid",
-                  searchLowAddress, searchHighAddress);
-              invalidEdgesArray
-                  ->array[invalidEdgesArray->firstAvailablePosition]
-                  .lowNodeAddress = searchLowAddress;
-              invalidEdgesArray
-                  ->array[invalidEdgesArray->firstAvailablePosition]
-                  .highNodeAddress = searchHighAddress;
-              ++(invalidEdgesArray->firstAvailablePosition);
-              // No need to do more processing of this edge
-              continue;
-            }
-            if (curEdgeCounter.reportedWeight != neighborWeight) {
-              printf(
-                  "WARNING: The edge %d <-> %d has been reported with "
-                  "different weights (%d and %d). This may be due to data "
-                  "corruption. Will therefore mark the edge invalid",
-                  searchLowAddress, searchHighAddress,
-                  curEdgeCounter.reportedWeight, neighborWeight);
-              invalidEdgesArray
-                  ->array[invalidEdgesArray->firstAvailablePosition]
-                  .lowNodeAddress = searchLowAddress;
-              invalidEdgesArray
-                  ->array[invalidEdgesArray->firstAvailablePosition]
-                  .highNodeAddress = searchHighAddress;
-              ++(invalidEdgesArray->firstAvailablePosition);
-              // No need to do more processing of this edge
-              continue;
+            success = checkIfEdgeIsValid(searchLowAddress, searchHighAddress,
+                                         addressOfFirstIndex, edgeWeight,
+                                         &curEdgeCounter, invalidEdgesArray);
+            if (success != EXIT_SUCCESS) {
+              return EXIT_FAILURE;
             }
           }
         }
       }
 
       if (foundMatch == 0) {
-        // Check that we are not out of bounds
-        if (edgeCounterArray.firstAvailablePosition ==
-            edgeCounterArray.maxEdges) {
-          fprintf(stderr,
-                  "When adding edge %d <-> %d to the edge counter array the "
-                  "firstAvailablePosition %d was out of bounds as maxEdges was "
-                  "%d.\n",
-                  searchLowAddress, searchHighAddress,
-                  edgeCounterArray.firstAvailablePosition, maxEdges);
-          freeEdgeCounterArray(&(edgeCounterArray.array));
+        success = addEdgeToEdgeCounterArray(searchLowAddress, searchHighAddress,
+                                            addressOfFirstIndex, edgeWeight,
+                                            &edgeCounterArray);
+        if (success != EXIT_SUCCESS) {
           return EXIT_FAILURE;
         }
-
-        // There are no matches in the edge counter array, which means that this
-        // is the first time we are observing this edge
-        // Hence we add it to the edge counter array
-        int idx = edgeCounterArray.firstAvailablePosition;
-        edgeCounterArray.array[idx].addressOfFirstIndex = addressOfFirstIndex;
-        edgeCounterArray.array[idx].edge.lowNodeAddress = searchLowAddress;
-        edgeCounterArray.array[idx].edge.highNodeAddress = searchHighAddress;
-        edgeCounterArray.array[idx].encounters = 1;
-        edgeCounterArray.array[idx].reportedWeight = neighborWeight;
-
-        // Increment the first available position
-        ++(edgeCounterArray.firstAvailablePosition);
       }
     }
   }
@@ -162,6 +85,122 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
 
   freeEdgeCounterArray(&(edgeCounterArray.array));
   return EXIT_FAILURE;
+}
+
+int checkIfEdgeIsValid(const int lowAddress, const int highAddress,
+                       const int addressOfFirstIndex, const int edgeWeight,
+                       const struct EdgeCounter* const edgeCounter,
+                       struct EdgeArray* invalidEdgesArray) {
+  // To validate that the match is valid we need to check that
+  // - It has not been reported more than twice
+  // - The addressOfFirstIndex is different (if not this means that
+  //   the same edge is reported twice which might indicate data
+  //   corruption)
+  // - That the reported weight is the same (as the graph we are
+  //   working with are undirected)
+  if (edgeCounter->encounters > 2) {
+    // If this is an invalid edge we don't want to report it twice,
+    // hence we check that it's not reported before
+    int success = addInvalidEdge(lowAddress, highAddress, invalidEdgesArray,
+                                 "reported more than twice");
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+    // No need to do more processing of this edge
+    return EXIT_SUCCESS;
+  }
+  if (edgeCounter->addressOfFirstIndex == addressOfFirstIndex) {
+    int success = addInvalidEdge(lowAddress, highAddress, invalidEdgesArray,
+                                 "reported in the exact same way before");
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+    // No need to do more processing of this edge
+    return EXIT_SUCCESS;
+  }
+  if (edgeCounter->reportedWeight != edgeWeight) {
+    int success = addInvalidEdge(lowAddress, highAddress, invalidEdgesArray,
+                                 "reported with different weights before");
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+    // No need to do more processing of this edge
+    return EXIT_SUCCESS;
+  }
+  // Everything is fine
+  return EXIT_SUCCESS;
+}
+
+int addInvalidEdge(const int lowAddress, const int highAddress,
+                   struct EdgeArray* invalidEdgesArray, const char* reason) {
+  // We check first that we are not out of bounds
+  if (invalidEdgesArray->firstAvailablePosition ==
+      invalidEdgesArray->maxEdges) {
+    fprintf(stderr,
+            "Wanted to add that edge %d <-> %d was out of bounds as it has "
+            "been %s, but the first available position in invalidEdgesArray "
+            "equals the maxEdges which is %d and therefore out of bounds\n",
+            lowAddress, highAddress, reason, invalidEdgesArray->maxEdges);
+    return EXIT_FAILURE;
+  }
+  // Furthermore We need to check that this edge has not been reported as
+  // invalid before
+  if (isEdgePresent(lowAddress, highAddress, invalidEdgesArray) == 1) {
+    return EXIT_SUCCESS;
+  }
+  // Finally we print the warning
+  printf(
+      "WARNING: The edge %d <-> %d has been %s. This may be due to data "
+      "corruption. Will therefore mark the edge invalid\n",
+      lowAddress, highAddress, reason);
+  invalidEdgesArray->array[invalidEdgesArray->firstAvailablePosition]
+      .lowNodeAddress = lowAddress;
+  invalidEdgesArray->array[invalidEdgesArray->firstAvailablePosition]
+      .highNodeAddress = highAddress;
+  ++(invalidEdgesArray->firstAvailablePosition);
+  return EXIT_SUCCESS;
+}
+
+int isEdgePresent(const int lowAddress, const int highAddress,
+                  struct EdgeArray const* edgeArray) {
+  for (int edgeIdx = 0; edgeIdx < edgeArray->firstAvailablePosition;
+       ++edgeIdx) {
+    if ((edgeArray->array[edgeIdx].lowNodeAddress == lowAddress) &&
+        (edgeArray->array[edgeIdx].highNodeAddress == highAddress)) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
+                              int addressOfFirstIndex, int edgeWeight,
+                              struct EdgeCounterArray* edgeCounterArray) {
+  // Check that we are not out of bounds
+  if (edgeCounterArray->firstAvailablePosition == edgeCounterArray->maxEdges) {
+    fprintf(stderr,
+            "When adding edge %d <-> %d to the edge counter array the "
+            "firstAvailablePosition %d was out of bounds as maxEdges was "
+            "%d.\n",
+            lowAddress, highAddress, edgeCounterArray->firstAvailablePosition,
+            edgeCounterArray->maxEdges);
+    freeEdgeCounterArray(&(edgeCounterArray->array));
+    return EXIT_FAILURE;
+  }
+
+  // There are no matches in the edge counter array, which means that this
+  // is the first time we are observing this edge
+  // Hence we add it to the edge counter array
+  int idx = edgeCounterArray->firstAvailablePosition;
+  edgeCounterArray->array[idx].addressOfFirstIndex = addressOfFirstIndex;
+  edgeCounterArray->array[idx].edge.lowNodeAddress = lowAddress;
+  edgeCounterArray->array[idx].edge.highNodeAddress = highAddress;
+  edgeCounterArray->array[idx].encounters = 1;
+  edgeCounterArray->array[idx].reportedWeight = edgeWeight;
+
+  // Increment the first available position
+  ++(edgeCounterArray->firstAvailablePosition);
+  return EXIT_SUCCESS;
 }
 
 int createAdjacencyMatrix(struct ReceivedNode* receivedNodeArray,

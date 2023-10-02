@@ -99,8 +99,8 @@ int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray, int n,
  * @param name Name of the edge counter
  * @returns 0 on success, 1 on error
  */
-int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray, int n,
-                             const char *name);
+int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
+                             int maxEdges, const char *name);
 
 /**
  * @brief Free the memory of the edge counter array
