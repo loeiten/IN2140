@@ -63,6 +63,7 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
                                          addressOfFirstIndex, edgeWeight,
                                          &curEdgeCounter, invalidEdgesArray);
             if (success != EXIT_SUCCESS) {
+              freeEdgeCounterArray(&(edgeCounterArray.array));
               return EXIT_FAILURE;
             }
           }
@@ -74,17 +75,21 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
                                             addressOfFirstIndex, edgeWeight,
                                             &edgeCounterArray);
         if (success != EXIT_SUCCESS) {
+          freeEdgeCounterArray(&(edgeCounterArray.array));
           return EXIT_FAILURE;
         }
       }
     }
   }
 
-  // FIXME: Check that all the nodes has been reported more than once
-  //        If not raise the error
+  success = checkDualReport(&edgeCounterArray, invalidEdgesArray);
+  if (success != EXIT_SUCCESS) {
+    freeEdgeCounterArray(&(edgeCounterArray.array));
+    return EXIT_FAILURE;
+  }
 
   freeEdgeCounterArray(&(edgeCounterArray.array));
-  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 }
 
 int checkIfEdgeIsValid(const int lowAddress, const int highAddress,
@@ -200,6 +205,23 @@ int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
 
   // Increment the first available position
   ++(edgeCounterArray->firstAvailablePosition);
+  return EXIT_SUCCESS;
+}
+
+int checkDualReport(const struct EdgeCounterArray* const edgeCounterArray,
+                    struct EdgeArray* invalidEdgesArray) {
+  for (int edgeIdx = 0; edgeIdx < edgeCounterArray->firstAvailablePosition;
+       ++edgeIdx) {
+    if (edgeCounterArray->array[edgeIdx].encounters < 2) {
+      int success =
+          addInvalidEdge(edgeCounterArray->array[edgeIdx].edge.lowNodeAddress,
+                         edgeCounterArray->array[edgeIdx].edge.highNodeAddress,
+                         invalidEdgesArray, "reported less than twice");
+      if (success != EXIT_SUCCESS) {
+        return EXIT_FAILURE;
+      }
+    }
+  }
   return EXIT_SUCCESS;
 }
 

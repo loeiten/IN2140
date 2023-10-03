@@ -120,6 +120,19 @@ int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
                               struct EdgeCounterArray* edgeCounterArray);
 
 /**
+ * @brief Check that the edges has been reported from both sides.
+ *
+ * If this is not the case, issue a warning and add the edge to
+ * invalidEdgesArray
+ *
+ * @param edgeCounterArray The edge counter array
+ * @param invalidEdgesArray The invalid edges array
+ * @returns 0 on success, 1 on error
+ */
+int checkDualReport(const struct EdgeCounterArray* const edgeCounterArray,
+                    struct EdgeArray* invalidEdgesArray);
+
+/**
  * @brief Create the adjacency matrix
  *
  * @param receivedNodeArray Array of the received nodes
