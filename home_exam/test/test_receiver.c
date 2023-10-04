@@ -85,8 +85,54 @@ void testAddInvalidEdge(void) {
 }
 
 void testCheckDualReport(void) {
-  // FIXME: Implement
-  assert(1 == 0);
+#define N (3)
+  // Setup the test data
+  struct EdgeCounter edgeCounter[N];
+  const int lowAddresses[N] = {1, 115, 20};
+  const int highAddresses[N] = {2, 298, 20};
+  const int weights[N] = {3, 2, 17};
+  for (int i = 0; i < N; ++i) {
+    edgeCounter[i].edge.lowNodeAddress = lowAddresses[i];
+    edgeCounter[i].edge.highNodeAddress = highAddresses[i];
+    edgeCounter[i].encounters = 2;
+    edgeCounter[i].addressOfFirstIndex = lowAddresses[i];
+    edgeCounter[i].reportedWeight = weights[i];
+  }
+  struct EdgeCounterArray edgeCounterArray = {
+      .array = edgeCounter, .firstAvailablePosition = N, .maxEdges = N};
+  struct Edge array[N];
+  // NOTE: We deliberately set maxEdges = N-1 so that it's easier to trigger the
+  //       out of bounds error
+  struct EdgeArray invalidEdgesArray = {
+      .array = array, .firstAvailablePosition = 0, .maxEdges = N - 1};
+  // Check that the dual report passes without any exceptions
+  int success = checkDualReport(&edgeCounterArray, &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 0);
+
+  // Add exceptions
+  // NOTE: We add an exception to the middle of the array
+  edgeCounterArray.array[1].encounters = 1;
+  success = checkDualReport(&edgeCounterArray, &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 1);
+  assert(invalidEdgesArray.array[0].lowNodeAddress == lowAddresses[1]);
+  assert(invalidEdgesArray.array[0].highNodeAddress == highAddresses[1]);
+
+  // Add exceptions out of bounds
+  // This will go out of bounds as it will first add edgeCounterArray.array[0],
+  // next it will try to add edgeCounterArray.array[1], however this was added
+  // in the call above, and since the invalidEdgesArray.maxEdges = N-1 we will
+  // be out of bounds
+  edgeCounterArray.array[0].encounters = 1;
+  success = checkDualReport(&edgeCounterArray, &invalidEdgesArray);
+  assert(success == EXIT_FAILURE);
+  assert(invalidEdgesArray.firstAvailablePosition == 2);
+  assert(invalidEdgesArray.array[0].lowNodeAddress == lowAddresses[1]);
+  assert(invalidEdgesArray.array[0].highNodeAddress == highAddresses[1]);
+  assert(invalidEdgesArray.array[1].lowNodeAddress == lowAddresses[0]);
+  assert(invalidEdgesArray.array[1].highNodeAddress == highAddresses[0]);
+#undef N
 }
 
 void testCheckIfEdgeIsValid(void) {
