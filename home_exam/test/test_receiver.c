@@ -8,7 +8,8 @@
 
 void testIsEdgePresent(void) {
 #define N (3)
-  // Create a
+  // Create an edge array and check that what is present is present and what is
+  // absent is absent
   struct Edge array[N] = {
       {.lowNodeAddress = 1, .highNodeAddress = 2},
       {.lowNodeAddress = 115, .highNodeAddress = 298},
@@ -28,6 +29,8 @@ void testIsEdgePresent(void) {
 }
 
 void testAddEdgeToEdgeCounterArray(void) {
+  // Add edges until edgeCounterArray, then add one more to check that out of
+  // bounds is working
 #define N (3)
   struct EdgeCounter edgeCounter[N];
   struct EdgeCounterArray edgeCounterArray = {
@@ -55,12 +58,33 @@ void testAddEdgeToEdgeCounterArray(void) {
 #undef N
 }
 
-void testCheckDualReport(void) {
-  // FIXME: Implement
-  assert(1 == 0);
+void testAddInvalidEdge(void) {
+#define N (3)
+  // Create an empty edge array, fill it until full and fill once more to check
+  // that out of bounds is working as expected
+  struct Edge array[N];
+  struct EdgeArray invalidEdgesArray = {
+      .array = array, .firstAvailablePosition = 0, .maxEdges = N};
+
+  const int lowAddresses[N] = {1, 115, 20};
+  const int highAddresses[N] = {2, 298, 20};
+  int success;
+  for (int i = 0; i < N; ++i) {
+    int isPresent =
+        isEdgePresent(lowAddresses[i], highAddresses[i], &invalidEdgesArray);
+    assert(isPresent == 0);
+    success = addInvalidEdge(lowAddresses[i], highAddresses[i],
+                             &invalidEdgesArray, "added to invalidArray");
+    assert(success == EXIT_SUCCESS);
+    assert(invalidEdgesArray.firstAvailablePosition == (i + 1));
+  }
+
+  success = addInvalidEdge(77, 88, &invalidEdgesArray, "added to invalidArray");
+  assert(success == EXIT_FAILURE);
+#undef N
 }
 
-void testAddInvalidEdge(void) {
+void testCheckDualReport(void) {
   // FIXME: Implement
   assert(1 == 0);
 }
@@ -165,10 +189,10 @@ int main(int argc, char** argv) {
     testIsEdgePresent();
   } else if (strcmp(argv[1], "addEdgeToEdgeCounterArray") == 0) {
     testAddEdgeToEdgeCounterArray();
-  } else if (strcmp(argv[1], "checkDualReport") == 0) {
-    testCheckDualReport();
   } else if (strcmp(argv[1], "addInvalidEdge") == 0) {
     testAddInvalidEdge();
+  } else if (strcmp(argv[1], "checkDualReport") == 0) {
+    testCheckDualReport();
   } else if (strcmp(argv[1], "checkIfEdgeIsValid") == 0) {
     testCheckIfEdgeIsValid();
   } else if (strcmp(argv[1], "createAdjacencyMatrix") == 0) {

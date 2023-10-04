@@ -1,0 +1,4 @@
+WARNING: The edge 1 <-> 2 has been added to invalidArray. This may be due to data corruption. Will therefore mark the edge invalid
+WARNING: The edge 115 <-> 298 has been added to invalidArray. This may be due to data corruption. Will therefore mark the edge invalid
+WARNING: The edge 20 <-> 20 has been added to invalidArray. This may be due to data corruption. Will therefore mark the edge invalid
+Wanted to add that edge 77 <-> 88 was out of bounds as it has been added to invalidArray, but the first available position in invalidEdgesArray equals the maxEdges which is 3 and therefore out of bounds

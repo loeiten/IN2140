@@ -158,6 +158,8 @@ int addInvalidEdge(const int lowAddress, const int highAddress,
       "WARNING: The edge %d <-> %d has been %s. This may be due to data "
       "corruption. Will therefore mark the edge invalid\n",
       lowAddress, highAddress, reason);
+  // Force a flush in order to get the order correct when piping to file
+  fflush(stdout);
   invalidEdgesArray->array[invalidEdgesArray->firstAvailablePosition]
       .lowNodeAddress = lowAddress;
   invalidEdgesArray->array[invalidEdgesArray->firstAvailablePosition]

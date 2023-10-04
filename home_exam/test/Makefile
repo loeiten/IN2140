@@ -75,10 +75,10 @@ run_test_receiver_2: $(TEST_EXEC_DIR)/test_receiver
 	$(call run_test,$@,$< addEdgeToEdgeCounterArray)
 
 run_test_receiver_3: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< checkDualReport)
+	$(call run_test,$@,$< addInvalidEdge 2>&1 | tee $(TEST_EXEC_DIR)/test_receiver_3_output.txt && diff data/test_receiver_3_output.txt $(TEST_EXEC_DIR)/test_receiver_3_output.txt)
 
 run_test_receiver_4: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< addInvalidEdge)
+	$(call run_test,$@,$< checkDualReport)
 
 run_test_receiver_5: $(TEST_EXEC_DIR)/test_receiver
 	$(call run_test,$@,$< checkIfEdgeIsValid)
