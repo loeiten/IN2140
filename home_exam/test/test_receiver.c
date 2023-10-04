@@ -6,7 +6,48 @@
 
 #include "../routing_server/include/receiver.h"  // for checkAllNodesReceived
 
+void testIsEdgePresent(void) {
+#define N (3)
+  struct Edge array[N] = {
+      {.lowNodeAddress = 1, .highNodeAddress = 2},
+      {.lowNodeAddress = 115, .highNodeAddress = 298},
+      {.lowNodeAddress = 17, .highNodeAddress = 20},
+  };
+  struct EdgeArray edgeArray = {
+      .array = array, .firstAvailablePosition = N, .maxEdges = N};
+  int isPresent = isEdgePresent(1, 2, &edgeArray);
+  assert(isPresent == 1);
+  isPresent = isEdgePresent(115, 298, &edgeArray);
+  assert(isPresent == 1);
+  isPresent = isEdgePresent(17, 20, &edgeArray);
+  assert(isPresent == 1);
+  isPresent = isEdgePresent(7, 10, &edgeArray);
+  assert(isPresent == 0);
+#undef N
+}
+
+void testAddEdgeToEdgeCounterArray(void) {
+  // FIXME: Implement
+  assert(1 == 0);
+}
+
+void testCheckDualReport(void) {
+  // FIXME: Implement
+  assert(1 == 0);
+}
+
+void testAddInvalidEdge(void) {
+  // FIXME: Implement
+  assert(1 == 0);
+}
+
+void testCheckIfEdgeIsValid(void) {
+  // FIXME: Implement
+  assert(1 == 0);
+}
+
 void testCheckAllNodesReceived(void) {
+  // FIXME: This tests the vanilla case, add harder cases
 #define N (5)
 // NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
 #define MAX_EDGES (N * (N - 1) / 2)
@@ -96,8 +137,16 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  if (strcmp(argv[1], "checkAllNodesReceived") == 0) {
-    testCheckAllNodesReceived();
+  if (strcmp(argv[1], "isEdgePresent") == 0) {
+    testIsEdgePresent();
+  } else if (strcmp(argv[1], "addEdgeToEdgeCounterArray") == 0) {
+    testAddEdgeToEdgeCounterArray();
+  } else if (strcmp(argv[1], "checkDualReport") == 0) {
+    testCheckDualReport();
+  } else if (strcmp(argv[1], "addInvalidEdge") == 0) {
+    testAddInvalidEdge();
+  } else if (strcmp(argv[1], "checkIfEdgeIsValid") == 0) {
+    testCheckIfEdgeIsValid();
   } else if (strcmp(argv[1], "createAdjacencyMatrix") == 0) {
     testCreateAdjacencyMatrix();
   } else {

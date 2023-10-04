@@ -167,7 +167,7 @@ int addInvalidEdge(const int lowAddress, const int highAddress,
 }
 
 int isEdgePresent(const int lowAddress, const int highAddress,
-                  struct EdgeArray const* edgeArray) {
+                  const struct EdgeArray* const edgeArray) {
   for (int edgeIdx = 0; edgeIdx < edgeArray->firstAvailablePosition;
        ++edgeIdx) {
     if ((edgeArray->array[edgeIdx].lowNodeAddress == lowAddress) &&
@@ -178,9 +178,10 @@ int isEdgePresent(const int lowAddress, const int highAddress,
   return 0;
 }
 
-int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
-                              int addressOfFirstIndex, int edgeWeight,
-                              struct EdgeCounterArray* edgeCounterArray) {
+int addEdgeToEdgeCounterArray(const int lowAddress, const int highAddress,
+                              const int addressOfFirstIndex,
+                              const int edgeWeight,
+                              struct EdgeCounterArray* const edgeCounterArray) {
   // Check that we are not out of bounds
   if (edgeCounterArray->firstAvailablePosition == edgeCounterArray->maxEdges) {
     fprintf(stderr,
@@ -189,7 +190,6 @@ int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
             "%d.\n",
             lowAddress, highAddress, edgeCounterArray->firstAvailablePosition,
             edgeCounterArray->maxEdges);
-    freeEdgeCounterArray(&(edgeCounterArray->array));
     return EXIT_FAILURE;
   }
 

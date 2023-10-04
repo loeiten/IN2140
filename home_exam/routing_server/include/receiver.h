@@ -105,7 +105,7 @@ int addInvalidEdge(const int lowAddress, const int highAddress,
  * @return 1 if the edge is present, 0 if the edge is absent
  */
 int isEdgePresent(const int lowAddress, const int highAddress,
-                  struct EdgeArray const* edgeArray);
+                  const struct EdgeArray* const edgeArray);
 
 /**
  * @brief Adds an edge to an edge counter array
@@ -115,8 +115,9 @@ int isEdgePresent(const int lowAddress, const int highAddress,
  * @param edgeCounterArray The edge counter array
  * @return 0 on success, 1 on error
  */
-int addEdgeToEdgeCounterArray(int lowAddress, int highAddress,
-                              int addressOfFirstIndex, int edgeWeight,
+int addEdgeToEdgeCounterArray(const int lowAddress, const int highAddress,
+                              const int addressOfFirstIndex,
+                              const int edgeWeight,
                               struct EdgeCounterArray* edgeCounterArray);
 
 /**

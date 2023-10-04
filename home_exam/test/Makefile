@@ -14,7 +14,11 @@ TESTS := run_test_dijkstra_1 \
 		 run_test_receiver_1 \
 		 run_test_receiver_2 \
 		 run_test_route_1 \
-		 run_test_route_2
+		 run_test_route_2 \
+		 run_test_route_3 \
+		 run_test_route_4 \
+		 run_test_route_5 \
+		 run_test_route_6
 
 .PHONY: all clean test $(TESTS)
 all: $(TEST_EXEC_DIR)/test_dijkstra \
@@ -52,7 +56,7 @@ run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 
 # RECEIVER
 # ==============================================================================
-$(TEST_EXEC_DIR)/test_receiver: $(BUILD_TEST_DIR)/test_receiver.o $(BUILD_OBJ_DIR)/receiver.o
+$(TEST_EXEC_DIR)/test_receiver: $(BUILD_TEST_DIR)/test_receiver.o $(BUILD_OBJ_DIR)/receiver.o $(BUILD_OBJ_DIR)/dynamic_memory.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
@@ -65,10 +69,22 @@ $(BUILD_TEST_DIR)/test_receiver.o: test_receiver.c
 
 # Tests
 run_test_receiver_1: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< checkAllNodesReceived)
+	$(call run_test,$@,$< isEdgePresent)
 
 run_test_receiver_2: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< createAdjacencyMatrix)
+	$(call run_test,$@,$< addEdgeToEdgeCounterArray)
+
+run_test_receiver_3: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,$< checkDualReport)
+
+run_test_receiver_4: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,$< addInvalidEdge)
+
+run_test_receiver_5: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,$< checkIfEdgeIsValid)
+
+run_test_receiver_6: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,$< checkAllNodesReceived)
 # ==============================================================================
 
 # ROUTE
