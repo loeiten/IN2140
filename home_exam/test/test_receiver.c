@@ -8,6 +8,7 @@
 
 void testIsEdgePresent(void) {
 #define N (3)
+  // Create a
   struct Edge array[N] = {
       {.lowNodeAddress = 1, .highNodeAddress = 2},
       {.lowNodeAddress = 115, .highNodeAddress = 298},
@@ -27,8 +28,31 @@ void testIsEdgePresent(void) {
 }
 
 void testAddEdgeToEdgeCounterArray(void) {
-  // FIXME: Implement
-  assert(1 == 0);
+#define N (3)
+  struct EdgeCounter edgeCounter[N];
+  struct EdgeCounterArray edgeCounterArray = {
+      .array = edgeCounter, .firstAvailablePosition = 0, .maxEdges = N};
+  const int lowAddresses[N] = {1, 115, 20};
+  const int highAddresses[N] = {2, 298, 20};
+  const int weights[N] = {3, 2, 17};
+  int success;
+  for (int i = 0; i < N; ++i) {
+    success = addEdgeToEdgeCounterArray(lowAddresses[i], highAddresses[i],
+                                        lowAddresses[i], weights[i],
+                                        &edgeCounterArray);
+    assert(success == EXIT_SUCCESS);
+    assert(edgeCounterArray.firstAvailablePosition == (i + 1));
+    assert(edgeCounterArray.array[i].addressOfFirstIndex == lowAddresses[i]);
+    assert(edgeCounterArray.array[i].edge.lowNodeAddress == lowAddresses[i]);
+    assert(edgeCounterArray.array[i].edge.highNodeAddress == highAddresses[i]);
+    assert(edgeCounterArray.array[i].encounters == 1);
+    assert(edgeCounterArray.array[i].reportedWeight == weights[i]);
+  }
+
+  success = addEdgeToEdgeCounterArray(42, 77, 42, 99, &edgeCounterArray);
+  assert(success == EXIT_FAILURE);
+
+#undef N
 }
 
 void testCheckDualReport(void) {

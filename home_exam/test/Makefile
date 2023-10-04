@@ -13,12 +13,12 @@ TESTS := run_test_dijkstra_1 \
 		 run_test_dijkstra_3 \
 		 run_test_receiver_1 \
 		 run_test_receiver_2 \
+		 run_test_receiver_3 \
+		 run_test_receiver_4 \
+		 run_test_receiver_5 \
+		 run_test_receiver_6 \
 		 run_test_route_1 \
-		 run_test_route_2 \
-		 run_test_route_3 \
-		 run_test_route_4 \
-		 run_test_route_5 \
-		 run_test_route_6
+		 run_test_route_2
 
 .PHONY: all clean test $(TESTS)
 all: $(TEST_EXEC_DIR)/test_dijkstra \
