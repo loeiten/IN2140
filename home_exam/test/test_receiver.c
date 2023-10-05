@@ -267,8 +267,6 @@ void testCheckIfEdgeIsValid(void) {
 }
 
 void testCheckAllNodesReceived(void) {
-  // FIXME: This tests the vanilla case, add harder cases
-  assert(1 == 0);
 #define N (5)
 // NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
 #define MAX_EDGES (N * (N - 1) / 2)
@@ -284,7 +282,7 @@ void testCheckAllNodesReceived(void) {
   int neighborAddress1[2] = {3, 5};
   int edgeWeights1[2] = {1, 3};
   int neighborAddress3[3] = {1, 5, 10};
-  int edgeWeights3[3] = {1, 1, 2};
+  int edgeWeights3[3] = {1, 2, 1};
   int neighborAddress5[3] = {3, 0, 17};
   int edgeWeights5[3] = {2, 3, 1};
   int neighborAddress10[1] = {3};
@@ -329,8 +327,8 @@ void testCheckAllNodesReceived(void) {
   assert(success == EXIT_SUCCESS);
   // Check that all the nodes are valid
   for (int i = 0; i < MAX_EDGES; ++i) {
-    assert(edgeArray[i].lowNodeAddress == -1);
-    assert(edgeArray[i].highNodeAddress == -1);
+    assert(invalidEdgesArray.array[i].lowNodeAddress == -1);
+    assert(invalidEdgesArray.array[i].highNodeAddress == -1);
   }
 #undef MAX_EDGES
 #undef N
