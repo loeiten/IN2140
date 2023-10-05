@@ -81,7 +81,7 @@ run_test_receiver_4: $(TEST_EXEC_DIR)/test_receiver
 	$(call run_test,$@,$< checkDualReport)
 
 run_test_receiver_5: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< checkIfEdgeIsValid)
+	$(call run_test,$@,$< checkIfEdgeIsValid 2>&1 | tee $(TEST_EXEC_DIR)/test_receiver_5_output.txt && diff data/test_receiver_5_output.txt $(TEST_EXEC_DIR)/test_receiver_5_output.txt)
 
 run_test_receiver_6: $(TEST_EXEC_DIR)/test_receiver
 	$(call run_test,$@,$< checkAllNodesReceived)

@@ -138,7 +138,12 @@ int checkIfEdgeIsValid(const int lowAddress, const int highAddress,
 
 int addInvalidEdge(const int lowAddress, const int highAddress,
                    struct EdgeArray* invalidEdgesArray, const char* reason) {
-  // We check first that we are not out of bounds
+  // We need to check that this edge has not been reported as
+  // invalid before
+  if (isEdgePresent(lowAddress, highAddress, invalidEdgesArray) == 1) {
+    return EXIT_SUCCESS;
+  }
+  // Furthermore we check first that we are not out of bounds
   if (invalidEdgesArray->firstAvailablePosition ==
       invalidEdgesArray->maxEdges) {
     fprintf(stderr,
@@ -147,11 +152,6 @@ int addInvalidEdge(const int lowAddress, const int highAddress,
             "equals the maxEdges which is %d and therefore out of bounds\n",
             lowAddress, highAddress, reason, invalidEdgesArray->maxEdges);
     return EXIT_FAILURE;
-  }
-  // Furthermore We need to check that this edge has not been reported as
-  // invalid before
-  if (isEdgePresent(lowAddress, highAddress, invalidEdgesArray) == 1) {
-    return EXIT_SUCCESS;
   }
   // Finally we print the warning
   printf(

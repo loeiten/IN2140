@@ -275,6 +275,7 @@ int main(int argc, char **argv) {
     testDijkstra();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;

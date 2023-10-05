@@ -35,7 +35,7 @@ void testAddEdgeToEdgeCounterArray(void) {
   struct EdgeCounter edgeCounter[N];
   struct EdgeCounterArray edgeCounterArray = {
       .array = edgeCounter, .firstAvailablePosition = 0, .maxEdges = N};
-  const int lowAddresses[N] = {1, 115, 20};
+  const int lowAddresses[N] = {1, 115, 17};
   const int highAddresses[N] = {2, 298, 20};
   const int weights[N] = {3, 2, 17};
   int success;
@@ -66,7 +66,7 @@ void testAddInvalidEdge(void) {
   struct EdgeArray invalidEdgesArray = {
       .array = array, .firstAvailablePosition = 0, .maxEdges = N};
 
-  const int lowAddresses[N] = {1, 115, 20};
+  const int lowAddresses[N] = {1, 115, 17};
   const int highAddresses[N] = {2, 298, 20};
   int success;
   for (int i = 0; i < N; ++i) {
@@ -88,7 +88,7 @@ void testCheckDualReport(void) {
 #define N (3)
   // Setup the test data
   struct EdgeCounter edgeCounter[N];
-  const int lowAddresses[N] = {1, 115, 20};
+  const int lowAddresses[N] = {1, 115, 17};
   const int highAddresses[N] = {2, 298, 20};
   const int weights[N] = {3, 2, 17};
   for (int i = 0; i < N; ++i) {
@@ -105,6 +105,7 @@ void testCheckDualReport(void) {
   //       out of bounds error
   struct EdgeArray invalidEdgesArray = {
       .array = array, .firstAvailablePosition = 0, .maxEdges = N - 1};
+
   // Check that the dual report passes without any exceptions
   int success = checkDualReport(&edgeCounterArray, &invalidEdgesArray);
   assert(success == EXIT_SUCCESS);
@@ -120,11 +121,10 @@ void testCheckDualReport(void) {
   assert(invalidEdgesArray.array[0].highNodeAddress == highAddresses[1]);
 
   // Add exceptions out of bounds
-  // This will go out of bounds as it will first add edgeCounterArray.array[0],
-  // next it will try to add edgeCounterArray.array[1], however this was added
-  // in the call above, and since the invalidEdgesArray.maxEdges = N-1 we will
-  // be out of bounds
+  // Here all N edges will be in error, but we've only allocated N-1 for
+  // invalidEdgesArray
   edgeCounterArray.array[0].encounters = 1;
+  edgeCounterArray.array[2].encounters = 1;
   success = checkDualReport(&edgeCounterArray, &invalidEdgesArray);
   assert(success == EXIT_FAILURE);
   assert(invalidEdgesArray.firstAvailablePosition == 2);
@@ -136,12 +136,139 @@ void testCheckDualReport(void) {
 }
 
 void testCheckIfEdgeIsValid(void) {
-  // FIXME: Implement
-  assert(1 == 0);
+#define N (3)
+  // Initialize the data
+  const int lowAddresses[N] = {1, 115, 17};
+  const int highAddresses[N] = {2, 298, 20};
+  const int addressOfFirstIndex[N] = {1, 115, 20};
+  const int weights[N] = {3, 2, 17};
+  struct EdgeCounter edgeCounter = {
+      .edge = {.lowNodeAddress = lowAddresses[0],
+               .highNodeAddress = highAddresses[0]},
+      .encounters = 2,
+      .addressOfFirstIndex = highAddresses[0],
+      .reportedWeight = weights[0]};
+  struct Edge array[N];
+  struct EdgeArray invalidEdgesArray = {
+      .array = array, .firstAvailablePosition = 0, .maxEdges = N};
+
+  // Check that the the edge is valid
+  int success = checkIfEdgeIsValid(lowAddresses[0], highAddresses[0],
+                                   addressOfFirstIndex[0], weights[0],
+                                   &edgeCounter, &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 0);
+
+  // Trigger warnings
+  // Reported more than twice
+  edgeCounter.encounters = 3;
+  success = checkIfEdgeIsValid(lowAddresses[0], highAddresses[0],
+                               addressOfFirstIndex[0], weights[0], &edgeCounter,
+                               &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 1);
+  assert(invalidEdgesArray.array[0].lowNodeAddress == lowAddresses[0]);
+  assert(invalidEdgesArray.array[0].highNodeAddress == highAddresses[0]);
+  // Reported in the same way
+  edgeCounter.edge.lowNodeAddress = lowAddresses[1];
+  edgeCounter.edge.highNodeAddress = highAddresses[1];
+  edgeCounter.encounters = 2;
+  edgeCounter.addressOfFirstIndex = addressOfFirstIndex[1];
+  edgeCounter.reportedWeight = weights[1];
+  success = checkIfEdgeIsValid(lowAddresses[1], highAddresses[1],
+                               addressOfFirstIndex[1], weights[1], &edgeCounter,
+                               &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 2);
+  assert(invalidEdgesArray.array[0].lowNodeAddress == lowAddresses[0]);
+  assert(invalidEdgesArray.array[0].highNodeAddress == highAddresses[0]);
+  assert(invalidEdgesArray.array[1].lowNodeAddress == lowAddresses[1]);
+  assert(invalidEdgesArray.array[1].highNodeAddress == highAddresses[1]);
+  // Reported with different weights
+  edgeCounter.edge.lowNodeAddress = lowAddresses[2];
+  edgeCounter.edge.highNodeAddress = highAddresses[2];
+  edgeCounter.addressOfFirstIndex = addressOfFirstIndex[2];
+  edgeCounter.reportedWeight = weights[2] + 100;
+  success = checkIfEdgeIsValid(lowAddresses[2], highAddresses[2],
+                               addressOfFirstIndex[2], weights[2], &edgeCounter,
+                               &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 3);
+  assert(invalidEdgesArray.array[0].lowNodeAddress == lowAddresses[0]);
+  assert(invalidEdgesArray.array[0].highNodeAddress == highAddresses[0]);
+  assert(invalidEdgesArray.array[1].lowNodeAddress == lowAddresses[1]);
+  assert(invalidEdgesArray.array[1].highNodeAddress == highAddresses[1]);
+  assert(invalidEdgesArray.array[2].lowNodeAddress == lowAddresses[2]);
+  assert(invalidEdgesArray.array[2].highNodeAddress == highAddresses[2]);
+
+  // Trigger errors
+  // Reported more than twice
+  const int errorLowAddress = 128;
+  const int errorHighAddress = 256;
+  const int errorAddressOfFirstIndex = errorHighAddress;
+  const int errorWeight = 88;
+  edgeCounter.edge.lowNodeAddress = errorLowAddress;
+  edgeCounter.edge.highNodeAddress = errorHighAddress;
+  edgeCounter.encounters = 3;
+  edgeCounter.addressOfFirstIndex = errorAddressOfFirstIndex;
+  edgeCounter.reportedWeight = errorWeight;
+  success =
+      checkIfEdgeIsValid(errorLowAddress, errorHighAddress, errorLowAddress,
+                         errorWeight, &edgeCounter, &invalidEdgesArray);
+  assert(success == EXIT_FAILURE);
+  assert(invalidEdgesArray.firstAvailablePosition == 3);
+  // Reported in the same way
+  edgeCounter.encounters = 2;
+  edgeCounter.addressOfFirstIndex = errorLowAddress;
+  success =
+      checkIfEdgeIsValid(errorLowAddress, errorHighAddress, errorLowAddress,
+                         errorWeight, &edgeCounter, &invalidEdgesArray);
+  assert(success == EXIT_FAILURE);
+  // Reported with different weights
+  edgeCounter.addressOfFirstIndex = errorHighAddress;
+  edgeCounter.reportedWeight = errorWeight + 512;
+  success =
+      checkIfEdgeIsValid(errorLowAddress, errorHighAddress, errorLowAddress,
+                         errorWeight, &edgeCounter, &invalidEdgesArray);
+  assert(success == EXIT_FAILURE);
+
+  // Check that the same node will not be reported twice
+  // Reported more than twice
+  edgeCounter.edge.lowNodeAddress = lowAddresses[0];
+  edgeCounter.edge.highNodeAddress = highAddresses[0];
+  edgeCounter.encounters = 3;
+  edgeCounter.addressOfFirstIndex = addressOfFirstIndex[0];
+  edgeCounter.reportedWeight = weights[0];
+  success = checkIfEdgeIsValid(lowAddresses[0], highAddresses[0],
+                               addressOfFirstIndex[0], weights[0], &edgeCounter,
+                               &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  // Reported in the same way
+  edgeCounter.edge.lowNodeAddress = lowAddresses[1];
+  edgeCounter.edge.highNodeAddress = highAddresses[1];
+  edgeCounter.encounters = 2;
+  edgeCounter.addressOfFirstIndex = addressOfFirstIndex[1];
+  edgeCounter.reportedWeight = weights[1];
+  success = checkIfEdgeIsValid(lowAddresses[1], highAddresses[1],
+                               addressOfFirstIndex[1], weights[1], &edgeCounter,
+                               &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  // Reported with different weights
+  edgeCounter.edge.lowNodeAddress = lowAddresses[2];
+  edgeCounter.edge.highNodeAddress = highAddresses[2];
+  edgeCounter.addressOfFirstIndex = addressOfFirstIndex[2];
+  edgeCounter.reportedWeight = weights[2] + 100;
+  success = checkIfEdgeIsValid(lowAddresses[2], highAddresses[2],
+                               addressOfFirstIndex[2], weights[2], &edgeCounter,
+                               &invalidEdgesArray);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 3);
+#undef N
 }
 
 void testCheckAllNodesReceived(void) {
   // FIXME: This tests the vanilla case, add harder cases
+  assert(1 == 0);
 #define N (5)
 // NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
 #define MAX_EDGES (N * (N - 1) / 2)
@@ -241,10 +368,13 @@ int main(int argc, char** argv) {
     testCheckDualReport();
   } else if (strcmp(argv[1], "checkIfEdgeIsValid") == 0) {
     testCheckIfEdgeIsValid();
+  } else if (strcmp(argv[1], "checkAllNodesReceived") == 0) {
+    testCheckAllNodesReceived();
   } else if (strcmp(argv[1], "createAdjacencyMatrix") == 0) {
     testCreateAdjacencyMatrix();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
+    return EXIT_FAILURE;
   }
 
   return EXIT_SUCCESS;
