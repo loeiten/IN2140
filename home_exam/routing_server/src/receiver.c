@@ -36,12 +36,6 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
       int searchHighAddress = addressOfFirstIndex > neighborAddress
                                   ? addressOfFirstIndex
                                   : neighborAddress;
-      // FIXME:
-      printf(
-          "  addressOfFirstIndex = %d, neighborAddress = %d, edgeWeight = %d, "
-          "searchLowAddress = %d, searchHighAddress = %d\n",
-          addressOfFirstIndex, neighborAddress, edgeWeight, searchLowAddress,
-          searchHighAddress);
 
       // Check if there are any matches in the EdgeCounterArray
       int foundMatch = 0;
@@ -60,20 +54,12 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
         // See if there are any matches
         struct EdgeCounter* curEdgeCounter =
             &(edgeCounterArray.array[counterIdx]);
-        // FIXME:
-        printf(
-            "    counterIdx = %d, curEdgeCounter.edge.lowNodeAddress = %d, "
-            "curEdgeCounter.edge.highNodeAddress = %d \n",
-            counterIdx, curEdgeCounter->edge.lowNodeAddress,
-            curEdgeCounter->edge.highNodeAddress);
         if (curEdgeCounter->edge.lowNodeAddress == searchLowAddress) {
           // Here we have a match, we need to check if the high address is also
           // matching
           if (curEdgeCounter->edge.highNodeAddress == searchHighAddress) {
             // Ok, we are now matching both on the low address and the high
             // address. This means that this edge has been observed before.
-            // FIXME:
-            printf("      Found match\n");
             ++(curEdgeCounter->encounters);
             foundMatch = 1;
 
