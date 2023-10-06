@@ -283,11 +283,11 @@ void testCheckAllNodesReceived(void) {
   int edgeWeights1[2] = {1, 3};
   int neighborAddress3[3] = {1, 5, 10};
   int edgeWeights3[3] = {1, 2, 1};
-  int neighborAddress5[3] = {3, 0, 17};
+  int neighborAddress5[3] = {3, 1, 17};
   int edgeWeights5[3] = {2, 3, 1};
   int neighborAddress10[1] = {3};
   int edgeWeights10[1] = {1};
-  int neighborAddress17[1] = {3};
+  int neighborAddress17[1] = {5};
   int edgeWeights17[1] = {1};
   struct ReceivedNode receivedNodeArray[N] = {
       {.address = 1,
