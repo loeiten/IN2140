@@ -25,8 +25,6 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
     for (int neighborIdx = 0;
          neighborIdx < receivedNodeArray[addressIdx].nNeighbors;
          ++neighborIdx) {
-      // FIXME:
-      printf("addressIdx = %d, neighborIdx = %d\n", addressIdx, neighborIdx);
       int neighborAddress =
           receivedNodeArray[addressIdx].neighborAddresses[neighborIdx];
       int edgeWeight = receivedNodeArray[addressIdx].edgeWeights[neighborIdx];
@@ -76,9 +74,6 @@ int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
       }
 
       if (foundMatch == 0) {
-        // FIXME:
-        printf("  Adding %d <-> %d edge to edgeCounterArray\n",
-               searchLowAddress, searchHighAddress);
         success = addEdgeToEdgeCounterArray(searchLowAddress, searchHighAddress,
                                             addressOfFirstIndex, edgeWeight,
                                             &edgeCounterArray);
@@ -106,9 +101,7 @@ int checkIfEdgeIsValid(const int lowAddress, const int highAddress,
                        struct EdgeArray* invalidEdgesArray) {
   // To validate that the match is valid we need to check that
   // - It has not been reported more than twice
-  // - The addressOfFirstIndex is different (if not this means that
-  //   the same edge is reported twice which might indicate data
-  //   corruption)
+  // - The addressOfFirstIndex is different
   // - That the reported weight is the same (as the graph we are
   //   working with are undirected)
   if (edgeCounter->encounters > 2) {

@@ -1,0 +1,4 @@
+WARNING: The edge 1 <-> 5 has been reported in the exact same way before. This may be due to data corruption. Will therefore mark the edge invalid
+WARNING: The edge 1 <-> 3 has been reported more than twice. This may be due to data corruption. Will therefore mark the edge invalid
+WARNING: The edge 3 <-> 10 has been reported with different weights before. This may be due to data corruption. Will therefore mark the edge invalid
+WARNING: The edge 5 <-> 17 has been reported less than twice. This may be due to data corruption. Will therefore mark the edge invalid

@@ -326,10 +326,53 @@ void testCheckAllNodesReceived(void) {
   // Check that the test went successful
   assert(success == EXIT_SUCCESS);
   // Check that all the nodes are valid
+  assert(invalidEdgesArray.firstAvailablePosition == 0);
   for (int i = 0; i < MAX_EDGES; ++i) {
     assert(invalidEdgesArray.array[i].lowNodeAddress == -1);
     assert(invalidEdgesArray.array[i].highNodeAddress == -1);
   }
+
+  // Modify for report more than twice
+  // Let the node 1 appear twice in the secondly processed node
+  int neighborAddress3Mod[4] = {1, 5, 10, 1};
+  int edgeWeights3Mod[4] = {1, 2, 1, 1};
+  receivedNodeArray[1].neighborAddresses = neighborAddress3Mod;
+  receivedNodeArray[1].edgeWeights = edgeWeights3Mod;
+  receivedNodeArray[1].nNeighbors = 4;
+  // Modify to trigger addressOfFirstIndex is the same
+  // Let the node 1 appear twice in the firstly processed node
+  int neighborAddress1Mod[3] = {3, 5, 5};
+  int edgeWeights1Mod[3] = {1, 3, 3};
+  receivedNodeArray[0].neighborAddresses = neighborAddress1Mod;
+  receivedNodeArray[0].edgeWeights = edgeWeights1Mod;
+  receivedNodeArray[0].nNeighbors = 3;
+  // Modify for different weights
+  // Modify the last processed node with a different weight
+  int edgeWeights10Mod[1] = {7};
+  receivedNodeArray[3].edgeWeights = edgeWeights10Mod;
+  // Modify for report less than twice
+  // Remove the connection from a node
+  receivedNodeArray[4].nNeighbors = 0;
+
+  success = checkAllNodesReceived(receivedNodeArray, invalidEdgesArrayPtr, N);
+  assert(success == EXIT_SUCCESS);
+  assert(invalidEdgesArray.firstAvailablePosition == 4);
+  // 1 <-> 5 will be processed first
+  // This is the edge which is reported in the exact same way twice
+  assert(invalidEdgesArray.array[0].lowNodeAddress == 1);
+  assert(invalidEdgesArray.array[0].highNodeAddress == 5);
+  // 1 <-> 3 will be processed secondly
+  // This is the edge which is reported more than twice
+  assert(invalidEdgesArray.array[1].lowNodeAddress == 1);
+  assert(invalidEdgesArray.array[1].highNodeAddress == 3);
+  // 3 <-> 10 will be processed thirdly
+  // This is the edge which has different weights
+  assert(invalidEdgesArray.array[2].lowNodeAddress == 3);
+  assert(invalidEdgesArray.array[2].highNodeAddress == 10);
+  // 5 <-> 17 will be processed in the end
+  // This is the edge which is reported only once
+  assert(invalidEdgesArray.array[3].lowNodeAddress == 5);
+  assert(invalidEdgesArray.array[3].highNodeAddress == 17);
 #undef MAX_EDGES
 #undef N
 }
