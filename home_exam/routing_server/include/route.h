@@ -12,7 +12,7 @@ struct Route {
 /**
  * @brief Map from index to node id
  */
-struct IndexToId {
+struct IndexToAddress {
   int n;    /**< Number of elements */
   int *map; /**< The index to id map */
 };
@@ -39,12 +39,13 @@ struct RoutingTable {
  * @param distanceArray The distance from src to all other nodes
  * @param routeArray Array of the route to the shortest route from src the the
  *                   other nodes in the graph.
- * @param indexToIdMap A map from index in to vertex id
+ * @param indexToAddressMap A map from index in to vertex id
  * @param n The number of nodes in the graph
  */
 void printEdges(const int *const distanceArray,
                 const struct Route *const routeArray,
-                const struct IndexToId *const indexToIdMap, const int n);
+                const struct IndexToAddress *const indexToAddressMap,
+                const int n);
 
 /**
  * @brief Create the routing tables

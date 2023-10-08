@@ -17,7 +17,8 @@
 
 void printEdges(const int *const distanceArray,
                 const struct Route *const routeArray,
-                const struct IndexToId *const indexToIdMap, const int n) {
+                const struct IndexToAddress *const indexToAddressMap,
+                const int n) {
   for (int fromNode = 0; fromNode < n; ++fromNode) {
     for (int toNode = 0; toNode < n; ++toNode) {
       // Check if fromNode is on the shortest path from the source to the toNode
@@ -34,8 +35,8 @@ void printEdges(const int *const distanceArray,
       }
 
       // Print the value
-      print_weighted_edge(indexToIdMap->map[fromNode],
-                          indexToIdMap->map[toNode], pathLen);
+      print_weighted_edge(indexToAddressMap->map[fromNode],
+                          indexToAddressMap->map[toNode], pathLen);
     }
   }
 }

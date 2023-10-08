@@ -17,6 +17,7 @@ TESTS := run_test_dijkstra_1 \
 		 run_test_receiver_4 \
 		 run_test_receiver_5 \
 		 run_test_receiver_6 \
+		 run_test_receiver_7 \
 		 run_test_route_1 \
 		 run_test_route_2
 
@@ -85,6 +86,9 @@ run_test_receiver_5: $(TEST_EXEC_DIR)/test_receiver
 
 run_test_receiver_6: $(TEST_EXEC_DIR)/test_receiver
 	$(call run_test,$@,$< checkAllNodesReceived 2>&1 | tee $(TEST_EXEC_DIR)/test_receiver_6_output.txt && diff data/test_receiver_6_output.txt $(TEST_EXEC_DIR)/test_receiver_6_output.txt)
+
+run_test_receiver_7: $(TEST_EXEC_DIR)/test_receiver
+	$(call run_test,$@,$< createAdjacencyMatrix)
 # ==============================================================================
 
 # ROUTE

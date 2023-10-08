@@ -30,7 +30,7 @@ void testPrintEdges(void) {
   //   1  \     /  3
   //       1 [0]
   int map[N] = {1, 3, 10, 5, 17};
-  const struct IndexToId indexToIdMap = {.n = N, .map = map};
+  const struct IndexToAddress indexToAddressMap = {.n = N, .map = map};
 
   const int distanceArray[N] = {0, 1, 2, 3, 4};
 
@@ -46,7 +46,7 @@ void testPrintEdges(void) {
                                       {.nHops = 2, .route = route4}};
 
   print_clear_logfile();
-  printEdges(distanceArray, routeArray, &indexToIdMap, N);
+  printEdges(distanceArray, routeArray, &indexToAddressMap, N);
 #undef N
 }
 

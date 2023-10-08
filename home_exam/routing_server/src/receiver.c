@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// FIXME: Consider moving to common
 #include "../../utils/include/dynamic_memory.h"
+#include "../include/route.h"
 
 int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
                           struct EdgeArray* invalidEdgesArray, int n) {
@@ -228,13 +230,83 @@ int checkDualReport(const struct EdgeCounterArray* const edgeCounterArray,
   return EXIT_SUCCESS;
 }
 
-int createAdjacencyMatrix(struct ReceivedNode* receivedNodeArray,
-                          struct EdgeArray* invalidEdgesArray,
-                          int*** adjacencyMatrix, int n) {
-  (void)receivedNodeArray;
-  (void)invalidEdgesArray;
-  (void)adjacencyMatrix;
-  (void)n;
-  // FIXME:
+int createAdjacencyMatrix(const struct ReceivedNode* const receivedNodeArray,
+                          const struct IndexToAddress* const indexToAddress,
+                          const struct EdgeArray* const invalidEdgesArray,
+                          int*** adjacencyMatrix, const int n) {
+  // Allocate memory to the adjacency matrix
+  // Note that this allocation is zero initalized
+  int success = allocateIntMatrix(adjacencyMatrix, n, "adjacencyMatrix");
+  if (success != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
+  }
+
+  // Loop through the edge array and fill the adjacencyMatrix
+  // Note that this is inefficient as we are looping through all edges twice
+  // (given that they are valid)
+  for (int nodeIdx = 0; nodeIdx < n; ++nodeIdx) {
+    // Loop through the neighbors
+    int nNeighbors = receivedNodeArray[nodeIdx].nNeighbors;
+    int firstIndex;
+    success = getIndexFromAddress(receivedNodeArray[nodeIdx].address,
+                                  indexToAddress, &firstIndex);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+
+    for (int neighborIdx = 0; neighborIdx < nNeighbors; ++neighborIdx) {
+      int secondIndex;
+      success = getIndexFromAddress(
+          receivedNodeArray[nodeIdx].neighborAddresses[neighborIdx],
+          indexToAddress, &secondIndex);
+      if (success != EXIT_SUCCESS) {
+        return EXIT_FAILURE;
+      }
+      // Set the weight
+      (*adjacencyMatrix)[firstIndex][secondIndex] =
+          receivedNodeArray[nodeIdx].edgeWeights[neighborIdx];
+    }
+  }
+
+  // Remove all edges with invalid edges
+  for (int edgeIdx = 0; edgeIdx < invalidEdgesArray->firstAvailablePosition;
+       ++edgeIdx) {
+    // Get the first and the second index
+    int firstIndex;
+    success =
+        getIndexFromAddress(invalidEdgesArray->array[edgeIdx].lowNodeAddress,
+                            indexToAddress, &firstIndex);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+    int secondIndex;
+    success =
+        getIndexFromAddress(invalidEdgesArray->array[edgeIdx].highNodeAddress,
+                            indexToAddress, &secondIndex);
+    if (success != EXIT_SUCCESS) {
+      return EXIT_FAILURE;
+    }
+
+    // Nullify the weight for one part of the edge
+    (*adjacencyMatrix)[firstIndex][secondIndex] = 0;
+    // Nullify the weight for the other part of the edge
+    (*adjacencyMatrix)[secondIndex][firstIndex] = 0;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+int getIndexFromAddress(const int address,
+                        const struct IndexToAddress* const indexToAddress,
+                        int* index) {
+  *index = -1;
+  for (int i = 0; i < indexToAddress->n; ++i) {
+    if (address == indexToAddress->map[i]) {
+      *index = i;
+      return EXIT_SUCCESS;
+    }
+  }
+  fprintf(stderr, "Could not find address %d in the indexToAddress map\n",
+          address);
   return EXIT_FAILURE;
 }
