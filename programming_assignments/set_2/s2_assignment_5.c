@@ -43,7 +43,7 @@
 
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for printf, snprintf
-#include <stdlib.h>  // for EXIT_FAILURE, free
+#include <stdlib.h>  // for free, EXIT_FAILURE
 #include <string.h>  // for strlen
 
 #include "../../utils/include/person.h"          // for printPerson, setAge

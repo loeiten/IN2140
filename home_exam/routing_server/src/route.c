@@ -1,11 +1,10 @@
 #include "../include/route.h"
 
-#include <stdio.h>   // for perror, NULL, fprintf, stderr
-#include <stdlib.h>  // for calloc, malloc, EXIT_FAILURE
+#include <stdio.h>   // for NULL
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 
-#include "../../utils/include/common.h"
-#include "../../utils/include/dynamic_memory.h"
-
+#include "../../utils/include/common.h"          // for IndexToAddress
+#include "../../utils/include/dynamic_memory.h"  // for freeIntMatrix, alloc...
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler

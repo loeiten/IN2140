@@ -1,7 +1,8 @@
 #ifndef OBLIGATORY_ASSIGNMENT_INCLUDE_BINARY_FILE_H_
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_BINARY_FILE_H_
 
-#include <stdio.h>  // for FILE
+#include <stdio.h>  // for FILE, size_t
+
 struct Router;
 
 // A note on the constness:

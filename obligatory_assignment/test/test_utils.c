@@ -1,7 +1,7 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
+#include <stdio.h>   // for fprintf, printf, stderr
+#include <stdlib.h>  // for atoi, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp
 
 #include "../include/utils.h"  // for getBinaryString

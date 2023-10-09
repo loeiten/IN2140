@@ -1,7 +1,7 @@
 #include <stdio.h>     // for printf, fclose, fopen, snprintf, NULL, ferror
-#include <stdlib.h>    // for exit, malloc, EXIT_FAILURE, atoi, free, rand
-#include <sys/wait.h>  // for wait
-#include <unistd.h>    // for fork, sleep, pid_t, NULL
+#include <stdlib.h>    // for free, malloc, EXIT_FAILURE, EXIT_SUCCESS, atoi
+#include <sys/wait.h>  // for wait, pid_t
+#include <unistd.h>    // for fork, getpid, sleep, NULL
 
 #define BUFFER_SIZE (8)  // Max 8 bytes for a 64 bit number
 

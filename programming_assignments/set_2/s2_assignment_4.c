@@ -11,8 +11,8 @@
  */
 
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for printf, fclose, fopen, NULL, ferror, fputs, fread
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, malloc
+#include <stdio.h>   // for fclose, printf, fopen, fread, NULL, ferror, fputs
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS, atoi, free, malloc
 
 #define BUFFER_SIZE (1024)
 

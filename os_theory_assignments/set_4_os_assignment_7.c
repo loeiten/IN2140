@@ -1,7 +1,7 @@
 #include <stdio.h>     // for printf, fclose, fflush, fopen, ftell, FILE, fputs
 #include <stdlib.h>    // for exit, EXIT_FAILURE, NULL, EXIT_SUCCESS
-#include <sys/wait.h>  // for wait
-#include <unistd.h>    // for fork, pid_t, NULL
+#include <sys/wait.h>  // for wait, pid_t
+#include <unistd.h>    // for fork, sleep, NULL
 
 void writeToFile(FILE* fp, const char* text) {
   int pos;

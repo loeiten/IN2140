@@ -1,7 +1,7 @@
 #include "../include/common.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>   // for fprintf, stderr
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 
 int getIndexFromAddress(const int address,
                         const struct IndexToAddress* const indexToAddress,

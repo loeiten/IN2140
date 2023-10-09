@@ -1,9 +1,10 @@
-#include <stdio.h>      // for printf, NULL, snprintf
-#include <stdlib.h>     // for free, malloc, EXIT_SUCCESS
-#include <string.h>     // for strlen
-#include <sys/fcntl.h>  // for open, O_CREAT, O_RDWR, O_TRUNC
-#include <sys/stat.h>   // for S_IRWXU, S_IRWXG, S_IRWXO
-#include <unistd.h>     // for close, fsync, lseek, read, write
+#include <stdio.h>                 // for printf, NULL, snprintf
+#include <stdlib.h>                // for free, malloc, EXIT_SUCCESS
+#include <string.h>                // for strlen
+#include <sys/_types/_seek_set.h>  // for SEEK_SET
+#include <sys/fcntl.h>             // for open, O_CREAT, O_RDWR, O_TRUNC
+#include <sys/stat.h>              // for S_IRWXG, S_IRWXO, S_IRWXU
+#include <unistd.h>                // for close, fsync, lseek, read, write
 
 int main(void) {
   const char* buf = "Hello, world!\n";

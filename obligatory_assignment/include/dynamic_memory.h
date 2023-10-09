@@ -2,6 +2,7 @@
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_DYNAMIC_MEMORY_H_
 
 #include <stddef.h>  // for size_t
+
 struct Router;
 
 // Clean-up according to https://stackoverflow.com/a/33170941/2786884

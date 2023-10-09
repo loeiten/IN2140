@@ -1,8 +1,8 @@
 #include "../include/file_operations.h"
 
-#include <stddef.h>
-#include <stdio.h>   // for printf, FILE
-#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
+#include <stddef.h>  // for NULL, size_t
+#include <stdio.h>   // for fclose, fopen, printf, fread, FILE, feof, ferror
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 
 #define BUFFER_SIZE (65536)  // 2^16
 

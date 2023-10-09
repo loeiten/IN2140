@@ -1,11 +1,12 @@
 
 #include "../include/helpers.h"
 
-#include <ftw.h>  // for nftw, FTW (ptr only), FTW_DEPTH, FTW_PHYS
-#include <stddef.h>
-#include <stdio.h>   // for fprintf, perror, NULL, size_t, remove, stderr
+#include <ftw.h>     // for nftw, FTW (ptr only), FTW_DEPTH, FTW_PHYS
+#include <stddef.h>  // for NULL, size_t
+#include <stdio.h>   // for fprintf, perror, remove, stderr, snprintf
 #include <stdlib.h>  // for free, atoi, malloc, EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strlen
+
 struct stat;
 
 int strToIntArray(const char *const arrayStr, int *const intArray) {

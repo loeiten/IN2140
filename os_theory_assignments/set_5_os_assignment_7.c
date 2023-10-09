@@ -1,5 +1,5 @@
 #include <libgen.h>    // for basename
-#include <stdio.h>     // for perror, printf
+#include <stdio.h>     // for perror, printf, snprintf
 #include <stdlib.h>    // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>    // for strlen
 #include <sys/ipc.h>   // for IPC_CREAT, IPC_NOWAIT, key_t

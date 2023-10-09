@@ -1,7 +1,7 @@
 #include <stddef.h>  // for NULL, size_t
-#include <stdio.h>
+#include <stdio.h>   // for fprintf, stderr
 #include <stdlib.h>  // for free
-#include <string.h>
+#include <string.h>  // for strcmp
 
 #include "../include/router.h"  // for Router
 

@@ -1,8 +1,8 @@
 #include "../include/dijkstra.h"
 
 #include <limits.h>  // for INT_MAX
-#include <stdio.h>   // for perror, fprintf, NULL
-#include <stdlib.h>  // for malloc, EXIT_FAILURE
+#include <stdio.h>   // for fprintf, NULL, stderr
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>  // for memcpy
 
 #include "../../utils/include/dynamic_memory.h"  // for freeIntArray, freeRo...

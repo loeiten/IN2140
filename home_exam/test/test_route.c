@@ -6,9 +6,8 @@
 #include <string.h>  // for strcmp
 
 #include "../routing_server/include/route.h"  // for RoutingTable, Destinati...
-#include "../utils/include/common.h"          // for freeRoutingTable
+#include "../utils/include/common.h"          // for IndexToAddress
 #include "../utils/include/dynamic_memory.h"  // for freeRoutingTable
-
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -17,7 +16,7 @@
 //          command
 //          You can do this with for example
 //          bear --output ../build/compile_commands.json --append -- make -B
-#include "print_lib/include/print_lib.h"  // for print_weighted_edge
+#include "print_lib/include/print_lib.h"  // for print_clear_logfile
 
 void testPrintEdges(void) {
 #define N (5)

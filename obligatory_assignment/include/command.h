@@ -2,6 +2,7 @@
 #define OBLIGATORY_ASSIGNMENT_INCLUDE_COMMAND_H_
 
 #include <stddef.h>  // for size_t
+
 struct Router;
 
 // A note on constness:

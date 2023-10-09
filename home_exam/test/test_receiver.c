@@ -1,10 +1,10 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, NULL, stderr
+#include <stdio.h>   // for fprintf, stderr
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/receiver.h"  // for checkAllNodesReceived
+#include "../routing_server/include/receiver.h"  // for Edge, EdgeCounter
 
 void testIsEdgePresent(void) {
 #define N (3)
@@ -382,7 +382,7 @@ void testCreateAdjacencyMatrix(void) {
   const struct ReceivedNode* receivedNodeArray = NULL;
   const struct EdgeArray* invalidEdgesArray = NULL;
   const struct IndexToAddress* indexToAddress = NULL;
-  const int** adjacencyMatrix = NULL;
+  int** adjacencyMatrix = NULL;
   assert(0 == 1);
   int success = createAdjacencyMatrix(receivedNodeArray, indexToAddress,
                                       invalidEdgesArray, &adjacencyMatrix, N);

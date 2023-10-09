@@ -1,13 +1,13 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
 #include <stddef.h>  // for NULL
-#include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
+#include <stdio.h>   // for printf, fprintf, perror, snpr...
+#include <stdlib.h>  // for atoi, EXIT_SUCCESS, malloc
 #include <string.h>  // for strcmp
 
 #include "../include/dynamic_memory.h"  // for freeRouterArray
-#include "../include/router.h"  // for findRouterId, printNeighbors, Router
-#include "include/helpers.h"    // for strToIntArray
+#include "../include/router.h"          // for Router, addLink, existsRoute
+#include "include/helpers.h"            // for strToIntArray
 
 #define N (3)
 

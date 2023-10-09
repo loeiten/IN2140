@@ -1,11 +1,10 @@
 #include "../include/binary_file.h"
 
-#include <errno.h>  // for errno
-#include <stddef.h>
-#include <stdio.h>     // for fprintf, ferror, fclose, stderr, fread
-#include <stdlib.h>    // for EXIT_FAILURE, EXIT_SUCCESS, free, malloc
-#include <string.h>    // for strerror, strlen
-#include <sys/stat.h>  // for stat, mkdir
+#include <errno.h>     // for errno
+#include <stdio.h>     // for fprintf, ferror, fclose, size_t, stderr
+#include <stdlib.h>    // for EXIT_FAILURE, free, EXIT_SUCCESS, malloc
+#include <string.h>    // for strerror, strlen, strdup
+#include <sys/stat.h>  // for stat, mkdir, S_IRWXU
 
 #include "../include/router.h"  // for Router, addLink, MAX_NEIGHBORS
 

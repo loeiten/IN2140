@@ -1,10 +1,10 @@
 #include "../include/receiver.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>   // for fprintf, fflush, printf
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 
-#include "../../utils/include/common.h"
-#include "../../utils/include/dynamic_memory.h"
+#include "../../utils/include/common.h"          // for getIndexFromAddress
+#include "../../utils/include/dynamic_memory.h"  // for freeEdgeCounterArray
 
 int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
                           struct EdgeArray* invalidEdgesArray, int n) {
