@@ -379,11 +379,13 @@ void testCheckAllNodesReceived(void) {
 
 void testCreateAdjacencyMatrix(void) {
 #define N (1)
-  struct ReceivedNode* receivedNodeArray = NULL;
-  struct EdgeArray* invalidEdgesArray = NULL;
-  int** adjacencyMatrix = NULL;
-  int success = createAdjacencyMatrix(receivedNodeArray, invalidEdgesArray,
-                                      &adjacencyMatrix, N);
+  const struct ReceivedNode* receivedNodeArray = NULL;
+  const struct EdgeArray* invalidEdgesArray = NULL;
+  const struct IndexToAddress* indexToAddress = NULL;
+  const int** adjacencyMatrix = NULL;
+  assert(0 == 1);
+  int success = createAdjacencyMatrix(receivedNodeArray, indexToAddress,
+                                      invalidEdgesArray, &adjacencyMatrix, N);
   assert(success == EXIT_SUCCESS);
 #undef N
 }

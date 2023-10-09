@@ -57,7 +57,7 @@ run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 
 # RECEIVER
 # ==============================================================================
-$(TEST_EXEC_DIR)/test_receiver: $(BUILD_TEST_DIR)/test_receiver.o $(BUILD_OBJ_DIR)/receiver.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+$(TEST_EXEC_DIR)/test_receiver: $(BUILD_TEST_DIR)/test_receiver.o $(BUILD_OBJ_DIR)/receiver.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
@@ -93,7 +93,7 @@ run_test_receiver_7: $(TEST_EXEC_DIR)/test_receiver
 
 # ROUTE
 # ==============================================================================
-$(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/route.o $(BUILD_OBJ_DIR)/dynamic_memory.o $(LIB_DIR)/libprint.$(LIB_EXTENSION)
+$(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/route.o $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@

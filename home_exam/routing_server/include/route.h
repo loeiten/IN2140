@@ -1,20 +1,14 @@
 #ifndef HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
 
+struct IndexToAddress;
+
 /**
  * @brief Representation of a route to an endpoint using indices
  */
 struct Route {
   int nHops;  /**< Number of hops from the starting point */
   int *route; /**< The route taken */
-};
-
-/**
- * @brief Map from index to node id
- */
-struct IndexToAddress {
-  int n;    /**< Number of elements */
-  int *map; /**< The index to id map */
 };
 
 /**

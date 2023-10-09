@@ -6,6 +6,7 @@
 #include <string.h>  // for strcmp
 
 #include "../routing_server/include/route.h"  // for RoutingTable, Destinati...
+#include "../utils/include/common.h"          // for freeRoutingTable
 #include "../utils/include/dynamic_memory.h"  // for freeRoutingTable
 
 // NOTE: We are not specifying the full path here

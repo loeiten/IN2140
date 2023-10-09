@@ -3,9 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// FIXME: Consider moving to common
+#include "../../utils/include/common.h"
 #include "../../utils/include/dynamic_memory.h"
-#include "../include/route.h"
 
 int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
                           struct EdgeArray* invalidEdgesArray, int n) {
@@ -294,19 +293,4 @@ int createAdjacencyMatrix(const struct ReceivedNode* const receivedNodeArray,
   }
 
   return EXIT_SUCCESS;
-}
-
-int getIndexFromAddress(const int address,
-                        const struct IndexToAddress* const indexToAddress,
-                        int* index) {
-  *index = -1;
-  for (int i = 0; i < indexToAddress->n; ++i) {
-    if (address == indexToAddress->map[i]) {
-      *index = i;
-      return EXIT_SUCCESS;
-    }
-  }
-  fprintf(stderr, "Could not find address %d in the indexToAddress map\n",
-          address);
-  return EXIT_FAILURE;
 }

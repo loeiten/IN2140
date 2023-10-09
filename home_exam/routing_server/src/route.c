@@ -3,6 +3,7 @@
 #include <stdio.h>   // for perror, NULL, fprintf, stderr
 #include <stdlib.h>  // for calloc, malloc, EXIT_FAILURE
 
+#include "../../utils/include/common.h"
 #include "../../utils/include/dynamic_memory.h"
 
 // NOTE: We are not specifying the full path here
