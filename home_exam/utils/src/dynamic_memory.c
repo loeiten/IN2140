@@ -161,3 +161,48 @@ void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray) {
     (*edgeCounterArray) = NULL;
   }
 }
+
+int allocateReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n,
+                              const char *name) {
+  (*receivedNodeArray) =
+      (struct ReceivedNode *)calloc(n, sizeof(struct ReceivedNode));
+  if ((*receivedNodeArray) == NULL) {
+    fprintf(stderr, "Could not allocate memory to %s", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+int allocateReceivedNodeNeighborAndWeights(struct ReceivedNode *receivedNode,
+                                           int nNeighbors, const char *name) {
+  receivedNode->nNeighbors = nNeighbors;
+  int success =
+      allocateIntArray(&(receivedNode->neighborAddresses), nNeighbors, name);
+  if (success != EXIT_SUCCESS) {
+    receivedNode->nNeighbors = -1;
+    fprintf(stderr, "Could not allocate memory to the neighbors of %s", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+  success = allocateIntArray(&(receivedNode->edgeWeights), nNeighbors, name);
+  if (success != EXIT_SUCCESS) {
+    receivedNode->nNeighbors = -1;
+    fprintf(stderr, "Could not allocate memory to the edgeWeights of %s", name);
+    perror(": ");
+    freeIntArray(&(receivedNode->neighborAddresses));
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+void freeReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n) {
+  if ((*receivedNodeArray) == NULL) {
+    return;
+  }
+  for (int i = 0; i < n; ++i) {
+    freeIntArray(&((*receivedNodeArray)[i].neighborAddresses));
+    freeIntArray(&((*receivedNodeArray)[i].edgeWeights));
+  }
+  (*receivedNodeArray) = NULL;
+}

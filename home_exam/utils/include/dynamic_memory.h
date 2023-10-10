@@ -4,6 +4,7 @@
 struct Route;
 struct RoutingTable;
 struct EdgeCounter;
+struct ReceivedNode;
 
 /**
  * @brief Allocate an int array
@@ -108,5 +109,35 @@ int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
  * @param edgeCounterArray The array of edge counters
  */
 void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray);
+
+/**
+ * @brief Allocate memory to the received node array
+ *
+ * @param receivedNodeArray The array of received nodes
+ * @param n The number of received nodes
+ * @param name Name of the received node array
+ * @returns 0 on success, 1 on error
+ */
+int allocateReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n,
+                              const char *name);
+
+/**
+ * @brief Allocate memory to the neighbor addresses and corresponding weights
+ *
+ * @param receivedNode The received node
+ * @param nNeighbors The number of neighbors
+ * @param name Name of the neighbor
+ * @returns 0 on success, 1 on error
+ */
+int allocateReceivedNodeNeighborAndWeights(struct ReceivedNode *receivedNode,
+                                           int nNeighbors, const char *name);
+
+/**
+ * @brief Free the memory of the received node array
+ *
+ * @param receivedNodeArray The array of received nodes
+ * @param n The number of received nodes
+ */
+void freeReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n);
 
 #endif  // HOME_EXAM_UTILS_INCLUDE_DYNAMIC_MEMORY_H_

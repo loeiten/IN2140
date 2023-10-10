@@ -5,6 +5,7 @@
 #include <string.h>  // for strcmp
 
 #include "../routing_server/include/receiver.h"  // for Edge, EdgeCounter
+#include "../utils/include/dynamic_memory.h"     // for Edge, EdgeCounter
 
 void testIsEdgePresent(void) {
 #define N (3)
@@ -266,6 +267,104 @@ void testCheckIfEdgeIsValid(void) {
 #undef N
 }
 
+int createInvertedAGraphReceivedNodeArray(
+    struct ReceivedNode** receivedNodeArray) {
+  // Graph
+  // The weight are written on the edges
+  // The ids are written on the vertices
+  // The indices are written in square brackets
+  //   10 [2]   17 [4]
+  //   1 |   2    | 1
+  //   3 [1] - 5 [3]
+  //   1  \     /  3
+  //       1 [0]
+  int n = 5;
+  int success;
+
+  // Malloc the receivedNodeArray
+  success = allocateReceivedNodeArray(receivedNodeArray, n,
+                                      "receivedNodeArray of invertedAGraph");
+  if (success != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
+  }
+
+  // Fill the receivedNodeArray
+  // Node 1
+  success = allocateReceivedNodeNeighborAndWeights(&((*receivedNodeArray)[0]),
+                                                   2, "receivedNodeArray[0]");
+  if (success != EXIT_SUCCESS) {
+    freeReceivedNodeArray(receivedNodeArray, n);
+    return EXIT_FAILURE;
+  }
+  (*receivedNodeArray)[0].address = 1;
+  (*receivedNodeArray)[0].neighborAddresses[0] = 3;
+  (*receivedNodeArray)[0].neighborAddresses[1] = 5;
+  (*receivedNodeArray)[0].edgeWeights[0] = 1;
+  (*receivedNodeArray)[0].edgeWeights[1] = 3;
+  // Node 3
+  success = allocateReceivedNodeNeighborAndWeights(&((*receivedNodeArray)[1]),
+                                                   3, "receivedNodeArray[1]");
+  if (success != EXIT_SUCCESS) {
+    freeReceivedNodeArray(receivedNodeArray, n);
+    return EXIT_FAILURE;
+  }
+  (*receivedNodeArray)[1].address = 3;
+  (*receivedNodeArray)[1].neighborAddresses[0] = 1;
+  (*receivedNodeArray)[1].neighborAddresses[1] = 5;
+  (*receivedNodeArray)[1].neighborAddresses[2] = 10;
+  (*receivedNodeArray)[1].edgeWeights[0] = 1;
+  (*receivedNodeArray)[1].edgeWeights[1] = 2;
+  (*receivedNodeArray)[1].edgeWeights[2] = 1;
+  // Node 5
+  success = allocateReceivedNodeNeighborAndWeights(&((*receivedNodeArray)[2]),
+                                                   3, "receivedNodeArray[2]");
+  if (success != EXIT_SUCCESS) {
+    freeReceivedNodeArray(receivedNodeArray, n);
+    return EXIT_FAILURE;
+  }
+  (*receivedNodeArray)[2].address = 5;
+  (*receivedNodeArray)[2].neighborAddresses[0] = 3;
+  (*receivedNodeArray)[2].neighborAddresses[1] = 1;
+  (*receivedNodeArray)[2].neighborAddresses[2] = 17;
+  (*receivedNodeArray)[2].edgeWeights[0] = 2;
+  (*receivedNodeArray)[2].edgeWeights[1] = 3;
+  (*receivedNodeArray)[2].edgeWeights[2] = 1;
+  // Node 10
+  success = allocateReceivedNodeNeighborAndWeights(&((*receivedNodeArray)[3]),
+                                                   1, "receivedNodeArray[3]");
+  if (success != EXIT_SUCCESS) {
+    freeReceivedNodeArray(receivedNodeArray, n);
+    return EXIT_FAILURE;
+  }
+  (*receivedNodeArray)[3].address = 10;
+  (*receivedNodeArray)[3].neighborAddresses[0] = 3;
+  (*receivedNodeArray)[3].edgeWeights[0] = 1;
+  // Node 17
+  success = allocateReceivedNodeNeighborAndWeights(&((*receivedNodeArray)[4]),
+                                                   1, "receivedNodeArray[4]");
+  if (success != EXIT_SUCCESS) {
+    freeReceivedNodeArray(receivedNodeArray, n);
+    return EXIT_FAILURE;
+  }
+  (*receivedNodeArray)[4].address = 17;
+  (*receivedNodeArray)[4].neighborAddresses[0] = 5;
+  (*receivedNodeArray)[4].edgeWeights[0] = 1;
+
+  return EXIT_SUCCESS;
+}
+
+//  int max_edges = n * (n - 1) / 2;
+//  struct Edge edgeArray[MAX_EDGES];
+//  // Initialize the edgeArray
+//  for (int i = 0; i < MAX_EDGES; ++i) {
+//    edgeArray[i].lowNodeAddress = -1;
+//    edgeArray[i].highNodeAddress = -1;
+//  }
+//  struct EdgeArray invalidEdgesArray = {
+//      .array = edgeArray, .firstAvailablePosition = 0, .maxEdges = MAX_EDGES};
+//
+//  struct EdgeArray* invalidEdgesArrayPtr = &invalidEdgesArray;
+
 void testCheckAllNodesReceived(void) {
 #define N (5)
 // NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
@@ -279,38 +378,8 @@ void testCheckAllNodesReceived(void) {
   //   3 [1] - 5 [3]
   //   1  \     /  3
   //       1 [0]
-  int neighborAddress1[2] = {3, 5};
-  int edgeWeights1[2] = {1, 3};
-  int neighborAddress3[3] = {1, 5, 10};
-  int edgeWeights3[3] = {1, 2, 1};
-  int neighborAddress5[3] = {3, 1, 17};
-  int edgeWeights5[3] = {2, 3, 1};
-  int neighborAddress10[1] = {3};
-  int edgeWeights10[1] = {1};
-  int neighborAddress17[1] = {5};
-  int edgeWeights17[1] = {1};
-  struct ReceivedNode receivedNodeArray[N] = {
-      {.address = 1,
-       .nNeighbors = 2,
-       .neighborAddresses = neighborAddress1,
-       .edgeWeights = edgeWeights1},
-      {.address = 3,
-       .nNeighbors = 3,
-       .neighborAddresses = neighborAddress3,
-       .edgeWeights = edgeWeights3},
-      {.address = 5,
-       .nNeighbors = 3,
-       .neighborAddresses = neighborAddress5,
-       .edgeWeights = edgeWeights5},
-      {.address = 10,
-       .nNeighbors = 1,
-       .neighborAddresses = neighborAddress10,
-       .edgeWeights = edgeWeights10},
-      {.address = 17,
-       .nNeighbors = 1,
-       .neighborAddresses = neighborAddress17,
-       .edgeWeights = edgeWeights17},
-  };
+  struct ReceivedNode* receivedNodeArray = NULL;
+  createInvertedAGraphReceivedNodeArray(&receivedNodeArray);
   struct Edge edgeArray[MAX_EDGES];
   // Initialize the edgeArray
   for (int i = 0; i < MAX_EDGES; ++i) {
@@ -334,22 +403,42 @@ void testCheckAllNodesReceived(void) {
 
   // Modify for report more than twice
   // Let the node 1 appear twice in the secondly processed node
-  int neighborAddress3Mod[4] = {1, 5, 10, 1};
-  int edgeWeights3Mod[4] = {1, 2, 1, 1};
-  receivedNodeArray[1].neighborAddresses = neighborAddress3Mod;
-  receivedNodeArray[1].edgeWeights = edgeWeights3Mod;
-  receivedNodeArray[1].nNeighbors = 4;
+#define N_NEIGHBORS (4)
+  receivedNodeArray[1].nNeighbors = N_NEIGHBORS;
+  receivedNodeArray[1].neighborAddresses = (int*)realloc(
+      receivedNodeArray[1].neighborAddresses, N_NEIGHBORS * sizeof(int));
+  assert(receivedNodeArray[1].neighborAddresses != NULL);
+  receivedNodeArray[1].edgeWeights = (int*)realloc(
+      receivedNodeArray[1].edgeWeights, N_NEIGHBORS * sizeof(int));
+  assert(receivedNodeArray[1].neighborAddresses != NULL);
+  const int neighborAddress3Mod[N_NEIGHBORS] = {1, 5, 10, 1};
+  const int edgeWeights3Mod[N_NEIGHBORS] = {1, 2, 1, 1};
+  for (int i = 0; i < N_NEIGHBORS; ++i) {
+    receivedNodeArray[1].neighborAddresses[i] = neighborAddress3Mod[i];
+    receivedNodeArray[1].edgeWeights[i] = edgeWeights3Mod[i];
+  }
+#undef N_NEIGHBORS
+#define N_NEIGHBORS (3)
   // Modify to trigger addressOfFirstIndex is the same
   // Let the node 1 appear twice in the firstly processed node
-  int neighborAddress1Mod[3] = {3, 5, 5};
-  int edgeWeights1Mod[3] = {1, 3, 3};
-  receivedNodeArray[0].neighborAddresses = neighborAddress1Mod;
-  receivedNodeArray[0].edgeWeights = edgeWeights1Mod;
-  receivedNodeArray[0].nNeighbors = 3;
+  receivedNodeArray[0].nNeighbors = N_NEIGHBORS;
+  receivedNodeArray[0].neighborAddresses = (int*)realloc(
+      receivedNodeArray[0].neighborAddresses, N_NEIGHBORS * sizeof(int));
+  assert(receivedNodeArray[0].neighborAddresses != NULL);
+  receivedNodeArray[0].edgeWeights = (int*)realloc(
+      receivedNodeArray[0].edgeWeights, N_NEIGHBORS * sizeof(int));
+  assert(receivedNodeArray[0].edgeWeights != NULL);
+  const int neighborAddress1Mod[N_NEIGHBORS] = {3, 5, 5};
+  const int edgeWeights1Mod[N_NEIGHBORS] = {1, 3, 3};
+  for (int i = 0; i < N_NEIGHBORS; ++i) {
+    receivedNodeArray[0].neighborAddresses[i] = neighborAddress1Mod[i];
+    receivedNodeArray[0].edgeWeights[i] = edgeWeights1Mod[i];
+  }
+#undef N_NEIGHBORS
   // Modify for different weights
   // Modify the last processed node with a different weight
-  int edgeWeights10Mod[1] = {7};
-  receivedNodeArray[3].edgeWeights = edgeWeights10Mod;
+  const int edgeWeights10Mod[1] = {7};
+  receivedNodeArray[3].edgeWeights[0] = edgeWeights10Mod[0];
   // Modify for report less than twice
   // Remove the connection from a node
   receivedNodeArray[4].nNeighbors = 0;
@@ -373,6 +462,8 @@ void testCheckAllNodesReceived(void) {
   // This is the edge which is reported only once
   assert(invalidEdgesArray.array[3].lowNodeAddress == 5);
   assert(invalidEdgesArray.array[3].highNodeAddress == 17);
+
+  freeReceivedNodeArray(&receivedNodeArray, N);
 #undef MAX_EDGES
 #undef N
 }
