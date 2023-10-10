@@ -353,18 +353,6 @@ int createInvertedAGraphReceivedNodeArray(
   return EXIT_SUCCESS;
 }
 
-//  int max_edges = n * (n - 1) / 2;
-//  struct Edge edgeArray[MAX_EDGES];
-//  // Initialize the edgeArray
-//  for (int i = 0; i < MAX_EDGES; ++i) {
-//    edgeArray[i].lowNodeAddress = -1;
-//    edgeArray[i].highNodeAddress = -1;
-//  }
-//  struct EdgeArray invalidEdgesArray = {
-//      .array = edgeArray, .firstAvailablePosition = 0, .maxEdges = MAX_EDGES};
-//
-//  struct EdgeArray* invalidEdgesArrayPtr = &invalidEdgesArray;
-
 void testCheckAllNodesReceived(void) {
 #define N (5)
 // NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
@@ -378,20 +366,16 @@ void testCheckAllNodesReceived(void) {
   //   3 [1] - 5 [3]
   //   1  \     /  3
   //       1 [0]
+  // Allocate and initialize
   struct ReceivedNode* receivedNodeArray = NULL;
-  createInvertedAGraphReceivedNodeArray(&receivedNodeArray);
-  struct Edge edgeArray[MAX_EDGES];
-  // Initialize the edgeArray
-  for (int i = 0; i < MAX_EDGES; ++i) {
-    edgeArray[i].lowNodeAddress = -1;
-    edgeArray[i].highNodeAddress = -1;
-  }
-  struct EdgeArray invalidEdgesArray = {
-      .array = edgeArray, .firstAvailablePosition = 0, .maxEdges = MAX_EDGES};
-
+  int success = createInvertedAGraphReceivedNodeArray(&receivedNodeArray);
+  assert(success == EXIT_SUCCESS);
+  struct EdgeArray invalidEdgesArray;
   struct EdgeArray* invalidEdgesArrayPtr = &invalidEdgesArray;
-  int success =
-      checkAllNodesReceived(receivedNodeArray, invalidEdgesArrayPtr, N);
+  success = allocateEdgeArray(invalidEdgesArrayPtr, MAX_EDGES, "edgeArray");
+  assert(success == EXIT_SUCCESS);
+
+  success = checkAllNodesReceived(receivedNodeArray, invalidEdgesArrayPtr, N);
   // Check that the test went successful
   assert(success == EXIT_SUCCESS);
   // Check that all the nodes are valid
@@ -463,6 +447,7 @@ void testCheckAllNodesReceived(void) {
   assert(invalidEdgesArray.array[3].lowNodeAddress == 5);
   assert(invalidEdgesArray.array[3].highNodeAddress == 17);
 
+  freeEdgeArray(invalidEdgesArrayPtr);
   freeReceivedNodeArray(&receivedNodeArray, N);
 #undef MAX_EDGES
 #undef N

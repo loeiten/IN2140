@@ -3,6 +3,7 @@
 
 struct Route;
 struct RoutingTable;
+struct EdgeArray;
 struct EdgeCounter;
 struct ReceivedNode;
 
@@ -46,7 +47,7 @@ int allocateIntMatrix(int ***intMatrix, const int n, const char *name);
 void freeIntMatrix(int ***intMatrix, int n);
 
 /**
- * @brief Allocate memory to the route array
+ * @brief Allocate memory to a route array
  *
  * @param routeArray Array of the route to the shortest route from src the the
  *                   other nodes in the graph.
@@ -71,7 +72,7 @@ int allocateRouteArray(struct Route **routeArray, const int n,
 void freeRouteArray(struct Route **routeArray, const int n);
 
 /**
- * @brief Allocate space to the routing table
+ * @brief Allocate space to a routing table
  *
  * @param routingTable The routing table, one for each node
  * @param n The number of nodes in the graph
@@ -89,11 +90,26 @@ int allocateRoutingTable(struct RoutingTable **routingTable, int n,
  */
 void freeRoutingTable(struct RoutingTable **routingTable, int n);
 
-int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray, int n,
-                             const char *name);
+/**
+ * @brief Allocate memory and initialize the values to an edge array
+ *
+ * @param edgeArray The array of edges
+ * @param maxEdges The maximum number of edges in the graph
+ * @param name Name of the edge counter
+ * @returns 0 on success, 1 on error
+ */
+int allocateEdgeArray(struct EdgeArray *edgeArray, int maxEdges,
+                      const char *name);
 
 /**
- * @brief Allocate memory to the edge counter array
+ * @brief Free the memory of the edge counter array
+ *
+ * @param edgeArray The array of edges
+ */
+void freeEdgeArray(struct EdgeArray *edgeArray);
+
+/**
+ * @brief Allocate memory to an edge counter array
  *
  * @param edgeCounterArray The array of edge counters
  * @param maxEdges The maximum number of edges in the graph
@@ -111,7 +127,7 @@ int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
 void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray);
 
 /**
- * @brief Allocate memory to the received node array
+ * @brief Allocate memory and initialize the values to a received node array
  *
  * @param receivedNodeArray The array of received nodes
  * @param n The number of received nodes
@@ -122,7 +138,7 @@ int allocateReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n,
                               const char *name);
 
 /**
- * @brief Allocate memory to the neighbor addresses and corresponding weights
+ * @brief Allocate memory to a neighbor addresses and corresponding weights
  *
  * @param receivedNode The received node
  * @param nNeighbors The number of neighbors

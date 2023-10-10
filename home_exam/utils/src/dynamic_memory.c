@@ -143,6 +143,34 @@ void freeRoutingTable(struct RoutingTable **routingTable, int n) {
   }
 }
 
+int allocateEdgeArray(struct EdgeArray *edgeArray, int maxEdges,
+                      const char *name) {
+  edgeArray->maxEdges = -1;
+  edgeArray->firstAvailablePosition = -1;
+  edgeArray->array = (struct Edge *)malloc(maxEdges * sizeof(struct Edge));
+  if (edgeArray->array == NULL) {
+    fprintf(stderr, "Could not allocate memory to %s", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+  for (int i = 0; i < maxEdges; ++i) {
+    edgeArray->array[i].lowNodeAddress = -1;
+    edgeArray->array[i].highNodeAddress = -1;
+  }
+  edgeArray->maxEdges = maxEdges;
+  edgeArray->firstAvailablePosition = 0;
+  return EXIT_SUCCESS;
+}
+
+void freeEdgeArray(struct EdgeArray *edgeArray) {
+  if (edgeArray->array != NULL) {
+    free(edgeArray->array);
+    edgeArray->array = NULL;
+  }
+  edgeArray->maxEdges = -1;
+  edgeArray->firstAvailablePosition = -1;
+}
+
 int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
                              int maxEdges, const char *name) {
   *edgeCounterArray =
@@ -170,6 +198,9 @@ int allocateReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n,
     fprintf(stderr, "Could not allocate memory to %s", name);
     perror(": ");
     return EXIT_FAILURE;
+  }
+  for (int i = 0; i < n; ++i) {
+    (*receivedNodeArray)[i].nNeighbors = -1;
   }
   return EXIT_SUCCESS;
 }
