@@ -5,6 +5,7 @@
 #include <string.h>  // for strcmp
 
 #include "../routing_server/include/receiver.h"  // for Edge, EdgeCounter
+#include "../utils/include/common.h"             // for Edge, EdgeCounter
 #include "../utils/include/dynamic_memory.h"     // for Edge, EdgeCounter
 
 void testIsEdgePresent(void) {
@@ -454,15 +455,71 @@ void testCheckAllNodesReceived(void) {
 }
 
 void testCreateAdjacencyMatrix(void) {
-#define N (1)
-  const struct ReceivedNode* receivedNodeArray = NULL;
-  const struct EdgeArray* invalidEdgesArray = NULL;
-  const struct IndexToAddress* indexToAddress = NULL;
-  int** adjacencyMatrix = NULL;
-  assert(0 == 1);
-  int success = createAdjacencyMatrix(receivedNodeArray, indexToAddress,
-                                      invalidEdgesArray, &adjacencyMatrix, N);
+#define N (5)
+// NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
+#define MAX_EDGES (N * (N - 1) / 2)
+  // Graph
+  // The weight are written on the edges
+  // The ids are written on the vertices
+  // The indices are written in square brackets
+  //   10 [2]   17 [4]
+  //   1 |   2    | 1
+  //   3 [1] - 5 [3]
+  //   1  \     /  3
+  //       1 [0]
+  // Allocate and initialize
+  struct ReceivedNode* receivedNodeArray = NULL;
+  int success = createInvertedAGraphReceivedNodeArray(&receivedNodeArray);
   assert(success == EXIT_SUCCESS);
+  struct EdgeArray invalidEdgesArray;
+  struct EdgeArray* invalidEdgesArrayPtr = &invalidEdgesArray;
+  success = allocateEdgeArray(invalidEdgesArrayPtr, MAX_EDGES, "edgeArray");
+  assert(success == EXIT_SUCCESS);
+
+  int map[N] = {1, 3, 5, 10, 17};
+  const struct IndexToAddress indexToAddress = {.n = N, .map = map};
+  int** adjacencyMatrix = NULL;
+  success = createAdjacencyMatrix(receivedNodeArray, &indexToAddress,
+                                  invalidEdgesArrayPtr, &adjacencyMatrix, N);
+  assert(success == EXIT_SUCCESS);
+
+  // Row 0 (connections from index 0)
+  assert(adjacencyMatrix[0][0] == 0);
+  assert(adjacencyMatrix[0][1] == 1);
+  assert(adjacencyMatrix[0][2] == 0);
+  assert(adjacencyMatrix[0][3] == 3);
+  assert(adjacencyMatrix[0][4] == 0);
+  // Row 1 (connections from index 1)
+  assert(adjacencyMatrix[1][0] == 1);
+  assert(adjacencyMatrix[1][1] == 0);
+  assert(adjacencyMatrix[1][2] == 1);
+  assert(adjacencyMatrix[1][3] == 2);
+  assert(adjacencyMatrix[1][4] == 0);
+  // Row 2 (connections from index 2)
+  assert(adjacencyMatrix[2][0] == 0);
+  assert(adjacencyMatrix[2][1] == 1);
+  assert(adjacencyMatrix[2][2] == 0);
+  assert(adjacencyMatrix[2][3] == 0);
+  assert(adjacencyMatrix[2][4] == 0);
+  // Row 3 (connections from index 3)
+  assert(adjacencyMatrix[3][0] == 3);
+  assert(adjacencyMatrix[3][1] == 2);
+  assert(adjacencyMatrix[3][2] == 0);
+  assert(adjacencyMatrix[3][3] == 0);
+  assert(adjacencyMatrix[3][4] == 1);
+  // Row 4 (connections from index 4)
+  assert(adjacencyMatrix[4][0] == 0);
+  assert(adjacencyMatrix[4][1] == 0);
+  assert(adjacencyMatrix[4][2] == 0);
+  assert(adjacencyMatrix[4][3] == 1);
+  assert(adjacencyMatrix[4][4] == 0);
+
+  freeEdgeArray(invalidEdgesArrayPtr);
+  freeReceivedNodeArray(&receivedNodeArray, N);
+  freeIntMatrix(&adjacencyMatrix, N);
+
+  // FIXME: Set up test with more brutal example
+#undef MAX_EDGES
 #undef N
 }
 
