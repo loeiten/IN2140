@@ -476,7 +476,7 @@ void testCreateAdjacencyMatrix(void) {
   success = allocateEdgeArray(invalidEdgesArrayPtr, MAX_EDGES, "edgeArray");
   assert(success == EXIT_SUCCESS);
 
-  int map[N] = {1, 3, 5, 10, 17};
+  int map[N] = {1, 3, 10, 5, 17};
   const struct IndexToAddress indexToAddress = {.n = N, .map = map};
   int** adjacencyMatrix = NULL;
   success = createAdjacencyMatrix(receivedNodeArray, &indexToAddress,
@@ -517,8 +517,6 @@ void testCreateAdjacencyMatrix(void) {
   freeEdgeArray(invalidEdgesArrayPtr);
   freeReceivedNodeArray(&receivedNodeArray, N);
   freeIntMatrix(&adjacencyMatrix, N);
-
-  // FIXME: Set up test with more brutal example
 #undef MAX_EDGES
 #undef N
 }

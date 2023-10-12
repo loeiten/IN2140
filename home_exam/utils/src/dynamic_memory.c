@@ -33,7 +33,7 @@ int allocateIntMatrix(int ***intMatrix, const int n, const char *name) {
   }
   // Allocate memory for each row individually
   for (int i = 0; i < n; i++) {
-    (*intMatrix)[i] = (int *)malloc(n * sizeof(int));
+    (*intMatrix)[i] = (int *)calloc(n, sizeof(int));
     if ((*intMatrix)[i] == NULL) {
       fprintf(stderr, "Memory allocation for %s failed for row %d", name, i);
       perror(": ");
