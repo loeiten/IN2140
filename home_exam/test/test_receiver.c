@@ -514,6 +514,52 @@ void testCreateAdjacencyMatrix(void) {
   assert(adjacencyMatrix[4][3] == 1);
   assert(adjacencyMatrix[4][4] == 0);
 
+  // Making edges invalid so that we end up with the following graph
+  //   10 [2]   17 [4]
+  //         2   | 1
+  //   3 [1] - 5 [3]
+  //   1  |
+  //   1 [0]
+  invalidEdgesArray.firstAvailablePosition = 2;
+  invalidEdgesArray.array[0].lowNodeAddress = 1;
+  invalidEdgesArray.array[0].highNodeAddress = 5;
+  invalidEdgesArray.array[1].lowNodeAddress = 3;
+  invalidEdgesArray.array[1].highNodeAddress = 10;
+  success = createAdjacencyMatrix(receivedNodeArray, &indexToAddress,
+                                  invalidEdgesArrayPtr, &adjacencyMatrix, N);
+  assert(success == EXIT_SUCCESS);
+
+  // Row 0 (connections from index 0)
+  assert(adjacencyMatrix[0][0] == 0);
+  assert(adjacencyMatrix[0][1] == 1);
+  assert(adjacencyMatrix[0][2] == 0);
+  assert(adjacencyMatrix[0][3] == 0);
+  assert(adjacencyMatrix[0][4] == 0);
+  // Row 1 (connections from index 1)
+  assert(adjacencyMatrix[1][0] == 1);
+  assert(adjacencyMatrix[1][1] == 0);
+  assert(adjacencyMatrix[1][2] == 0);
+  assert(adjacencyMatrix[1][3] == 2);
+  assert(adjacencyMatrix[1][4] == 0);
+  // Row 2 (connections from index 2)
+  assert(adjacencyMatrix[2][0] == 0);
+  assert(adjacencyMatrix[2][1] == 0);
+  assert(adjacencyMatrix[2][2] == 0);
+  assert(adjacencyMatrix[2][3] == 0);
+  assert(adjacencyMatrix[2][4] == 0);
+  // Row 3 (connections from index 3)
+  assert(adjacencyMatrix[3][0] == 0);
+  assert(adjacencyMatrix[3][1] == 2);
+  assert(adjacencyMatrix[3][2] == 0);
+  assert(adjacencyMatrix[3][3] == 0);
+  assert(adjacencyMatrix[3][4] == 1);
+  // Row 4 (connections from index 4)
+  assert(adjacencyMatrix[4][0] == 0);
+  assert(adjacencyMatrix[4][1] == 0);
+  assert(adjacencyMatrix[4][2] == 0);
+  assert(adjacencyMatrix[4][3] == 1);
+  assert(adjacencyMatrix[4][4] == 0);
+
   freeEdgeArray(invalidEdgesArrayPtr);
   freeReceivedNodeArray(&receivedNodeArray, N);
   freeIntMatrix(&adjacencyMatrix, N);
