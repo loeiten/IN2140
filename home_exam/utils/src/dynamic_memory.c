@@ -1,9 +1,9 @@
 #include "../include/dynamic_memory.h"
 
-#include <stdio.h>   // for NULL, fprintf
-#include <stdlib.h>  // for free, malloc, calloc
+#include <stdio.h>   // for fprintf, perror
+#include <stdlib.h>  // for free, calloc, malloc
 
-#include "../../routing_server/include/receiver.h"  // for EdgeCounter
+#include "../../routing_server/include/receiver.h"  // for EdgeArray, Receiv...
 #include "../../routing_server/include/route.h"     // for RoutingTable, Route
 
 int allocateIntArray(int **intArray, const int n, const char *name) {
