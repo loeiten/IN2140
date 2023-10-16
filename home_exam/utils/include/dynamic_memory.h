@@ -1,11 +1,12 @@
 #ifndef HOME_EXAM_UTILS_INCLUDE_DYNAMIC_MEMORY_H_
 #define HOME_EXAM_UTILS_INCLUDE_DYNAMIC_MEMORY_H_
 
-struct Route;
-struct RoutingTable;
 struct EdgeArray;
 struct EdgeCounter;
+struct IndexToAddress;
 struct ReceivedNode;
+struct Route;
+struct RoutingTable;
 
 /**
  * @brief Allocate an int array
@@ -155,5 +156,64 @@ int allocateReceivedNodeNeighborAndWeights(struct ReceivedNode *receivedNode,
  * @param n The number of received nodes
  */
 void freeReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n);
+
+/**
+ * @brief Allocate memory to an index to address struct
+ *
+ * @param indexToAddress The index to address struct
+ * @param n The number of nodes
+ * @param name Name of the index to address struct
+ * @returns 0 on success, 1 on error
+ */
+int allocateIndexToAddress(struct IndexToAddress *indexToAddress, int n,
+                           const char *name);
+
+/**
+ * @brief Free the memory of the edge counter array
+ *
+ * @param indexToAddress The index to address struct
+ */
+void freeIndexToAddress(struct IndexToAddress *indexToAddress);
+
+/**
+ * @brief Allocate all memory for the routing server
+ *
+ * @param receivedNodeArray The array of received nodes
+ * @param invalidEdgesArray The invalid edges array
+ * @param indexToAddress The index to array map
+ * @param adjacencyMatrix The adjacency matrix
+ * @param distanceArray The distance array
+ * @param routeArray The route array
+ * @param routingTable The routing table
+ * @param n The number of nodes
+ * @param maxEdges The maximum number of edges
+ * @return 0 on success, 1 on error
+ */
+int allocateRoutingServer(struct ReceivedNode **receivedNodeArray,
+                          struct EdgeArray *invalidEdgesArray,
+                          struct IndexToAddress *indexToAddress,
+                          int ***adjacencyMatrix, int **distanceArray,
+                          struct Route **routeArray,
+                          struct RoutingTable **routingTable, int n,
+                          int maxEdges);
+
+/**
+ * @brief Free memory allocated to the routing server
+ *
+ * @param receivedNodeArray The array of received nodes
+ * @param invalidEdgesArray The invalid edges array
+ * @param indexToAddress The index to array map
+ * @param adjacencyMatrix The adjacency matrix
+ * @param distanceArray The distance array
+ * @param routeArray The route array
+ * @param routingTable The routing table
+ * @param n The number of nodes
+ */
+void freeRoutingServer(struct ReceivedNode **receivedNodeArray,
+                       struct EdgeArray *invalidEdgesArray,
+                       struct IndexToAddress *indexToAddress,
+                       int ***adjacencyMatrix, int **distanceArray,
+                       struct Route **routeArray,
+                       struct RoutingTable **routingTable, int n);
 
 #endif  // HOME_EXAM_UTILS_INCLUDE_DYNAMIC_MEMORY_H_

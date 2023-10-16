@@ -5,6 +5,7 @@
 
 #include "../../routing_server/include/receiver.h"  // for EdgeArray, Receiv...
 #include "../../routing_server/include/route.h"     // for RoutingTable, Route
+#include "../include/common.h"
 
 int allocateIntArray(int **intArray, const int n, const char *name) {
   *intArray = (int *)malloc(n * sizeof(int));
@@ -236,4 +237,115 @@ void freeReceivedNodeArray(struct ReceivedNode **receivedNodeArray, int n) {
     freeIntArray(&((*receivedNodeArray)[i].edgeWeights));
   }
   (*receivedNodeArray) = NULL;
+}
+
+int allocateIndexToAddress(struct IndexToAddress *indexToAddress, int n,
+                           const char *name) {
+  indexToAddress->n = -1;
+  indexToAddress->map = (int *)malloc(n * sizeof(int));
+  if (indexToAddress->map == NULL) {
+    fprintf(stderr, "Could not allocate memory to %s", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+  indexToAddress->n = n;
+  return EXIT_SUCCESS;
+}
+
+void freeIndexToAddress(struct IndexToAddress *indexToAddress) {
+  if (indexToAddress->map != NULL) {
+    free(indexToAddress->map);
+    indexToAddress->map = NULL;
+  }
+  indexToAddress->n = -1;
+}
+
+int allocateRoutingServer(struct ReceivedNode **receivedNodeArray,
+                          struct EdgeArray *invalidEdgesArray,
+                          struct IndexToAddress *indexToAddress,
+                          int ***adjacencyMatrix, int **distanceArray,
+                          struct Route **routeArray,
+                          struct RoutingTable **routingTable, int n,
+                          int maxEdges) {
+  // receivedNodeArray
+  int success =
+      allocateReceivedNodeArray(receivedNodeArray, n, "receivedNodeArray");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr,
+            "Allocation of memory to receivedNodeArray failed, exiting\n");
+    return EXIT_FAILURE;
+  }
+  // invalidEdgesArray
+  success = allocateEdgeArray(invalidEdgesArray, maxEdges, "invalidEdgesArray");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr,
+            "Allocation of memory to invalidEdgesArray failed, exiting\n");
+    freeRoutingServer(receivedNodeArray, invalidEdgesArray, indexToAddress,
+                      adjacencyMatrix, distanceArray, routeArray, routingTable,
+                      n);
+    return EXIT_FAILURE;
+  }
+  // indexToAddress
+  success = allocateIndexToAddress(indexToAddress, n, "indexToAddress");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Allocation of memory to indexToAddress failed, exiting\n");
+    freeRoutingServer(receivedNodeArray, invalidEdgesArray, indexToAddress,
+                      adjacencyMatrix, distanceArray, routeArray, routingTable,
+                      n);
+    return EXIT_FAILURE;
+  }
+  // adjacencyMatrix
+  success = allocateIntMatrix(adjacencyMatrix, n, "adjacencyMatrix");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr,
+            "Allocation of memory to adjacencyMatrix failed, exiting\n");
+    freeRoutingServer(receivedNodeArray, invalidEdgesArray, indexToAddress,
+                      adjacencyMatrix, distanceArray, routeArray, routingTable,
+                      n);
+    return EXIT_FAILURE;
+  }
+  // distanceArray
+  success = allocateIntArray(distanceArray, n, "distanceArray");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Allocation of memory to distanceArray failed, exiting\n");
+    freeRoutingServer(receivedNodeArray, invalidEdgesArray, indexToAddress,
+                      adjacencyMatrix, distanceArray, routeArray, routingTable,
+                      n);
+    return EXIT_FAILURE;
+  }
+  // routeArray
+  success = allocateRouteArray(routeArray, n, "routeArray");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Allocation of memory to routeArray failed, exiting\n");
+    freeRoutingServer(receivedNodeArray, invalidEdgesArray, indexToAddress,
+                      adjacencyMatrix, distanceArray, routeArray, routingTable,
+                      n);
+    return EXIT_FAILURE;
+  }
+  // routingTable
+  success = allocateRoutingTable(routingTable, n, "routingTable");
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Allocation of memory to routingTable failed, exiting\n");
+    freeRoutingServer(receivedNodeArray, invalidEdgesArray, indexToAddress,
+                      adjacencyMatrix, distanceArray, routeArray, routingTable,
+                      n);
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+void freeRoutingServer(struct ReceivedNode **receivedNodeArray,
+                       struct EdgeArray *invalidEdgesArray,
+                       struct IndexToAddress *indexToAddress,
+                       int ***adjacencyMatrix, int **distanceArray,
+                       struct Route **routeArray,
+                       struct RoutingTable **routingTable, int n) {
+  freeReceivedNodeArray(receivedNodeArray, n);
+  freeEdgeArray(invalidEdgesArray);
+  freeIndexToAddress(indexToAddress);
+  freeIntMatrix(adjacencyMatrix, n);
+  freeIntArray(distanceArray);
+  freeRouteArray(routeArray, n);
+  freeRoutingTable(routingTable, n);
 }
