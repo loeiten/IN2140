@@ -17,7 +17,6 @@ ROUTING_SERVER_SRC := $(patsubst %/,%,$(ROUTING_SERVER_SRC))
 OBJECT_FILES := $(patsubst $(ROUTING_SERVER_SRC)%.c,$(BUILD_OBJ_DIR)%.o,$(ROUTING_SERVER_SOURCE_FILES))
 
 # Build the final executable
-# NOTE: We also have an dependency on dynamic_memory.o
 $(EXEC_DIR)/routing_server: $(OBJECT_FILES) $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
 	$(call explain_build,Building routing_server)
 	mkdir -p $(EXEC_DIR)

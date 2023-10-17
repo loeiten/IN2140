@@ -14,7 +14,7 @@ struct Route;
  * Drawback: Less cache friendly
  * Pro: One can access the elements by using [row][col]
  *
- * @param src The id of the source
+ * @param src The index of the source
  * @param adjacencyMatrix The graph to traverse given as an adjacency matrix.
  *              The adjacency matrix will have INT_MAX where if there are no
  *              connection between the nodes
