@@ -149,4 +149,25 @@ int createAdjacencyMatrix(const struct ReceivedNode* const receivedNodeArray,
                           const struct EdgeArray* const invalidEdgesArray,
                           int*** adjacencyMatrix, const int n);
 
+/**
+ * @brief Get the a listen socket
+ *
+ * @param listenPort The port to bind the socket to
+ * @param listenSocket The socket descriptor
+ * @return 0 on success, 1 on error
+ */
+int getListenSocket(const int listenPort, int* const listenSocket);
+
+/**
+ * @brief Populate the received node array
+ *
+ * @param listenSocket The socket descriptor which listens
+ * @param receivedNodeArray Array of the received nodes
+ * @param n The number of nodes in the graph
+ * @return 0 on success, 1 on error
+ */
+int populateReceivedNodeArray(const int listenSocket,
+                              struct ReceivedNode* receivedNodeArray,
+                              const int n);
+
 #endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_RECEIVER_H_

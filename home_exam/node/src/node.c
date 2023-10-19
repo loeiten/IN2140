@@ -1,9 +1,6 @@
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, stderr, NULL
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_S...
-
-#include "../../utils/include/common.h"          // for IndexToAddress
-#include "../../utils/include/dynamic_memory.h"  // for allocateRoutingServer
+#include <stdio.h>   // for fprintf, stderr
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 
 int main(int argc, char** argv) {
   if (argc < 3) {
