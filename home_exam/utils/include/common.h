@@ -2,6 +2,16 @@
 #define HOME_EXAM_UTILS_INCLUDE_COMMON_H_
 
 /**
+ * @brief Struct representing the communicated node
+ */
+struct CommunicatedNode {
+  int address;            /**< The address of this node */
+  int nNeighbors;         /**< The number of neighbors */
+  int* neighborAddresses; /**< Addresses to the other neighbors */
+  int* edgeWeights;       /**< Weight to the neighbors */
+};
+
+/**
  * @brief Map from index to node id
  */
 struct IndexToAddress {

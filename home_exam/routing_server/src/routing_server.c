@@ -25,21 +25,22 @@ int main(int argc, char** argv) {
   int maxEdges = (n * (n - 1) / 2);
 
   // Allocate memory
-  struct ReceivedNode* receivedNodeArray = NULL;
+  struct CommunicatedNode* communicatedNodeArray = NULL;
   struct EdgeArray invalidEdgesArray;
   struct IndexToAddress indexToAddress;
   int** adjacencyMatrix = NULL;
   int* distanceArray = NULL;
   struct Route* routeArray = NULL;
   struct RoutingTable* routingTable = NULL;
-  int success = allocateRoutingServer(
-      &receivedNodeArray, &invalidEdgesArray, &indexToAddress, &adjacencyMatrix,
-      &distanceArray, &routeArray, &routingTable, n, maxEdges);
+  int success =
+      allocateRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                            &indexToAddress, &adjacencyMatrix, &distanceArray,
+                            &routeArray, &routingTable, n, maxEdges);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory failed, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     return EXIT_FAILURE;
   }
 
@@ -47,9 +48,9 @@ int main(int argc, char** argv) {
   success = getListenSocket(listenPort, &listenSocket);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Obtaining the listen socket failed, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     if (listenSocket != -1) {
       close(listenSocket);
       listenSocket = -1;
@@ -57,40 +58,41 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  success = populateReceivedNodeArray(listenSocket, receivedNodeArray, n);
+  success =
+      populateCommunicatedNodeArray(listenSocket, communicatedNodeArray, n);
   if (success != EXIT_SUCCESS) {
-    fprintf(stderr, "Populating the received node array failed, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    fprintf(stderr, "Populating the communicated node array failed, exiting\n");
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     close(listenSocket);
     return EXIT_FAILURE;
   }
 
   // Fill the index to address struct
   for (int i = 0; i < n; ++i) {
-    indexToAddress.map[i] = receivedNodeArray[i].address;
+    indexToAddress.map[i] = communicatedNodeArray[i].address;
   }
 
   // Test if edge has been reported twice
-  success = checkAllNodesReceived(receivedNodeArray, &invalidEdgesArray, n);
+  success = checkAllNodesReceived(communicatedNodeArray, &invalidEdgesArray, n);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "The checking of all nodes failed, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     close(listenSocket);
     return EXIT_FAILURE;
   }
 
   // Create the adjacency matrix
-  success = createAdjacencyMatrix(receivedNodeArray, &indexToAddress,
+  success = createAdjacencyMatrix(communicatedNodeArray, &indexToAddress,
                                   &invalidEdgesArray, &adjacencyMatrix, n);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Could not create the adjacency matrix, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     close(listenSocket);
     return EXIT_FAILURE;
   }
@@ -105,9 +107,9 @@ int main(int argc, char** argv) {
     fprintf(
         stderr,
         "Could not find shortest path using Dijkstra's algorithm, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     close(listenSocket);
     return EXIT_FAILURE;
   }
@@ -119,9 +121,9 @@ int main(int argc, char** argv) {
   success = createRoutingTables(routeArray, &routingTable, n);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Could not create the routing tables, exiting\n");
-    freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
-                      &adjacencyMatrix, &distanceArray, &routeArray,
-                      &routingTable, n);
+    freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,
+                      &indexToAddress, &adjacencyMatrix, &distanceArray,
+                      &routeArray, &routingTable, n);
     close(listenSocket);
     return EXIT_FAILURE;
   }
@@ -133,7 +135,7 @@ int main(int argc, char** argv) {
   close(listenSocket);
 
   // Free memory
-  freeRoutingServer(&receivedNodeArray, &invalidEdgesArray, &indexToAddress,
+  freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray, &indexToAddress,
                     &adjacencyMatrix, &distanceArray, &routeArray,
                     &routingTable, n);
   return EXIT_SUCCESS;

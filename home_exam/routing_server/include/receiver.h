@@ -2,16 +2,7 @@
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_RECEIVER_H_
 
 struct IndexToAddress;
-
-/**
- * @brief Struct representing the received node
- */
-struct ReceivedNode {
-  int address;            /**< The address of this node */
-  int nNeighbors;         /**< The number of neighbors */
-  int* neighborAddresses; /**< Addresses to the other neighbors */
-  int* edgeWeights;       /**< Weight to the neighbors */
-};
+struct CommunicatedNode;
 
 /**
  * @brief Struct representing an edge
@@ -62,12 +53,12 @@ struct EdgeCounterArray {
  * For edges where this is not the case, a warning will be printed and the edge
  * will be added to the invalidEdgesArray.
  *
- * @param receivedNodeArray Array of the received nodes
+ * @param communicatedNodeArray Array of the communicated nodes
  * @param invalidEdgesArray Array of the non-valid edges
  * @param n The number of nodes in the graph
  * @returns 0 on success, 1 on error
  */
-int checkAllNodesReceived(struct ReceivedNode* receivedNodeArray,
+int checkAllNodesReceived(struct CommunicatedNode* communicatedNodeArray,
                           struct EdgeArray* invalidEdgesArray, int n);
 
 /**
@@ -138,16 +129,17 @@ int checkDualReport(const struct EdgeCounterArray* const edgeCounterArray,
 /**
  * @brief Create the adjacency matrix
  *
- * @param receivedNodeArray Array of the received nodes
+ * @param communicatedNodeArray Array of the communicated nodes
  * @param invalidEdgesArray Array of the non-valid edges
  * @param adjacencyMatrix The adjacency matrix of the graph
  * @param n The number of nodes in the graph
  * @returns 0 on success, 1 on error
  */
-int createAdjacencyMatrix(const struct ReceivedNode* const receivedNodeArray,
-                          const struct IndexToAddress* const indexToAddress,
-                          const struct EdgeArray* const invalidEdgesArray,
-                          int*** adjacencyMatrix, const int n);
+int createAdjacencyMatrix(
+    const struct CommunicatedNode* const communicatedNodeArray,
+    const struct IndexToAddress* const indexToAddress,
+    const struct EdgeArray* const invalidEdgesArray, int*** adjacencyMatrix,
+    const int n);
 
 /**
  * @brief Get the a listen socket
@@ -159,15 +151,15 @@ int createAdjacencyMatrix(const struct ReceivedNode* const receivedNodeArray,
 int getListenSocket(const int listenPort, int* const listenSocket);
 
 /**
- * @brief Populate the received node array
+ * @brief Populate the communicated node array
  *
  * @param listenSocket The socket descriptor which listens
- * @param receivedNodeArray Array of the received nodes
+ * @param communicatedNodeArray Array of the communicated nodes
  * @param n The number of nodes in the graph
  * @return 0 on success, 1 on error
  */
-int populateReceivedNodeArray(const int listenSocket,
-                              struct ReceivedNode* receivedNodeArray,
-                              const int n);
+int populateCommunicatedNodeArray(
+    const int listenSocket, struct CommunicatedNode* communicatedNodeArray,
+    const int n);
 
 #endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_RECEIVER_H_

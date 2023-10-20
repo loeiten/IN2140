@@ -2,8 +2,12 @@
 #include <stdio.h>   // for fprintf, stderr
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 
-int main(int argc, char** argv) {
-  if (argc < 3) {
+#include "../../utils/include/common.h"          // for getIndexFromAddress
+#include "../../utils/include/dynamic_memory.h"  // for freeIntArray, freeEd...
+#include "../include/node_parser.h"              // for getIndexFromAddress
+
+int main(int argc, char **argv) {
+  if (argc < 2) {
     fprintf(stderr,
             "Usage: %s <Port> <OwnAddress> <NeighborAddress>:<weight> ...\n"
             "<Port> Value between 1024 and 65535 - number of nodes\n"
@@ -17,6 +21,19 @@ int main(int argc, char** argv) {
   }
 
   // Capture all the neighbors
+  // One argument for the file name, one for the port and one for own address
+  int nNeighbors = argc - 3;
+  struct CommunicatedNode communicatedNode = {.nNeighbors = nNeighbors};
+  int success = allocateNeighborAddressesAndEdgeWeights(
+      &(communicatedNode), nNeighbors, "communicatedNode");
+  if (success != EXIT_SUCCESS) {
+    freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+    return EXIT_FAILURE;
+  }
+  success = parseNodes(argc, (const char *const *const)argv, &communicatedNode);
+  if (success != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
+  }
 
   // Check that UDP socket P+A is valid
 
