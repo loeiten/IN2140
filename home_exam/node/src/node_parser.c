@@ -1,8 +1,6 @@
 #include "../include/node_parser.h"
 
-#include <stdlib.h>
-
-#include "../../utils/include/common.h"
+#include <stdlib.h>  // for EXIT_FAILURE
 
 int parseNodes(const int argc, const char *const *const argv,
                struct CommunicatedNode *communicatedNode) {

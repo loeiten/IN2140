@@ -3,7 +3,7 @@
 #include <stdlib.h>  // for EXIT_FAILURE, EXIT_S...
 #include <unistd.h>  // for close
 
-#include "../../utils/include/common.h"          // for IndexToAddress
+#include "../../utils/include/common.h"          // for CommunicatedNode
 #include "../../utils/include/dynamic_memory.h"  // for freeRoutingServer
 #include "../include/dijkstra.h"                 // for dijkstra
 #include "../include/receiver.h"                 // for checkAllNodesReceived

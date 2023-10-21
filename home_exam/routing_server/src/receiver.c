@@ -10,8 +10,8 @@
 #include <sys/socket.h>  // for recv, MSG_WAITALL
 #include <unistd.h>      // for close, NULL
 
-#include "../../utils/include/common.h"          // for getIndexFromAddress
-#include "../../utils/include/dynamic_memory.h"  // for freeIntArray, freeEd...
+#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/dynamic_memory.h"  // for freeEdgeCounterArray
 
 int checkAllNodesReceived(struct CommunicatedNode* communicatedNodeArray,
                           struct EdgeArray* invalidEdgesArray, int n) {

@@ -1,10 +1,10 @@
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_S...
 
-#include "../../utils/include/common.h"          // for getIndexFromAddress
-#include "../../utils/include/dynamic_memory.h"  // for freeIntArray, freeEd...
-#include "../include/node_parser.h"              // for getIndexFromAddress
+#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/dynamic_memory.h"  // for allocateNeighborAddr...
+#include "../include/node_parser.h"              // for parseNodes
 
 int main(int argc, char **argv) {
   if (argc < 2) {

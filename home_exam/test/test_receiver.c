@@ -4,9 +4,9 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/receiver.h"  // for CommunicatedNode, Edge
-#include "../utils/include/common.h"             // for IndexToAddress
-#include "../utils/include/dynamic_memory.h"  // for freeCommunicatedNodeArray
+#include "../routing_server/include/receiver.h"  // for Edge, EdgeCounter
+#include "../utils/include/common.h"             // for CommunicatedNode
+#include "../utils/include/dynamic_memory.h"     // for freeCommunicatedNode...
 
 void testIsEdgePresent(void) {
 #define N (3)

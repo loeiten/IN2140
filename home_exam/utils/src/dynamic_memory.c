@@ -3,9 +3,9 @@
 #include <stdio.h>   // for fprintf, perror
 #include <stdlib.h>  // for free, EXIT_FAILURE
 
-#include "../../routing_server/include/receiver.h"  // for EdgeArray, Receiv...
+#include "../../routing_server/include/receiver.h"  // for EdgeArray, Edge
 #include "../../routing_server/include/route.h"     // for RoutingTable, Route
-#include "../include/common.h"                      // for IndexToAddress
+#include "../include/common.h"                      // for CommunicatedNode
 
 int allocateIntArray(int **intArray, const int n, const char *name) {
   *intArray = (int *)malloc(n * sizeof(int));
