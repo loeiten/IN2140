@@ -236,7 +236,7 @@ void freeCommunicatedNodeArray(struct CommunicatedNode **communicatedNodeArray,
     return;
   }
   for (int i = 0; i < n; ++i) {
-    freeNeighborAddressesAndEdgeWeights(communicatedNodeArray[i]);
+    freeNeighborAddressesAndEdgeWeights(&((*communicatedNodeArray)[i]));
   }
   (*communicatedNodeArray) = NULL;
 }
