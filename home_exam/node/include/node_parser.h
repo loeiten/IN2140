@@ -3,7 +3,7 @@
 
 struct CommunicatedNode;
 
-int parseNodes(const int argc, const char *const *const argv,
+int parseNodes(const char *const *const nodes, const int nNeighbors,
                struct CommunicatedNode *communicatedNode);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_PARSER_H_

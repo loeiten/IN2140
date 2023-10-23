@@ -30,7 +30,8 @@ int main(int argc, char **argv) {
     freeNeighborAddressesAndEdgeWeights(&communicatedNode);
     return EXIT_FAILURE;
   }
-  success = parseNodes(argc, (const char *const *const)argv, &communicatedNode);
+  success = parseNodes((const char *const *const)&(argv[3]), nNeighbors,
+                       &communicatedNode);
   if (success != EXIT_SUCCESS) {
     return EXIT_FAILURE;
   }
