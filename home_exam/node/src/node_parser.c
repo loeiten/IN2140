@@ -28,7 +28,7 @@ int parseNodes(const char *const *const nodesStr, const int nNeighbors,
       perror("Could not allocate memory to nodesStrCpy: ");
       return EXIT_FAILURE;
     }
-    charWritten = snprintf(nodesStrCpy, (strLen + 1), format, nodesStr);
+    charWritten = snprintf(nodesStrCpy, (strLen + 1), format, nodesStr[i]);
     if (charWritten != strLen) {
       fprintf(stderr, "Could not copy from nodesStr to nodesStrCpy\n");
       free(nodesStrCpy);

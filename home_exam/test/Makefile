@@ -11,6 +11,7 @@ include ../common.mk
 TESTS := run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
+		 run_test_node_parser_1 \
 		 run_test_receiver_1 \
 		 run_test_receiver_2 \
 		 run_test_receiver_3 \
@@ -53,6 +54,24 @@ run_test_dijkstra_2: $(TEST_EXEC_DIR)/test_dijkstra
 
 run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< dijkstra)
+# ==============================================================================
+
+# NODE_PARSER
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_node_parser: $(BUILD_TEST_DIR)/test_node_parser.o $(BUILD_OBJ_DIR)/node_parser.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
+# Building the object files
+$(BUILD_TEST_DIR)/test_node_parser.o: test_node_parser.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+
+# Tests
+run_test_node_parser_1 : $(TEST_EXEC_DIR)/test_node_parser
+	$(call run_test,$@,$< parseNodes)
 # ==============================================================================
 
 # RECEIVER
