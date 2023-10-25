@@ -1,13 +1,12 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
-#include <limits.h>  // for INT_MAX
-#include <stdio.h>   // for fprintf, stderr, NULL
-#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
+#include <stdio.h>   // for fprintf, stderr
+#include <stdlib.h>  // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>  // for strcmp
 
-#include "../node/include/node_parser.h"      // for RoutingTable, Destinati...
-#include "../utils/include/common.h"          // for IndexToAddress
-#include "../utils/include/dynamic_memory.h"  // for freeRoutingTable
+#include "../node/include/node_parser.h"      // for parseNodes
+#include "../utils/include/common.h"          // for CommunicatedNode
+#include "../utils/include/dynamic_memory.h"  // for allocateCommunicatedNod...
 
 void testParseNodes(void) {
 #define N (4)

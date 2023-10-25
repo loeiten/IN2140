@@ -8,19 +8,19 @@ include ../common.mk
 #          one small change in an unrelated file).
 #		   Hence, we are adding the tests one by one
 
-TESTS := run_test_dijkstra_1 \
+TESTS := run_test_adjacency_matrix_1 \
+		 run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
 		 run_test_node_parser_1 \
-		 run_test_receiver_1 \
-		 run_test_receiver_2 \
-		 run_test_receiver_3 \
-		 run_test_receiver_4 \
-		 run_test_receiver_5 \
-		 run_test_receiver_6 \
-		 run_test_receiver_7 \
 		 run_test_route_1 \
-		 run_test_route_2
+		 run_test_route_2 \
+		 run_test_validation_1 \
+		 run_test_validation_2 \
+		 run_test_validation_3 \
+		 run_test_validation_4 \
+		 run_test_validation_5 \
+		 run_test_validation_6 \
 
 .PHONY: all clean test $(TESTS)
 all: $(TEST_EXEC_DIR)/test_dijkstra \
@@ -28,11 +28,32 @@ all: $(TEST_EXEC_DIR)/test_dijkstra \
 
 test: $(TESTS)
 
-# DIJKSTRA
+# TOOLS
+# ==============================================================================
+TEST_TOOLS_SOURCE_FILES := $(wildcard $(CUR_DIR)test/src/*.c)
+TEST_TOOLS_SRC := $(word 1, $(dir $(TEST_TOOLS_SOURCE_FILES)))
+# Remove trailing slash
+TEST_TOOLS_SRC := $(patsubst %/,%,$(TEST_TOOLS_SRC))
+# NOTE:
+# Substitution references
+# $(var:pattern=replacement)
+# are equivalent to
+# $(patsubst %suffix,%replacement,$(var))
+# Here we cannot use the former, and must use the latter
+OBJECT_FILES := $(patsubst $(TEST_TOOLS_SRC)%.c,$(BUILD_OBJ_DIR)%.o,$(TEST_TOOLS_SOURCE_FILES))
+
+# Building the object files
+$(BUILD_OBJ_DIR)%.o: $(TEST_TOOLS_SRC)%.c
+	$(call explain_build,Building the object files for test tools)
+	mkdir -p $(BUILD_OBJ_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+# ==============================================================================
+
+# ADJACENCY_MATRIX
 # ==============================================================================
 # @ outputs the target
 # ^ outputs all prerequisites
-$(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+$(TEST_EXEC_DIR)/test_adjacency_matrix: $(BUILD_TEST_DIR)/test_adjacency_matrix.o $(BUILD_OBJ_DIR)/adjacency_matrix.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o $(BUILD_OBJ_DIR)/test_tools.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
@@ -40,6 +61,23 @@ $(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DI
 # < outputs the first prerequisite
 # NOTE: We don't add an include path, as the path to the .h files can be found
 #       relative to the .c files
+$(BUILD_TEST_DIR)/test_adjacency_matrix.o: test_adjacency_matrix.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+
+# Tests
+run_test_adjacency_matrix_1: $(TEST_EXEC_DIR)/test_adjacency_matrix
+	$(call run_test,$@,$< createAdjacencyMatrix)
+# ==============================================================================
+
+# DIJKSTRA
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
 $(BUILD_TEST_DIR)/test_dijkstra.o: test_dijkstra.c
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(BUILD_TEST_DIR)
@@ -74,42 +112,6 @@ run_test_node_parser_1 : $(TEST_EXEC_DIR)/test_node_parser
 	$(call run_test,$@,$< parseNodes)
 # ==============================================================================
 
-# RECEIVER
-# ==============================================================================
-$(TEST_EXEC_DIR)/test_receiver: $(BUILD_TEST_DIR)/test_receiver.o $(BUILD_OBJ_DIR)/receiver.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
-	$(call explain_build,Making $(notdir $@))
-	mkdir -p $(TEST_EXEC_DIR)
-	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
-
-# Building the object files
-$(BUILD_TEST_DIR)/test_receiver.o: test_receiver.c
-	$(call explain_build,Making $(notdir $@))
-	mkdir -p $(BUILD_TEST_DIR)
-	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
-
-# Tests
-run_test_receiver_1: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< isEdgePresent)
-
-run_test_receiver_2: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< addEdgeToEdgeCounterArray)
-
-run_test_receiver_3: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< addInvalidEdge 2>&1 | tee $(TEST_EXEC_DIR)/test_receiver_3_output.txt && diff data/test_receiver_3_output.txt $(TEST_EXEC_DIR)/test_receiver_3_output.txt)
-
-run_test_receiver_4: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< checkDualReport)
-
-run_test_receiver_5: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< checkIfEdgeIsValid 2>&1 | tee $(TEST_EXEC_DIR)/test_receiver_5_output.txt && diff data/test_receiver_5_output.txt $(TEST_EXEC_DIR)/test_receiver_5_output.txt)
-
-run_test_receiver_6: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< checkAllNodesReceived 2>&1 | tee $(TEST_EXEC_DIR)/test_receiver_6_output.txt && diff data/test_receiver_6_output.txt $(TEST_EXEC_DIR)/test_receiver_6_output.txt)
-
-run_test_receiver_7: $(TEST_EXEC_DIR)/test_receiver
-	$(call run_test,$@,$< createAdjacencyMatrix)
-# ==============================================================================
-
 # ROUTE
 # ==============================================================================
 $(TEST_EXEC_DIR)/test_route: $(BUILD_TEST_DIR)/test_route.o $(BUILD_OBJ_DIR)/route.o $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
@@ -135,6 +137,39 @@ run_test_route_1: $(TEST_EXEC_DIR)/test_route
 
 run_test_route_2: $(TEST_EXEC_DIR)/test_route
 	$(call run_test,$@,$< createRoutingTables)
+# ==============================================================================
+
+# VALIDATION
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_validation: $(BUILD_TEST_DIR)/test_validation.o $(BUILD_OBJ_DIR)/validation.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o  $(BUILD_OBJ_DIR)/test_tools.o
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
+# Building the object files
+$(BUILD_TEST_DIR)/test_validation.o: test_validation.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+
+# Tests
+run_test_validation_1: $(TEST_EXEC_DIR)/test_validation
+	$(call run_test,$@,$< isEdgePresent)
+
+run_test_validation_2: $(TEST_EXEC_DIR)/test_validation
+	$(call run_test,$@,$< addEdgeToEdgeCounterArray)
+
+run_test_validation_3: $(TEST_EXEC_DIR)/test_validation
+	$(call run_test,$@,$< addInvalidEdge 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_3_output.txt && diff data/test_validation_3_output.txt $(TEST_EXEC_DIR)/test_validation_3_output.txt)
+
+run_test_validation_4: $(TEST_EXEC_DIR)/test_validation
+	$(call run_test,$@,$< checkDualReport)
+
+run_test_validation_5: $(TEST_EXEC_DIR)/test_validation
+	$(call run_test,$@,$< checkIfEdgeIsValid 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_5_output.txt && diff data/test_validation_5_output.txt $(TEST_EXEC_DIR)/test_validation_5_output.txt)
+
+run_test_validation_6: $(TEST_EXEC_DIR)/test_validation
+	$(call run_test,$@,$< checkAllNodesReceived 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_6_output.txt && diff data/test_validation_6_output.txt $(TEST_EXEC_DIR)/test_validation_6_output.txt)
 # ==============================================================================
 
 clean:

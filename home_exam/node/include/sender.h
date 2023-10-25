@@ -1,6 +1,0 @@
-#ifndef HOME_EXAM_NODE_INCLUDE_SENDER_H_
-#define HOME_EXAM_NODE_INCLUDE_SENDER_H_
-
-void fixme(void);
-
-#endif  // HOME_EXAM_NODE_INCLUDE_SENDER_H_

@@ -20,6 +20,23 @@ struct IndexToAddress {
 };
 
 /**
+ * @brief Struct representing an edge
+ */
+struct Edge {
+  int lowNodeAddress;  /**< One of the nodes in the edge */
+  int highNodeAddress; /**< The other node in the edge */
+};
+
+/**
+ * @brief Struct representing an array of edges
+ */
+struct EdgeArray {
+  struct Edge* array;          /**< The array */
+  int firstAvailablePosition;  //**< Position of first non-used counter */
+  int maxEdges;                /**< Number of edges */
+};
+
+/**
  * @brief Get the index from an address
  *
  * @param address The address to get the index from

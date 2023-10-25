@@ -5,9 +5,11 @@
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
 #include "../../utils/include/dynamic_memory.h"  // for freeRoutingServer
+#include "../include/adjacency_matrix.h"         // for createAdjacencyMatrix
 #include "../include/dijkstra.h"                 // for dijkstra
-#include "../include/receiver.h"                 // for checkAllNodesReceived
 #include "../include/route.h"                    // for createRoutingTables
+#include "../include/server_communication.h"     // for getListenSocket, pop...
+#include "../include/validation.h"               // for checkAllNodesReceived
 
 int main(int argc, char** argv) {
   if (argc < 2) {

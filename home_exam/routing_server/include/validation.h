@@ -1,25 +1,7 @@
-#ifndef HOME_EXAM_ROUTING_SERVER_INCLUDE_RECEIVER_H_
-#define HOME_EXAM_ROUTING_SERVER_INCLUDE_RECEIVER_H_
+#ifndef HOME_EXAM_ROUTING_SERVER_INCLUDE_VALIDATION_H_
+#define HOME_EXAM_ROUTING_SERVER_INCLUDE_VALIDATION_H_
 
-struct IndexToAddress;
-struct CommunicatedNode;
-
-/**
- * @brief Struct representing an edge
- */
-struct Edge {
-  int lowNodeAddress;  /**< One of the nodes in the edge */
-  int highNodeAddress; /**< The other node in the edge */
-};
-
-/**
- * @brief Struct representing an array of edges
- */
-struct EdgeArray {
-  struct Edge* array;          /**< The array */
-  int firstAvailablePosition;  //**< Position of first non-used counter */
-  int maxEdges;                /**< Number of edges */
-};
+#include "../../utils/include/common.h"  // for Edge
 
 /**
  * @brief Struct used for counting the encounter of an edge
@@ -126,40 +108,4 @@ int addEdgeToEdgeCounterArray(const int lowAddress, const int highAddress,
 int checkDualReport(const struct EdgeCounterArray* const edgeCounterArray,
                     struct EdgeArray* invalidEdgesArray);
 
-/**
- * @brief Create the adjacency matrix
- *
- * @param communicatedNodeArray Array of the communicated nodes
- * @param invalidEdgesArray Array of the non-valid edges
- * @param adjacencyMatrix The adjacency matrix of the graph
- * @param n The number of nodes in the graph
- * @returns 0 on success, 1 on error
- */
-int createAdjacencyMatrix(
-    const struct CommunicatedNode* const communicatedNodeArray,
-    const struct IndexToAddress* const indexToAddress,
-    const struct EdgeArray* const invalidEdgesArray, int*** adjacencyMatrix,
-    const int n);
-
-/**
- * @brief Get the a listen socket
- *
- * @param listenPort The port to bind the socket to
- * @param listenSocket The socket descriptor
- * @return 0 on success, 1 on error
- */
-int getListenSocket(const int listenPort, int* const listenSocket);
-
-/**
- * @brief Populate the communicated node array
- *
- * @param listenSocket The socket descriptor which listens
- * @param communicatedNodeArray Array of the communicated nodes
- * @param n The number of nodes in the graph
- * @return 0 on success, 1 on error
- */
-int populateCommunicatedNodeArray(
-    const int listenSocket, struct CommunicatedNode* communicatedNodeArray,
-    const int n);
-
-#endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_RECEIVER_H_
+#endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_VALIDATION_H_

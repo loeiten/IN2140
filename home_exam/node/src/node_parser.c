@@ -1,10 +1,10 @@
 #include "../include/node_parser.h"
 
-#include <stdio.h>   // for perror, snprintf, fprintf
-#include <stdlib.h>  // for atoi, malloc, EXIT_FAILURE
-#include <string.h>  // for strcmp, strlen, strtok_r
+#include <stdio.h>   // for fprintf, NULL, stderr, snprintf
+#include <stdlib.h>  // for free, malloc, EXIT_FAILURE
+#include <string.h>  // for strtok_r, strlen
 
-#include "../../utils/include/common.h"
+#include "../../utils/include/common.h"  // for CommunicatedNode
 
 int parseNodes(const char *const *const nodesStr, const int nNeighbors,
                struct CommunicatedNode *communicatedNode) {
