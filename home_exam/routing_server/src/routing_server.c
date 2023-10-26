@@ -8,7 +8,7 @@
 #include "../include/adjacency_matrix.h"         // for createAdjacencyMatrix
 #include "../include/dijkstra.h"                 // for dijkstra
 #include "../include/route.h"                    // for createRoutingTables
-#include "../include/server_communication.h"     // for getListenSocket, pop...
+#include "../include/server_communication.h"     // for getTCPServerSocket
 #include "../include/validation.h"               // for checkAllNodesReceived
 
 int main(int argc, char** argv) {
@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
   }
 
   int listenSocket = -1;
-  success = getListenSocket(listenPort, &listenSocket);
+  success = getTCPServerSocket(&listenSocket, listenPort);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Obtaining the listen socket failed, exiting\n");
     freeRoutingServer(&communicatedNodeArray, &invalidEdgesArray,

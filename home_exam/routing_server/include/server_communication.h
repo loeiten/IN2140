@@ -6,13 +6,13 @@
 struct CommunicatedNode;
 
 /**
- * @brief Get the a listen socket
+ * @brief Get a TCP socket which is listening to a specific port
  *
+ * @param listenSocket The socket descriptor which will listen
  * @param listenPort The port to bind the socket to
- * @param listenSocket The socket descriptor
  * @return 0 on success, 1 on error
  */
-int getListenSocket(const int listenPort, int* const listenSocket);
+int getTCPServerSocket(int* const listenSocket, const int listenPort);
 
 /**
  * @brief Populate the communicated node array

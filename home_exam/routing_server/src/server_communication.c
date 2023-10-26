@@ -2,7 +2,7 @@
 
 #include <arpa/inet.h>   // for htons
 #include <errno.h>       // for errno
-#include <netinet/in.h>  // for sockaddr_in, INADDR_ANY
+#include <netinet/in.h>  // for sockaddr_in, INADDR_...
 #include <stdio.h>       // for fprintf, stderr, ssi...
 #include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
 #include <string.h>      // for strerror
@@ -13,7 +13,7 @@
 #include "../../utils/include/common.h"          // for CommunicatedNode
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
 
-int getListenSocket(const int listenPort, int* const listenSocket) {
+int getTCPServerSocket(int* const listenSocket, const int listenPort) {
   // Abbreviations:
   // AF - Address family
   //      Address families are categorization of network addresses and protocols
@@ -27,11 +27,12 @@ int getListenSocket(const int listenPort, int* const listenSocket) {
   // https://man7.org/linux/man-pages/man2/socket.2.html
   // Create the socket file descriptor for the server
   // This is an endpoint for the communication
-  // Note that this is not the socket that will
+  // Note that this is not the socket that will send and receive messages
   (*listenSocket) = socket(AF_LOCAL,      // We are communicating locally
                            SOCK_STREAM,   // Sequenced, reliable, two-way,
-                                          // connection-based byte streams
+                                          // connection-based byte streams (TCP)
                            IPPROTO_TCP);  // Use the TCP protocol
+                                          // (redundant because of SOCK_STREAM)
   if ((*listenSocket) == -1) {
     // NOTE: fprintf(stderr, "%s\n", strerror(errno)) is similar to perror(NULL)
     fprintf(stderr, "Failed to create socket for the server.\nError %d: %s\n",
@@ -52,7 +53,9 @@ int getListenSocket(const int listenPort, int* const listenSocket) {
   // port) pair. When INADDR_ANY is specified in the bind call, the socket will
   // be bound to all local interfaces.
   serverAddr.sin_family = AF_LOCAL;  // We are still communicating locally
-  serverAddr.sin_addr.s_addr = INADDR_ANY;  // All addresses are accepted
+  serverAddr.sin_addr.s_addr =
+      INADDR_LOOPBACK;  // Only local addresses are accepted (INADDR_ANY would
+                        // accept connection to any addresses)
   serverAddr.sin_port = htons(listenPort);  // The port in network byte order
 
   // Bind assigns the address specified by sockaddr_in to a socket
