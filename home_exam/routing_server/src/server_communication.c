@@ -15,6 +15,7 @@
 
 int getTCPServerSocket(int* const listenSocket, const int listenPort) {
   // Abbreviations:
+  // ARPA - Address and Routing Parameter Area
   // AF - Address family
   //      Address families are categorization of network addresses and protocols
   //      Examples: AF_INET (AddressFamily - InterNET) for IPv4
@@ -110,7 +111,7 @@ int populateCommunicatedNodeArray(
     //       read()/write() are universal functions working on all descriptors
     //       Both of them are blocking by default
     // Receive the address
-    ssize_t nBytes = 1;
+    ssize_t nBytes = sizeof(int);
     ssize_t bytesReceived = recv(
         newSocketFd, &(communicatedNodeArray[i].address), nBytes, MSG_WAITALL);
     if (bytesReceived == -1) {
@@ -125,6 +126,7 @@ int populateCommunicatedNodeArray(
               "Received less bytes than expected for "
               "communicatedNodeArray[%d].address\n",
               i);
+      close(newSocketFd);
       return EXIT_FAILURE;
     }
 

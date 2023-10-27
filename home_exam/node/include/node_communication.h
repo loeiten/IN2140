@@ -2,6 +2,7 @@
 #define HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
 
 // FIXME: These functions are untested
+struct CommunicatedNode;
 
 /**
  * @brief Assign a UDP socket to connectSocket for sending and receiving
@@ -23,5 +24,16 @@ int getUDPSocket(int* const connectSocket, const int connectPort);
  * @return 0 on success, 1 on error
  */
 int getTCPClientSocket(int* const clientSocket, const int serverPort);
+
+/**
+ * @brief Send the edge information to the routing server
+ *
+ * @param tcpRoutingServerSocketFd The connected TCP socket to use for
+ *                                 communication
+ * @param communicatedNode The node to be communicated
+ * @return 0 on success, 1 on error
+ */
+int sendEdgeInformation(int tcpRoutingServerSocketFd,
+                        struct CommunicatedNode* communicatedNode);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_

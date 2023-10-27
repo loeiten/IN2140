@@ -1,9 +1,10 @@
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for atoi, exit, EXIT_SUC...
+#include <stdlib.h>  // for EXIT_SUCCESS, atoi
+#include <unistd.h>  // for close
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
-#include "../../utils/include/dynamic_memory.h"  // for allocateNeighborAddr...
+#include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
 #include "../include/node_communication.h"       // for getTCPClientSocket
 #include "../include/node_parser.h"              // for parseNodes
 
@@ -21,10 +22,14 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
+  int serverPort = atoi(argv[1]);
+  int ownAddress = atoi(argv[2]);
+
   // Capture all the neighbors
   // One argument for the file name, one for the port and one for own address
   int nNeighbors = argc - 3;
-  struct CommunicatedNode communicatedNode = {.nNeighbors = nNeighbors};
+  struct CommunicatedNode communicatedNode = {.address = ownAddress,
+                                              .nNeighbors = nNeighbors};
   int success = allocateNeighborAddressesAndEdgeWeights(
       &(communicatedNode), nNeighbors, "communicatedNode");
   if (success != EXIT_SUCCESS) {
@@ -34,18 +39,18 @@ int main(int argc, char **argv) {
   success = parseNodes((const char *const *const)&(argv[3]), nNeighbors,
                        &communicatedNode);
   if (success != EXIT_SUCCESS) {
+    freeNeighborAddressesAndEdgeWeights(&communicatedNode);
     return EXIT_FAILURE;
   }
-
-  int serverPort = atoi(argv[1]);
 
   // We now make a UDP socket we can both send to and receive from
   int udpSocketFd;
   // The UDP port should be port + ownAddress
-  int udpPort = serverPort + atoi(argv[2]);
+  int udpPort = serverPort + ownAddress;
   success = getUDPSocket(&udpSocketFd, udpPort);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Failed to get UDP socket, exiting\n");
+    freeNeighborAddressesAndEdgeWeights(&communicatedNode);
     exit(-1);
   }
 
@@ -54,7 +59,16 @@ int main(int argc, char **argv) {
   success = getTCPClientSocket(&tcpRoutingServerSocketFd, serverPort);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Failed to connect to the server, exiting\n");
+    freeNeighborAddressesAndEdgeWeights(&communicatedNode);
     exit(-2);
+  }
+
+  // Send the edge information
+  success = sendEdgeInformation(tcpRoutingServerSocketFd, &communicatedNode);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Failed to send the edge information\n");
+    freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+    close(tcpRoutingServerSocketFd);
   }
 
   // Receive the routing table
