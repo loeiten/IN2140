@@ -12,6 +12,22 @@ struct CommunicatedNode {
 };
 
 /**
+ * @brief Elements in the routing table
+ */
+struct DestinationNextPair {
+  int destination; /**< Destination of package */
+  int nextHop;     /**< The next hop needed in order to reach the destination */
+};
+
+/**
+ * @brief The routing table
+ */
+struct RoutingTable {
+  int n;                             /**< Number of elements */
+  struct DestinationNextPair* table; /**< Array of dest-next pairs */
+};
+
+/**
  * @brief Map from index to node id
  */
 struct IndexToAddress {

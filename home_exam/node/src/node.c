@@ -1,6 +1,6 @@
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for fprintf, stderr
-#include <stdlib.h>  // for EXIT_SUCCESS, atoi
+#include <stdlib.h>  // for exit, EXIT_SUCCESS
 #include <unistd.h>  // for close
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
@@ -60,6 +60,8 @@ int main(int argc, char **argv) {
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Failed to connect to the server, exiting\n");
     freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+    close(udpSocketFd);
+    close(tcpRoutingServerSocketFd);
     exit(-2);
   }
 
@@ -68,10 +70,21 @@ int main(int argc, char **argv) {
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Failed to send the edge information\n");
     freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+    close(udpSocketFd);
     close(tcpRoutingServerSocketFd);
+    exit(-3);
   }
 
-  // Receive the routing table
+  // // Receive the routing table
+  // struct RoutingTable routingTable;
+  // success = receiveRoutingTable(tcpRoutingServerSocketFd, &routingTable);
+  // if (success != EXIT_SUCCESS) {
+  //   fprintf(stderr, "Failed to receive the edge information\n");
+  //   freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+  //   close(udpSocketFd);
+  //   close(tcpRoutingServerSocketFd);
+  //   exit(-4);
+  // }
 
   // NOTE: In TCP you can bind before connecting
   //       If not this is done automatically by the OS

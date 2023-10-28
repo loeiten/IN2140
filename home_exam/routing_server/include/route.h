@@ -2,6 +2,7 @@
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
 
 struct IndexToAddress;
+struct RoutingTable;
 
 /**
  * @brief Representation of a route to an endpoint using indices
@@ -9,22 +10,6 @@ struct IndexToAddress;
 struct Route {
   int nHops;  /**< Number of hops from the starting point */
   int *route; /**< The route taken */
-};
-
-/**
- * @brief Elements in the routing table
- */
-struct DestinationNextPair {
-  int destination; /**< Destination of package */
-  int nextHop;     /**< The next hop needed in order to reach the destination */
-};
-
-/**
- * @brief The routing table
- */
-struct RoutingTable {
-  int n;                             /**< Number of elements */
-  struct DestinationNextPair *table; /**< Array of dest-next pairs */
 };
 
 /**

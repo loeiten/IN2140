@@ -3,7 +3,7 @@
 #include <stdio.h>   // for fprintf, perror
 #include <stdlib.h>  // for free, EXIT_FAILURE
 
-#include "../../routing_server/include/route.h"       // for RoutingTable
+#include "../../routing_server/include/route.h"       // for Route
 #include "../../routing_server/include/validation.h"  // for EdgeCounter
 #include "../include/common.h"                        // for CommunicatedNode
 

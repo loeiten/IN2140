@@ -2,12 +2,12 @@
 
 #include <arpa/inet.h>   // for htons
 #include <errno.h>       // for errno
-#include <netinet/in.h>  // for sockaddr_in, INADDR_LOOPBACK, in_addr, IPPRO...
-#include <stdio.h>       // for fprintf, stderr
+#include <netinet/in.h>  // for sockaddr_in, INADDR_LOOPBACK
+#include <stdio.h>       // for fprintf, stderr, ssize_t
 #include <stdlib.h>      // for EXIT_FAILURE, EXIT_SUCCESS
 #include <string.h>      // for strerror
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for socket, AF_LOCAL, bind, connect, SOCK_DGRAM
+#include <sys/socket.h>  // for send, socket, AF_LOCAL, bind
 
 #include "../../utils/include/common.h"  // for CommunicatedNode
 
