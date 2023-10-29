@@ -3,6 +3,7 @@
 
 // FIXME: These functions are untested
 struct CommunicatedNode;
+struct RoutingTable;
 
 /**
  * @brief Assign a UDP socket to connectSocket for sending and receiving
@@ -33,7 +34,20 @@ int getTCPClientSocket(int* const clientSocket, const int serverPort);
  * @param communicatedNode The node to be communicated
  * @return 0 on success, 1 on error
  */
-int sendEdgeInformation(int tcpRoutingServerSocketFd,
-                        struct CommunicatedNode* communicatedNode);
+int sendEdgeInformation(const int tcpRoutingServerSocketFd,
+                        struct CommunicatedNode* const communicatedNode);
+
+/**
+ * @brief Receive
+ *
+ * @param tcpRoutingServerSocketFd The connected TCP socket to use for
+ *                                 communication
+ * @param routingTable The routing table to be filled
+ * @param tableRows Number of rows in the table
+ * @return 0 on success, 1 on error
+ */
+int receiveRoutingTable(const int tcpRoutingServerSocketFd,
+                        struct RoutingTable* routingTable,
+                        int* const tableRows);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_

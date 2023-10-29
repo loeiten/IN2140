@@ -9,7 +9,8 @@
 #include <strings.h>     // for bzero
 #include <sys/socket.h>  // for send, socket, AF_LOCAL, bind
 
-#include "../../utils/include/common.h"  // for CommunicatedNode
+#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/dynamic_memory.h"  // for CommunicatedNode
 
 int getUDPSocket(int* const clientSocket, const int clientPort) {
   // A great introduction to socket programming can be found at:
@@ -102,8 +103,8 @@ int getTCPClientSocket(int* const clientSocket, const int serverPort) {
   return EXIT_SUCCESS;
 }
 
-int sendEdgeInformation(int tcpRoutingServerSocketFd,
-                        struct CommunicatedNode* communicatedNode) {
+int sendEdgeInformation(const int tcpRoutingServerSocketFd,
+                        struct CommunicatedNode* const communicatedNode) {
   // Send own address
   ssize_t nBytes = sizeof(int);
   ssize_t bytesSent =
@@ -161,6 +162,50 @@ int sendEdgeInformation(int tcpRoutingServerSocketFd,
     fprintf(
         stderr,
         "Sent less bytes than expected for communicatedNode->edgeWeights\n");
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
+}
+
+int receiveRoutingTable(const int tcpRoutingServerSocketFd,
+                        struct RoutingTable* routingTable,
+                        int* const tableRows) {
+  // NOTE: recv()/send() are specific to socket descriptors, whereas
+  //       read()/write() are universal functions working on all descriptors
+  //       Both of them are blocking by default
+  // Receive the number of rows
+  ssize_t nBytes = sizeof(int);
+  ssize_t bytesReceived =
+      recv(tcpRoutingServerSocketFd, &(routingTable->n), nBytes, MSG_WAITALL);
+  if (bytesReceived == -1) {
+    fprintf(stderr, "Receiving routingTable->n failed.\nError %d: %s\n", errno,
+            strerror(errno));
+    return EXIT_FAILURE;
+  } else if (bytesReceived != nBytes) {
+    fprintf(stderr, "Received less bytes than expected for routingTable->n\n");
+    return EXIT_FAILURE;
+  }
+  (*tableRows) = routingTable->n;
+
+  // Allocate memory to the routing table
+  int success =
+      allocateRoutingTable(&routingTable, *tableRows, "node routing table");
+  if (success != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
+  }
+
+  // Receive the table
+  nBytes = (*tableRows) * sizeof(struct DestinationNextPair);
+  bytesReceived = recv(tcpRoutingServerSocketFd, &(routingTable->table), nBytes,
+                       MSG_WAITALL);
+  if (bytesReceived == -1) {
+    fprintf(stderr, "Receiving routingTable->table failed.\nError %d: %s\n",
+            errno, strerror(errno));
+    return EXIT_FAILURE;
+  } else if (bytesReceived != nBytes) {
+    fprintf(stderr,
+            "Received less bytes than expected for routingTable->table\n");
     return EXIT_FAILURE;
   }
 
