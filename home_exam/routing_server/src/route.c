@@ -3,7 +3,7 @@
 #include <stdio.h>   // for NULL
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 
-#include "../../utils/include/common.h"          // for RoutingTable, Destin...
+#include "../../utils/include/common.h"  // for RoutingTableArray, Destin...
 #include "../../utils/include/dynamic_memory.h"  // for freeIntMatrix, alloc...
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
@@ -41,8 +41,9 @@ void printEdges(const int *const distanceArray,
   }
 }
 
-int createRoutingTables(struct Route *routeArray,
-                        struct RoutingTable **const routingTable, int n) {
+int createRoutingTableArray(struct Route *routeArray,
+                            struct RoutingTableArray **const routingTableArray,
+                            int n) {
   // Pseudo code:
   // 1. Create a n x n matrix called visited, the rows will be the source
   //    indices and the cols will be the destination indices
@@ -53,14 +54,14 @@ int createRoutingTables(struct Route *routeArray,
   //         a. Check if visited[sourceNode][destinationNode] is true, if yes
   //            go to step 2.iii.f
   //         b. Allocate a DestinationNextPair to
-  //            routingTable[sourceNode].table[routingTable[sourceNode].n]
+  //            routingTableArray[sourceNode].table[routingTableArray[sourceNode].n]
   //         c. Set
-  //            routingTable[sourceNode].table[routingTable[sourceNode].n].destination
+  //            routingTableArray[sourceNode].table[routingTableArray[sourceNode].n].destination
   //            = *destinationPtr
   //         c. Set
-  //            routingTable[sourceNode].table[routingTable[sourceNode].n].nextHop
+  //            routingTableArray[sourceNode].table[routingTableArray[sourceNode].n].nextHop
   //            = *(sourcePtr + 1)
-  //         d. ++(routingTable[sourceNode].n)
+  //         d. ++(routingTableArray[sourceNode].n)
   //         e. Mark visited[sourceNode][destinationNode] as true
   //         f. Decrement destination pointer, if destinationNode == sourceNode,
   //            go to the next element of routingArray, else go to step
@@ -81,8 +82,9 @@ int createRoutingTables(struct Route *routeArray,
   }
 
   // Allocate the routing table
-  struct RoutingTable *routingTableTmp = NULL;
-  success = allocateRoutingTable(&routingTableTmp, n, "routingTableTmp");
+  struct RoutingTableArray *routingTableArrayTmp = NULL;
+  success = allocateRoutingTableArray(&routingTableArrayTmp, n,
+                                      "routingTableArrayTmp");
   if (success != EXIT_SUCCESS) {
     freeIntMatrix(&visited, n);
     return EXIT_FAILURE;
@@ -114,16 +116,16 @@ int createRoutingTables(struct Route *routeArray,
           continue;
         }
         // Set the destination and next
-        routingTableTmp[sourceNode]
-            .table[routingTableTmp[sourceNode].n]
+        routingTableArrayTmp[sourceNode]
+            .table[routingTableArrayTmp[sourceNode].n]
             .destination = destinationNode;
-        routingTableTmp[sourceNode]
-            .table[routingTableTmp[sourceNode].n]
+        routingTableArrayTmp[sourceNode]
+            .table[routingTableArrayTmp[sourceNode].n]
             .nextHop = nextHopNode;
         // Mark visited
         visited[sourceNode][destinationNode] = 1;
         // Increment the number of DestinationNextPair in the table
-        ++(routingTableTmp[sourceNode].n);
+        ++(routingTableArrayTmp[sourceNode].n);
 
         // Shift the destination left
         --destinationIdx;
@@ -139,6 +141,6 @@ int createRoutingTables(struct Route *routeArray,
   freeIntMatrix(&visited, n);
 
   // Finally assign the local temporary to the output value
-  *routingTable = routingTableTmp;
+  *routingTableArray = routingTableArrayTmp;
   return EXIT_SUCCESS;
 }

@@ -77,14 +77,13 @@ int main(int argc, char **argv) {
 
   // Receive the routing table
   struct RoutingTable routingTable;
-  struct RoutingTable *routingTablePtr = &routingTable;
   int tableRows = -1;
-  success = receiveRoutingTable(tcpRoutingServerSocketFd, routingTablePtr,
-                                &tableRows);
+  success =
+      receiveRoutingTable(tcpRoutingServerSocketFd, &routingTable, &tableRows);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Failed to receive the edge information\n");
     freeNeighborAddressesAndEdgeWeights(&communicatedNode);
-    freeRoutingTable(&routingTablePtr, tableRows);
+    freeRoutingTable(&routingTable, tableRows);
     close(udpSocketFd);
     close(tcpRoutingServerSocketFd);
     exit(-4);

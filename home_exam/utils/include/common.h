@@ -19,10 +19,16 @@ struct DestinationNextPair {
   int nextHop;     /**< The next hop needed in order to reach the destination */
 };
 
+// FIXME: You are here: You just changed RoutingTableArray
+//        You need to make a RoutingTable struct which also stores how many rows
+//        there are
+//        Then update the RoutingTableArray to store RoutingTable
+//        Double pointers and allocation needs to be updated
+
 /**
- * @brief The routing table
+ * @brief Array of routing tables
  */
-struct RoutingTable {
+struct RoutingTableArray {
   int n;                             /**< Number of elements */
   struct DestinationNextPair* table; /**< Array of dest-next pairs */
 };
