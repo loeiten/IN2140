@@ -136,7 +136,7 @@ run_test_route_1: $(TEST_EXEC_DIR)/test_route
 	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges && diff data/test_route_1_logfile.txt $(TEST_EXEC_DIR)/logfile.txt)
 
 run_test_route_2: $(TEST_EXEC_DIR)/test_route
-	$(call run_test,$@,$< createRoutingTableArray)
+	$(call run_test,$@,$< createRoutingTables)
 # ==============================================================================
 
 # VALIDATION
