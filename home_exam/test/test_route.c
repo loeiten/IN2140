@@ -5,9 +5,9 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/route.h"  // for createRoutingTables, Route
+#include "../routing_server/include/route.h"  // for createRoutingTableArray, Route
 #include "../utils/include/common.h"          // for RoutingTable, Destinati...
-#include "../utils/include/dynamic_memory.h"  // for freeRoutingTable
+#include "../utils/include/dynamic_memory.h"  // for freeRoutingTableArray
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -50,7 +50,7 @@ void testPrintEdges(void) {
 #undef N
 }
 
-void testCreateRoutingTables(void) {
+void testCreateRoutingTableArray(void) {
 #define N (9)
   // GraphA from
   // https://www.geeksforgeeks.org/dijkstras-shortest-path-algorithm-greedy-algo-7/
@@ -70,67 +70,67 @@ void testCreateRoutingTables(void) {
       {.nHops = 2, .route = routeA6}, {.nHops = 1, .route = routeA7},
       {.nHops = 3, .route = routeA8},
   };
-  struct RoutingTable *routingTable = NULL;
-  int success = createRoutingTables(routeArrayA, &routingTable, N);
+  struct RoutingTable *routingTableArray = NULL;
+  int success = createRoutingTableArray(routeArrayA, &routingTableArray, N);
   assert(success == EXIT_SUCCESS);
 
   // Check for 0th index node
-  assert(routingTable[0].n == 8);
-  assert(routingTable[0].table[0].destination == 1);
-  assert(routingTable[0].table[0].nextHop == 1);
-  assert(routingTable[0].table[1].destination == 2);
-  assert(routingTable[0].table[1].nextHop == 1);
-  assert(routingTable[0].table[2].destination == 3);
-  assert(routingTable[0].table[2].nextHop == 1);
-  assert(routingTable[0].table[3].destination == 4);
-  assert(routingTable[0].table[3].nextHop == 7);
-  assert(routingTable[0].table[4].destination == 5);
-  assert(routingTable[0].table[4].nextHop == 7);
-  assert(routingTable[0].table[5].destination == 6);
-  assert(routingTable[0].table[5].nextHop == 7);
-  assert(routingTable[0].table[6].destination == 7);
-  assert(routingTable[0].table[6].nextHop == 7);
-  assert(routingTable[0].table[7].destination == 8);
-  assert(routingTable[0].table[7].nextHop == 1);
+  assert(routingTableArray[0].nRows == 8);
+  assert(routingTableArray[0].routingTableRow[0].destination == 1);
+  assert(routingTableArray[0].routingTableRow[0].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[1].destination == 2);
+  assert(routingTableArray[0].routingTableRow[1].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[2].destination == 3);
+  assert(routingTableArray[0].routingTableRow[2].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[3].destination == 4);
+  assert(routingTableArray[0].routingTableRow[3].nextHop == 7);
+  assert(routingTableArray[0].routingTableRow[4].destination == 5);
+  assert(routingTableArray[0].routingTableRow[4].nextHop == 7);
+  assert(routingTableArray[0].routingTableRow[5].destination == 6);
+  assert(routingTableArray[0].routingTableRow[5].nextHop == 7);
+  assert(routingTableArray[0].routingTableRow[6].destination == 7);
+  assert(routingTableArray[0].routingTableRow[6].nextHop == 7);
+  assert(routingTableArray[0].routingTableRow[7].destination == 8);
+  assert(routingTableArray[0].routingTableRow[7].nextHop == 1);
   // Check for 1st index node
-  assert(routingTable[1].n == 3);
-  assert(routingTable[1].table[0].destination == 2);
-  assert(routingTable[1].table[0].nextHop == 2);
-  assert(routingTable[1].table[1].destination == 3);
-  assert(routingTable[1].table[1].nextHop == 2);
-  assert(routingTable[1].table[2].destination == 8);
-  assert(routingTable[1].table[2].nextHop == 2);
+  assert(routingTableArray[1].nRows == 3);
+  assert(routingTableArray[1].routingTableRow[0].destination == 2);
+  assert(routingTableArray[1].routingTableRow[0].nextHop == 2);
+  assert(routingTableArray[1].routingTableRow[1].destination == 3);
+  assert(routingTableArray[1].routingTableRow[1].nextHop == 2);
+  assert(routingTableArray[1].routingTableRow[2].destination == 8);
+  assert(routingTableArray[1].routingTableRow[2].nextHop == 2);
   // Check for 2nd index node
-  assert(routingTable[2].n == 2);
-  assert(routingTable[2].table[0].destination == 3);
-  assert(routingTable[2].table[0].nextHop == 3);
-  assert(routingTable[2].table[1].destination == 8);
-  assert(routingTable[2].table[1].nextHop == 8);
+  assert(routingTableArray[2].nRows == 2);
+  assert(routingTableArray[2].routingTableRow[0].destination == 3);
+  assert(routingTableArray[2].routingTableRow[0].nextHop == 3);
+  assert(routingTableArray[2].routingTableRow[1].destination == 8);
+  assert(routingTableArray[2].routingTableRow[1].nextHop == 8);
   // Check for 3rd index node
-  assert(routingTable[3].n == 0);
+  assert(routingTableArray[3].nRows == 0);
   // Check for 4th index node
-  assert(routingTable[4].n == 0);
+  assert(routingTableArray[4].nRows == 0);
   // Check for 5th index node
-  assert(routingTable[5].n == 1);
-  assert(routingTable[5].table[0].destination == 4);
-  assert(routingTable[5].table[0].nextHop == 4);
+  assert(routingTableArray[5].nRows == 1);
+  assert(routingTableArray[5].routingTableRow[0].destination == 4);
+  assert(routingTableArray[5].routingTableRow[0].nextHop == 4);
   // Check for 6th index node
-  assert(routingTable[6].n == 2);
-  assert(routingTable[6].table[0].destination == 4);
-  assert(routingTable[6].table[0].nextHop == 5);
-  assert(routingTable[6].table[1].destination == 5);
-  assert(routingTable[6].table[1].nextHop == 5);
+  assert(routingTableArray[6].nRows == 2);
+  assert(routingTableArray[6].routingTableRow[0].destination == 4);
+  assert(routingTableArray[6].routingTableRow[0].nextHop == 5);
+  assert(routingTableArray[6].routingTableRow[1].destination == 5);
+  assert(routingTableArray[6].routingTableRow[1].nextHop == 5);
   // Check for 7th index node
-  assert(routingTable[7].n == 3);
-  assert(routingTable[7].table[0].destination == 4);
-  assert(routingTable[7].table[0].nextHop == 6);
-  assert(routingTable[7].table[1].destination == 5);
-  assert(routingTable[7].table[1].nextHop == 6);
-  assert(routingTable[7].table[2].destination == 6);
-  assert(routingTable[7].table[2].nextHop == 6);
+  assert(routingTableArray[7].nRows == 3);
+  assert(routingTableArray[7].routingTableRow[0].destination == 4);
+  assert(routingTableArray[7].routingTableRow[0].nextHop == 6);
+  assert(routingTableArray[7].routingTableRow[1].destination == 5);
+  assert(routingTableArray[7].routingTableRow[1].nextHop == 6);
+  assert(routingTableArray[7].routingTableRow[2].destination == 6);
+  assert(routingTableArray[7].routingTableRow[2].nextHop == 6);
   // Check for 8th index node
-  assert(routingTable[8].n == 0);
-  freeRoutingTable(&routingTable, N);
+  assert(routingTableArray[8].nRows == 0);
+  freeRoutingTableArray(&routingTableArray, N);
 
   // Using 8 as the source
   int routeB0[4] = {8, 2, 1, 0};
@@ -149,59 +149,59 @@ void testCreateRoutingTables(void) {
       {.nHops = 1, .route = routeB6}, {.nHops = 2, .route = routeB7},
       {.nHops = 0, .route = routeB8},
   };
-  success = createRoutingTables(routeArrayB, &routingTable, N);
+  success = createRoutingTableArray(routeArrayB, &routingTableArray, N);
   assert(success == EXIT_SUCCESS);
   // Check for 0th index node
-  assert(routingTable[0].n == 0);
+  assert(routingTableArray[0].nRows == 0);
   // Check for 1st index node
-  assert(routingTable[1].n == 1);
-  assert(routingTable[1].table[0].destination == 0);
-  assert(routingTable[1].table[0].nextHop == 0);
+  assert(routingTableArray[1].nRows == 1);
+  assert(routingTableArray[1].routingTableRow[0].destination == 0);
+  assert(routingTableArray[1].routingTableRow[0].nextHop == 0);
   // Check for 2nd index node
-  assert(routingTable[2].n == 5);
-  assert(routingTable[2].table[0].destination == 0);
-  assert(routingTable[2].table[0].nextHop == 1);
-  assert(routingTable[2].table[1].destination == 1);
-  assert(routingTable[2].table[1].nextHop == 1);
-  assert(routingTable[2].table[2].destination == 3);
-  assert(routingTable[2].table[2].nextHop == 3);
-  assert(routingTable[2].table[3].destination == 4);
-  assert(routingTable[2].table[3].nextHop == 5);
-  assert(routingTable[2].table[4].destination == 5);
-  assert(routingTable[2].table[4].nextHop == 5);
+  assert(routingTableArray[2].nRows == 5);
+  assert(routingTableArray[2].routingTableRow[0].destination == 0);
+  assert(routingTableArray[2].routingTableRow[0].nextHop == 1);
+  assert(routingTableArray[2].routingTableRow[1].destination == 1);
+  assert(routingTableArray[2].routingTableRow[1].nextHop == 1);
+  assert(routingTableArray[2].routingTableRow[2].destination == 3);
+  assert(routingTableArray[2].routingTableRow[2].nextHop == 3);
+  assert(routingTableArray[2].routingTableRow[3].destination == 4);
+  assert(routingTableArray[2].routingTableRow[3].nextHop == 5);
+  assert(routingTableArray[2].routingTableRow[4].destination == 5);
+  assert(routingTableArray[2].routingTableRow[4].nextHop == 5);
   // Check for 3rd index node
-  assert(routingTable[3].n == 0);
+  assert(routingTableArray[3].nRows == 0);
   // Check for 4th index node
-  assert(routingTable[4].n == 0);
+  assert(routingTableArray[4].nRows == 0);
   // Check for 5th index node
-  assert(routingTable[5].n == 1);
-  assert(routingTable[5].table[0].destination == 4);
-  assert(routingTable[5].table[0].nextHop == 4);
+  assert(routingTableArray[5].nRows == 1);
+  assert(routingTableArray[5].routingTableRow[0].destination == 4);
+  assert(routingTableArray[5].routingTableRow[0].nextHop == 4);
   // Check for 6th index node
-  assert(routingTable[6].n == 1);
-  assert(routingTable[6].table[0].destination == 7);
-  assert(routingTable[6].table[0].nextHop == 7);
+  assert(routingTableArray[6].nRows == 1);
+  assert(routingTableArray[6].routingTableRow[0].destination == 7);
+  assert(routingTableArray[6].routingTableRow[0].nextHop == 7);
   // Check for 7th index node
-  assert(routingTable[7].n == 0);
+  assert(routingTableArray[7].nRows == 0);
   // Check for 8th index node
-  assert(routingTable[8].n == 8);
-  assert(routingTable[8].table[0].destination == 0);
-  assert(routingTable[8].table[0].nextHop == 2);
-  assert(routingTable[8].table[1].destination == 1);
-  assert(routingTable[8].table[1].nextHop == 2);
-  assert(routingTable[8].table[2].destination == 2);
-  assert(routingTable[8].table[2].nextHop == 2);
-  assert(routingTable[8].table[3].destination == 3);
-  assert(routingTable[8].table[3].nextHop == 2);
-  assert(routingTable[8].table[4].destination == 4);
-  assert(routingTable[8].table[4].nextHop == 2);
-  assert(routingTable[8].table[5].destination == 5);
-  assert(routingTable[8].table[5].nextHop == 2);
-  assert(routingTable[8].table[6].destination == 6);
-  assert(routingTable[8].table[6].nextHop == 6);
-  assert(routingTable[8].table[7].destination == 7);
-  assert(routingTable[8].table[7].nextHop == 6);
-  freeRoutingTable(&routingTable, N);
+  assert(routingTableArray[8].nRows == 8);
+  assert(routingTableArray[8].routingTableRow[0].destination == 0);
+  assert(routingTableArray[8].routingTableRow[0].nextHop == 2);
+  assert(routingTableArray[8].routingTableRow[1].destination == 1);
+  assert(routingTableArray[8].routingTableRow[1].nextHop == 2);
+  assert(routingTableArray[8].routingTableRow[2].destination == 2);
+  assert(routingTableArray[8].routingTableRow[2].nextHop == 2);
+  assert(routingTableArray[8].routingTableRow[3].destination == 3);
+  assert(routingTableArray[8].routingTableRow[3].nextHop == 2);
+  assert(routingTableArray[8].routingTableRow[4].destination == 4);
+  assert(routingTableArray[8].routingTableRow[4].nextHop == 2);
+  assert(routingTableArray[8].routingTableRow[5].destination == 5);
+  assert(routingTableArray[8].routingTableRow[5].nextHop == 2);
+  assert(routingTableArray[8].routingTableRow[6].destination == 6);
+  assert(routingTableArray[8].routingTableRow[6].nextHop == 6);
+  assert(routingTableArray[8].routingTableRow[7].destination == 7);
+  assert(routingTableArray[8].routingTableRow[7].nextHop == 6);
+  freeRoutingTableArray(&routingTableArray, N);
 #undef N
 
 #define N (6)
@@ -218,39 +218,40 @@ void testCreateRoutingTables(void) {
       {.nHops = 2, .route = routeC2}, {.nHops = 3, .route = routeC3},
       {.nHops = 2, .route = routeC4}, {.nHops = 1, .route = routeC5},
   };
-  success = createRoutingTables(routeArrayC, &routingTable, N);
+  success = createRoutingTableArray(routeArrayC, &routingTableArray, N);
   assert(success == EXIT_SUCCESS);
 
-  assert(routingTable[0].n == 5);
-  assert(routingTable[0].table[0].destination == 1);
-  assert(routingTable[0].table[0].nextHop == 1);
-  assert(routingTable[0].table[1].destination == 2);
-  assert(routingTable[0].table[1].nextHop == 1);
-  assert(routingTable[0].table[2].destination == 3);
-  assert(routingTable[0].table[2].nextHop == 1);
-  assert(routingTable[0].table[3].destination == 4);
-  assert(routingTable[0].table[3].nextHop == 1);
-  assert(routingTable[0].table[4].destination == 5);
-  assert(routingTable[0].table[4].nextHop == 5);
+  // Check for 0th index node
+  assert(routingTableArray[0].nRows == 5);
+  assert(routingTableArray[0].routingTableRow[0].destination == 1);
+  assert(routingTableArray[0].routingTableRow[0].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[1].destination == 2);
+  assert(routingTableArray[0].routingTableRow[1].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[2].destination == 3);
+  assert(routingTableArray[0].routingTableRow[2].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[3].destination == 4);
+  assert(routingTableArray[0].routingTableRow[3].nextHop == 1);
+  assert(routingTableArray[0].routingTableRow[4].destination == 5);
+  assert(routingTableArray[0].routingTableRow[4].nextHop == 5);
   // Check for 1st index node
-  assert(routingTable[1].n == 3);
-  assert(routingTable[1].table[0].destination == 2);
-  assert(routingTable[1].table[0].nextHop == 2);
-  assert(routingTable[1].table[1].destination == 3);
-  assert(routingTable[1].table[1].nextHop == 4);
-  assert(routingTable[1].table[2].destination == 4);
-  assert(routingTable[1].table[2].nextHop == 4);
+  assert(routingTableArray[1].nRows == 3);
+  assert(routingTableArray[1].routingTableRow[0].destination == 2);
+  assert(routingTableArray[1].routingTableRow[0].nextHop == 2);
+  assert(routingTableArray[1].routingTableRow[1].destination == 3);
+  assert(routingTableArray[1].routingTableRow[1].nextHop == 4);
+  assert(routingTableArray[1].routingTableRow[2].destination == 4);
+  assert(routingTableArray[1].routingTableRow[2].nextHop == 4);
   // Check for 2nd index node
-  assert(routingTable[2].n == 0);
+  assert(routingTableArray[2].nRows == 0);
   // Check for 3rd index node
-  assert(routingTable[3].n == 0);
+  assert(routingTableArray[3].nRows == 0);
   // Check for 4th index node
-  assert(routingTable[4].n == 1);
-  assert(routingTable[4].table[0].destination == 3);
-  assert(routingTable[4].table[0].nextHop == 3);
+  assert(routingTableArray[4].nRows == 1);
+  assert(routingTableArray[4].routingTableRow[0].destination == 3);
+  assert(routingTableArray[4].routingTableRow[0].nextHop == 3);
   // Check for 5th index node
-  assert(routingTable[5].n == 0);
-  freeRoutingTable(&routingTable, N);
+  assert(routingTableArray[5].nRows == 0);
+  freeRoutingTableArray(&routingTableArray, N);
 #undef N
 }
 
@@ -267,8 +268,8 @@ int main(int argc, char **argv) {
 
   if (strcmp(argv[1], "printEdges") == 0) {
     testPrintEdges();
-  } else if (strcmp(argv[1], "createRoutingTables") == 0) {
-    testCreateRoutingTables();
+  } else if (strcmp(argv[1], "createRoutingTableArray") == 0) {
+    testCreateRoutingTableArray();
   } else {
     fprintf(stderr, "No test named %s in %s\n", argv[1], basename(argv[0]));
     return EXIT_FAILURE;

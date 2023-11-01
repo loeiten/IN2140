@@ -38,7 +38,7 @@ int sendEdgeInformation(const int tcpRoutingServerSocketFd,
                         struct CommunicatedNode* const communicatedNode);
 
 /**
- * @brief Receive
+ * @brief Receive the routing table
  *
  * @param tcpRoutingServerSocketFd The connected TCP socket to use for
  *                                 communication

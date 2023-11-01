@@ -171,6 +171,11 @@ int sendEdgeInformation(const int tcpRoutingServerSocketFd,
 int receiveRoutingTable(const int tcpRoutingServerSocketFd,
                         struct RoutingTable* routingTable,
                         int* const tableRows) {
+  // FIXME: You are here
+  (void)tcpRoutingServerSocketFd;
+  (void)routingTable;
+  (void)tableRows;
+  /*
   // NOTE: recv()/send() are specific to socket descriptors, whereas
   //       read()/write() are universal functions working on all descriptors
   //       Both of them are blocking by default
@@ -196,7 +201,7 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
   }
 
   // Receive the table
-  nBytes = (*tableRows) * sizeof(struct DestinationNextPair);
+  nBytes = (*tableRows) * sizeof(struct RoutingTable);
   bytesReceived = recv(tcpRoutingServerSocketFd, &(routingTable->table), nBytes,
                        MSG_WAITALL);
   if (bytesReceived == -1) {
@@ -208,6 +213,7 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
             "Received less bytes than expected for routingTable->table\n");
     return EXIT_FAILURE;
   }
+  */
 
   return EXIT_SUCCESS;
 }

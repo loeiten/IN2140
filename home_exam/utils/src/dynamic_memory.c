@@ -101,46 +101,47 @@ void freeRouteArray(struct Route **routeArray, const int n) {
   }
 }
 
-int allocateRoutingTable(struct RoutingTable **routingTable, int n,
-                         const char *name) {
+int allocateRoutingTableArray(struct RoutingTable **routingTableArray, int n,
+                              const char *name) {
   // Zero allocate the routing table
-  *routingTable = (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
-  if ((*routingTable) == NULL) {
+  *routingTableArray =
+      (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
+  if ((*routingTableArray) == NULL) {
     fprintf(stderr, "Memory allocation for %s failed", name);
     perror(": ");
     return EXIT_FAILURE;
   }
 
-  // Allocate the RoutingTable
+  // Allocate the RoutingTableArray
   for (int i = 0; i < n; ++i) {
     // There will be at max one table for each node
-    (*routingTable)[i].table = (struct DestinationNextPair *)malloc(
-        n * sizeof(struct DestinationNextPair));
-    (*routingTable)[i].n = 0;
-    if ((*routingTable)[i].table == NULL) {
+    (*routingTableArray)[i].routingTableRow =
+        (struct RoutingTableRow *)malloc(n * sizeof(struct RoutingTableRow));
+    (*routingTableArray)[i].nRows = 0;
+    if ((*routingTableArray)[i].routingTableRow == NULL) {
       fprintf(stderr,
               "Memory allocation for %s failed for routeArrayTmp[%d].route",
               name, i);
       perror(": ");
       // NOTE: The freeing of routeArray will happen in the place where it
       // was allocated
-      freeRoutingTable(routingTable, n);
+      freeRoutingTableArray(routingTableArray, n);
       return EXIT_FAILURE;
     }
   }
   return EXIT_SUCCESS;
 }
 
-void freeRoutingTable(struct RoutingTable **routingTable, int n) {
-  if ((*routingTable) != NULL) {
+void freeRoutingTableArray(struct RoutingTable **routingTableArray, int n) {
+  if ((*routingTableArray) != NULL) {
     for (int i = 0; i < n; ++i) {
-      if ((*routingTable)[i].table != NULL) {
-        free((*routingTable)[i].table);
-        (*routingTable)[i].table = NULL;
+      if ((*routingTableArray)[i].routingTableRow != NULL) {
+        free((*routingTableArray)[i].routingTableRow);
+        (*routingTableArray)[i].routingTableRow = NULL;
       }
     }
-    free(*routingTable);
-    (*routingTable) = NULL;
+    free(*routingTableArray);
+    (*routingTableArray) = NULL;
   }
 }
 
@@ -298,7 +299,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
                           struct IndexToAddress *indexToAddress,
                           int ***adjacencyMatrix, int **distanceArray,
                           struct Route **routeArray,
-                          struct RoutingTable **routingTable, int n,
+                          struct RoutingTable **routingTableArray, int n,
                           int maxEdges) {
   // communicatedNodeArray
   int success = allocateCommunicatedNodeArray(communicatedNodeArray, n,
@@ -314,8 +315,8 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
     fprintf(stderr,
             "Allocation of memory to invalidEdgesArray failed, exiting\n");
     freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
-                      adjacencyMatrix, distanceArray, routeArray, routingTable,
-                      n);
+                      adjacencyMatrix, distanceArray, routeArray,
+                      routingTableArray, n);
     return EXIT_FAILURE;
   }
   // indexToAddress
@@ -323,8 +324,8 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory to indexToAddress failed, exiting\n");
     freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
-                      adjacencyMatrix, distanceArray, routeArray, routingTable,
-                      n);
+                      adjacencyMatrix, distanceArray, routeArray,
+                      routingTableArray, n);
     return EXIT_FAILURE;
   }
   // adjacencyMatrix
@@ -333,8 +334,8 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
     fprintf(stderr,
             "Allocation of memory to adjacencyMatrix failed, exiting\n");
     freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
-                      adjacencyMatrix, distanceArray, routeArray, routingTable,
-                      n);
+                      adjacencyMatrix, distanceArray, routeArray,
+                      routingTableArray, n);
     return EXIT_FAILURE;
   }
   // distanceArray
@@ -342,8 +343,8 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory to distanceArray failed, exiting\n");
     freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
-                      adjacencyMatrix, distanceArray, routeArray, routingTable,
-                      n);
+                      adjacencyMatrix, distanceArray, routeArray,
+                      routingTableArray, n);
     return EXIT_FAILURE;
   }
   // routeArray
@@ -351,17 +352,19 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory to routeArray failed, exiting\n");
     freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
-                      adjacencyMatrix, distanceArray, routeArray, routingTable,
-                      n);
+                      adjacencyMatrix, distanceArray, routeArray,
+                      routingTableArray, n);
     return EXIT_FAILURE;
   }
-  // routingTable
-  success = allocateRoutingTable(routingTable, n, "routingTable");
+  // routingTableArray
+  success =
+      allocateRoutingTableArray(routingTableArray, n, "routingTableArray");
   if (success != EXIT_SUCCESS) {
-    fprintf(stderr, "Allocation of memory to routingTable failed, exiting\n");
+    fprintf(stderr,
+            "Allocation of memory to routingTableArray failed, exiting\n");
     freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
-                      adjacencyMatrix, distanceArray, routeArray, routingTable,
-                      n);
+                      adjacencyMatrix, distanceArray, routeArray,
+                      routingTableArray, n);
     return EXIT_FAILURE;
   }
 
@@ -373,12 +376,12 @@ void freeRoutingServer(struct CommunicatedNode **communicatedNodeArray,
                        struct IndexToAddress *indexToAddress,
                        int ***adjacencyMatrix, int **distanceArray,
                        struct Route **routeArray,
-                       struct RoutingTable **routingTable, int n) {
+                       struct RoutingTable **routingTableArray, int n) {
   freeCommunicatedNodeArray(communicatedNodeArray, n);
   freeEdgeArray(invalidEdgesArray);
   freeIndexToAddress(indexToAddress);
   freeIntMatrix(adjacencyMatrix, n);
   freeIntArray(distanceArray);
   freeRouteArray(routeArray, n);
-  freeRoutingTable(routingTable, n);
+  freeRoutingTableArray(routingTableArray, n);
 }

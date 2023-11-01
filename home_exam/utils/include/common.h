@@ -14,7 +14,7 @@ struct CommunicatedNode {
 /**
  * @brief Elements in the routing table
  */
-struct DestinationNextPair {
+struct RoutingTableRow {
   int destination; /**< Destination of package */
   int nextHop;     /**< The next hop needed in order to reach the destination */
 };
@@ -23,8 +23,8 @@ struct DestinationNextPair {
  * @brief The routing table
  */
 struct RoutingTable {
-  int n;                             /**< Number of elements */
-  struct DestinationNextPair* table; /**< Array of dest-next pairs */
+  int nRows;                      /**< Number of elements */
+  struct RoutingTableRow* routingTableRow; /**< Array of routingTables */
 };
 
 /**

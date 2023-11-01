@@ -76,6 +76,8 @@ int main(int argc, char **argv) {
   }
 
   // Receive the routing table
+  // FIXME: You are here
+  /*
   struct RoutingTable routingTable;
   struct RoutingTable *routingTablePtr = &routingTable;
   int tableRows = -1;
@@ -84,11 +86,12 @@ int main(int argc, char **argv) {
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Failed to receive the edge information\n");
     freeNeighborAddressesAndEdgeWeights(&communicatedNode);
-    freeRoutingTable(&routingTablePtr, tableRows);
+    freeRoutingTableArray(&routingTablePtr, tableRows);
     close(udpSocketFd);
     close(tcpRoutingServerSocketFd);
     exit(-4);
   }
+  */
 
   // NOTE: In TCP you can bind before connecting
   //       If not this is done automatically by the OS
