@@ -7,6 +7,7 @@ struct IndexToAddress;
 struct CommunicatedNode;
 struct Route;
 struct RoutingTable;
+struct RoutingTableArray;
 
 /**
  * @brief Allocate an int array
@@ -73,23 +74,40 @@ int allocateRouteArray(struct Route **routeArray, const int n,
 void freeRouteArray(struct Route **routeArray, const int n);
 
 /**
- * @brief Allocate space to a routing table
+ * @brief Allocate memory to a routing table
  *
- * @param routingTableArray The routing table, one for each node
- * @param n The number of nodes in the graph
+ * @param routingTable The routing table, one for each node
+ * @param nRows The number of nodes in the graph
  * @param name Name of the routing table
  * @returns 0 on success, 1 on error
  */
-int allocateRoutingTableArray(struct RoutingTable **routingTableArray, int n,
-                              const char *name);
+int allocateRoutingTable(struct RoutingTable *routingTable, const int nRows,
+                         const char *name);
 
 /**
  * @brief Free the routing table and its contents
  *
  * @param routingTableArray The routing table, one for each node
- * @param n The number of nodes in the graph
  */
-void freeRoutingTableArray(struct RoutingTable **routingTableArray, int n);
+void freeRoutingTable(struct RoutingTable *routingTable);
+
+/**
+ * @brief Allocate memory to an array of routing tables
+ *
+ * @param routingTableArray The routing table array, one for each node
+ * @param n The number of nodes in the graph
+ * @param name Name of the routing table
+ * @returns 0 on success, 1 on error
+ */
+int allocateRoutingTableArray(struct RoutingTableArray *routingTableArray,
+                              const int n, const char *name);
+
+/**
+ * @brief Free the routing table array and its contents
+ *
+ * @param routingTableArray The routing table array
+ */
+void freeRoutingTableArray(struct RoutingTableArray *routingTableArray);
 
 /**
  * @brief Allocate memory and initialize the values to an edge array
@@ -216,7 +234,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
                           struct IndexToAddress *indexToAddress,
                           int ***adjacencyMatrix, int **distanceArray,
                           struct Route **routeArray,
-                          struct RoutingTable **routingTableArray, int n,
+                          struct RoutingTableArray *routingTableArray, int n,
                           int maxEdges);
 
 /**
@@ -236,6 +254,6 @@ void freeRoutingServer(struct CommunicatedNode **communicatedNodeArray,
                        struct IndexToAddress *indexToAddress,
                        int ***adjacencyMatrix, int **distanceArray,
                        struct Route **routeArray,
-                       struct RoutingTable **routingTableArray, int n);
+                       struct RoutingTableArray *routingTableArray, int n);
 
 #endif  // HOME_EXAM_UTILS_INCLUDE_DYNAMIC_MEMORY_H_

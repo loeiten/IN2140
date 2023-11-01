@@ -42,7 +42,7 @@ void printEdges(const int *const distanceArray,
 }
 
 int createRoutingTableArray(struct Route *routeArray,
-                            struct RoutingTable **const routingTableArray,
+                            struct RoutingTableArray *const routingTableArray,
                             int n) {
   // Pseudo code:
   // 1. Create a n x n matrix called visited, the rows will be the source
@@ -82,7 +82,7 @@ int createRoutingTableArray(struct Route *routeArray,
   }
 
   // Allocate the routing table
-  struct RoutingTable *routingTableArrayTmp = NULL;
+  struct RoutingTableArray routingTableArrayTmp;
   success = allocateRoutingTableArray(&routingTableArrayTmp, n,
                                       "routingTableArrayTmp");
   if (success != EXIT_SUCCESS) {
@@ -116,16 +116,18 @@ int createRoutingTableArray(struct Route *routeArray,
           continue;
         }
         // Set the destination and next
-        routingTableArrayTmp[sourceNode]
-            .routingTableRow[routingTableArrayTmp[sourceNode].nRows]
+        routingTableArrayTmp.routingTables[sourceNode]
+            .routingTableRows[routingTableArrayTmp.routingTables[sourceNode]
+                                  .nRows]
             .destination = destinationNode;
-        routingTableArrayTmp[sourceNode]
-            .routingTableRow[routingTableArrayTmp[sourceNode].nRows]
+        routingTableArrayTmp.routingTables[sourceNode]
+            .routingTableRows[routingTableArrayTmp.routingTables[sourceNode]
+                                  .nRows]
             .nextHop = nextHopNode;
         // Mark visited
         visited[sourceNode][destinationNode] = 1;
         // Increment the number of DestinationNextPair in the table
-        ++(routingTableArrayTmp[sourceNode].nRows);
+        ++(routingTableArrayTmp.routingTables[sourceNode].nRows);
 
         // Shift the destination left
         --destinationIdx;
@@ -141,6 +143,8 @@ int createRoutingTableArray(struct Route *routeArray,
   freeIntMatrix(&visited, n);
 
   // Finally assign the local temporary to the output value
+  // NOTE: No deep copy, both structures will point to the same memory after
+  // this
   *routingTableArray = routingTableArrayTmp;
   return EXIT_SUCCESS;
 }

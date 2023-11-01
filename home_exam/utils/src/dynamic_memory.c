@@ -101,12 +101,39 @@ void freeRouteArray(struct Route **routeArray, const int n) {
   }
 }
 
-int allocateRoutingTableArray(struct RoutingTable **routingTableArray, int n,
-                              const char *name) {
+int allocateRoutingTable(struct RoutingTable *routingTable, const int nRows,
+                         const char *name) {
   // Zero allocate the routing table
-  *routingTableArray =
+  routingTable->nRows = nRows;
+  routingTable->routingTableRows =
+      (struct RoutingTableRows *)calloc(nRows, sizeof(struct RoutingTableRows));
+  if (routingTable->routingTableRows == NULL) {
+    routingTable->nRows = -1;
+    fprintf(stderr, "Memory allocation for %s failed", name);
+    perror(": ");
+    return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+}
+
+void freeRoutingTable(struct RoutingTable *routingTable) {
+  routingTable->nRows = -1;
+  if (routingTable->routingTableRows == NULL) {
+    return;
+  }
+
+  free(routingTable->routingTableRows);
+  routingTable->routingTableRows = NULL;
+}
+
+int allocateRoutingTableArray(struct RoutingTableArray *routingTableArray,
+                              int n, const char *name) {
+  routingTableArray->n = n;
+  // Zero allocate the routing table array
+  routingTableArray->routingTables =
       (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
-  if ((*routingTableArray) == NULL) {
+  if (routingTableArray->routingTables == NULL) {
+    routingTableArray->n = -1;
     fprintf(stderr, "Memory allocation for %s failed", name);
     perror(": ");
     return EXIT_FAILURE;
@@ -115,34 +142,35 @@ int allocateRoutingTableArray(struct RoutingTable **routingTableArray, int n,
   // Allocate the RoutingTableArray
   for (int i = 0; i < n; ++i) {
     // There will be at max one table for each node
-    (*routingTableArray)[i].routingTableRow =
-        (struct RoutingTableRow *)malloc(n * sizeof(struct RoutingTableRow));
-    (*routingTableArray)[i].nRows = 0;
-    if ((*routingTableArray)[i].routingTableRow == NULL) {
+    routingTableArray->routingTables[i].routingTableRows =
+        (struct RoutingTableRows *)malloc(n * sizeof(struct RoutingTableRows));
+    routingTableArray->routingTables[i].nRows = 0;
+    if (routingTableArray->routingTables[i].routingTableRows == NULL) {
       fprintf(stderr,
               "Memory allocation for %s failed for routeArrayTmp[%d].route",
               name, i);
       perror(": ");
       // NOTE: The freeing of routeArray will happen in the place where it
       // was allocated
-      freeRoutingTableArray(routingTableArray, n);
+      freeRoutingTableArray(routingTableArray);
       return EXIT_FAILURE;
     }
   }
   return EXIT_SUCCESS;
 }
 
-void freeRoutingTableArray(struct RoutingTable **routingTableArray, int n) {
-  if ((*routingTableArray) != NULL) {
-    for (int i = 0; i < n; ++i) {
-      if ((*routingTableArray)[i].routingTableRow != NULL) {
-        free((*routingTableArray)[i].routingTableRow);
-        (*routingTableArray)[i].routingTableRow = NULL;
-      }
-    }
-    free(*routingTableArray);
-    (*routingTableArray) = NULL;
+void freeRoutingTableArray(struct RoutingTableArray *routingTableArray) {
+  if (routingTableArray->routingTables == NULL) {
+    routingTableArray->n = -1;
+    return;
   }
+
+  for (int i = 0; i < routingTableArray->n; ++i) {
+    freeRoutingTable(&(routingTableArray->routingTables[i]));
+  }
+  free(routingTableArray->routingTables);
+  routingTableArray->routingTables = NULL;
+  routingTableArray->n = -1;
 }
 
 int allocateEdgeArray(struct EdgeArray *edgeArray, int maxEdges,
@@ -299,7 +327,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
                           struct IndexToAddress *indexToAddress,
                           int ***adjacencyMatrix, int **distanceArray,
                           struct Route **routeArray,
-                          struct RoutingTable **routingTableArray, int n,
+                          struct RoutingTableArray *routingTableArray, int n,
                           int maxEdges) {
   // communicatedNodeArray
   int success = allocateCommunicatedNodeArray(communicatedNodeArray, n,
@@ -376,12 +404,12 @@ void freeRoutingServer(struct CommunicatedNode **communicatedNodeArray,
                        struct IndexToAddress *indexToAddress,
                        int ***adjacencyMatrix, int **distanceArray,
                        struct Route **routeArray,
-                       struct RoutingTable **routingTableArray, int n) {
+                       struct RoutingTableArray *routingTableArray, int n) {
   freeCommunicatedNodeArray(communicatedNodeArray, n);
   freeEdgeArray(invalidEdgesArray);
   freeIndexToAddress(indexToAddress);
   freeIntMatrix(adjacencyMatrix, n);
   freeIntArray(distanceArray);
   freeRouteArray(routeArray, n);
-  freeRoutingTableArray(routingTableArray, n);
+  freeRoutingTableArray(routingTableArray);
 }

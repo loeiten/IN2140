@@ -2,7 +2,6 @@
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
 
 struct IndexToAddress;
-struct RoutingTable;
 
 /**
  * @brief Representation of a route to an endpoint using indices
@@ -10,6 +9,11 @@ struct RoutingTable;
 struct Route {
   int nHops;  /**< Number of hops from the starting point */
   int *route; /**< The route taken */
+};
+
+struct RoutingTableArray {
+  int n;                              /**< Size of the array*/
+  struct RoutingTable *routingTables; /**< Elements of the array */
 };
 
 /**
@@ -32,11 +36,10 @@ void printEdges(const int *const distanceArray,
  * @param routeArray Array of the route to the shortest route from src the the
  *                   other nodes in the graph.
  * @param routingTableArray The routing table array, one for each node
- * @param n The number of nodes in the graph
  * @returns 0 on success, 1 on error
  */
 int createRoutingTableArray(struct Route *routeArray,
-                            struct RoutingTable **const routingTableArray,
+                            struct RoutingTableArray *const routingTableArray,
                             int n);
 
 #endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
