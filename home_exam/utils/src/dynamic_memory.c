@@ -1,7 +1,9 @@
 #include "../include/dynamic_memory.h"
 
+#include <errno.h>   // for errno
 #include <stdio.h>   // for fprintf, perror
 #include <stdlib.h>  // for free, EXIT_FAILURE
+#include <string.h>  // for strlen, strdup, strerror, memcpy, strndup
 
 #include "../../routing_server/include/route.h"       // for Route
 #include "../../routing_server/include/validation.h"  // for EdgeCounter
@@ -10,8 +12,8 @@
 int allocateIntArray(int **intArray, const int n, const char *name) {
   *intArray = (int *)malloc(n * sizeof(int));
   if ((*intArray) == NULL) {
-    fprintf(stderr, "Could not allocate memory to %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to %s: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
@@ -28,16 +30,16 @@ int allocateIntMatrix(int ***intMatrix, const int n, const char *name) {
   // Allocate memory for the array of pointers
   (*intMatrix) = (int **)calloc(n, sizeof(int *));
   if ((*intMatrix) == NULL) {
-    fprintf(stderr, "Could not allocate memory to *%s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to *%s: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   // Allocate memory for each row individually
   for (int i = 0; i < n; i++) {
     (*intMatrix)[i] = (int *)calloc(n, sizeof(int));
     if ((*intMatrix)[i] == NULL) {
-      fprintf(stderr, "Memory allocation for %s failed for row %d", name, i);
-      perror(": ");
+      fprintf(stderr, "Memory allocation for %s failed for row %d: %s\n", name,
+              i, strerror(errno));
       return EXIT_FAILURE;
     }
   }
@@ -66,8 +68,8 @@ int allocateRouteArray(struct Route **routeArray, const int n,
   //       then routeArray[i].route pointer has an indeterminate value
   *routeArray = (struct Route *)calloc(n, sizeof(struct Route));
   if ((*routeArray) == NULL) {
-    fprintf(stderr, "Memory allocation for %s failed", name);
-    perror(": ");
+    fprintf(stderr, "Memory allocation for %s failed: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
 
@@ -75,10 +77,10 @@ int allocateRouteArray(struct Route **routeArray, const int n,
   for (int i = 0; i < n; ++i) {
     (*routeArray)[i].route = (int *)malloc(n * sizeof(int));
     if ((*routeArray)[i].route == NULL) {
-      fprintf(stderr,
-              "Memory allocation for %s failed for routeArrayTmp[%d].route",
-              name, i);
-      perror(": ");
+      fprintf(
+          stderr,
+          "Memory allocation for %s failed for routeArrayTmp[%d].route: %s\n",
+          name, i, strerror(errno));
       // NOTE: The freeing of routeArray will happen in the place where it
       // was allocated
       freeRouteArray(routeArray, n);
@@ -109,8 +111,8 @@ int allocateRoutingTable(struct RoutingTable *routingTable, const int nRows,
       (struct RoutingTableRows *)calloc(nRows, sizeof(struct RoutingTableRows));
   if (routingTable->routingTableRows == NULL) {
     routingTable->nRows = -1;
-    fprintf(stderr, "Memory allocation for %s failed", name);
-    perror(": ");
+    fprintf(stderr, "Memory allocation for %s failed: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
@@ -134,8 +136,8 @@ int allocateRoutingTableArray(struct RoutingTableArray *routingTableArray,
       (struct RoutingTable *)calloc(n, sizeof(struct RoutingTable));
   if (routingTableArray->routingTables == NULL) {
     routingTableArray->n = -1;
-    fprintf(stderr, "Memory allocation for %s failed", name);
-    perror(": ");
+    fprintf(stderr, "Memory allocation for %s failed: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
 
@@ -146,10 +148,10 @@ int allocateRoutingTableArray(struct RoutingTableArray *routingTableArray,
         (struct RoutingTableRows *)malloc(n * sizeof(struct RoutingTableRows));
     routingTableArray->routingTables[i].nRows = 0;
     if (routingTableArray->routingTables[i].routingTableRows == NULL) {
-      fprintf(stderr,
-              "Memory allocation for %s failed for routeArrayTmp[%d].route",
-              name, i);
-      perror(": ");
+      fprintf(
+          stderr,
+          "Memory allocation for %s failed for routeArrayTmp[%d].route: %s\n",
+          name, i, strerror(errno));
       // NOTE: The freeing of routeArray will happen in the place where it
       // was allocated
       freeRoutingTableArray(routingTableArray);
@@ -179,8 +181,8 @@ int allocateEdgeArray(struct EdgeArray *edgeArray, int maxEdges,
   edgeArray->firstAvailablePosition = -1;
   edgeArray->array = (struct Edge *)malloc(maxEdges * sizeof(struct Edge));
   if (edgeArray->array == NULL) {
-    fprintf(stderr, "Could not allocate memory to %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to %s: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   for (int i = 0; i < maxEdges; ++i) {
@@ -206,8 +208,8 @@ int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
   *edgeCounterArray =
       (struct EdgeCounter *)malloc(maxEdges * sizeof(struct EdgeCounter));
   if ((*edgeCounterArray) == NULL) {
-    fprintf(stderr, "Could not allocate memory to %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to %s: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
@@ -225,8 +227,8 @@ int allocateCommunicatedNodeArray(
   (*communicatedNodeArray) =
       (struct CommunicatedNode *)calloc(n, sizeof(struct CommunicatedNode));
   if ((*communicatedNodeArray) == NULL) {
-    fprintf(stderr, "Could not allocate memory to %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to %s: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   for (int i = 0; i < n; ++i) {
@@ -243,16 +245,16 @@ int allocateCommunicatedNodeNeighborAndWeights(
                                  nNeighbors, name);
   if (success != EXIT_SUCCESS) {
     communicatedNode->nNeighbors = -1;
-    fprintf(stderr, "Could not allocate memory to the neighbors of %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to the neighbors of %s: %s\n",
+            name, strerror(errno));
     return EXIT_FAILURE;
   }
   success =
       allocateIntArray(&(communicatedNode->edgeWeights), nNeighbors, name);
   if (success != EXIT_SUCCESS) {
     communicatedNode->nNeighbors = -1;
-    fprintf(stderr, "Could not allocate memory to the edgeWeights of %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to the edgeWeights of %s: %s\n",
+            name, strerror(errno));
     freeIntArray(&(communicatedNode->neighborAddresses));
     return EXIT_FAILURE;
   }
@@ -275,8 +277,8 @@ int allocateIndexToAddress(struct IndexToAddress *indexToAddress, int n,
   indexToAddress->n = -1;
   indexToAddress->map = (int *)malloc(n * sizeof(int));
   if (indexToAddress->map == NULL) {
-    fprintf(stderr, "Could not allocate memory to %s", name);
-    perror(": ");
+    fprintf(stderr, "Could not allocate memory to %s: %s\n", name,
+            strerror(errno));
     return EXIT_FAILURE;
   }
   indexToAddress->n = n;
