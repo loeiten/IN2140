@@ -24,6 +24,8 @@ int getTCPServerSocket(int* const listenSocket, const int listenPort) {
   //      See https://man7.org/linux/man-pages/man7/address_families.7.html
   // IN - Internet
   // SIN - Shorthand for sockaddr_in
+  // hton - Host to network
+  // ntoh - Network to host
 
   // https://man7.org/linux/man-pages/man2/socket.2.html
   // Create the socket file descriptor for the server

@@ -43,11 +43,23 @@ int sendEdgeInformation(const int tcpRoutingServerSocketFd,
  * @param tcpRoutingServerSocketFd The connected TCP socket to use for
  *                                 communication
  * @param routingTable The routing table to be filled
- * @param tableRows Number of rows in the table
  * @return 0 on success, 1 on error
  */
 int receiveRoutingTable(const int tcpRoutingServerSocketFd,
-                        struct RoutingTable* routingTable,
-                        int* const tableRows);
+                        struct RoutingTable* routingTable);
+
+/**
+ * @brief Receive and potentially forward packets from other nodes
+ *
+ * @param udpSocketFd The socket to use for communication
+ * @param ownAddress The address of this node
+ * @param serverPort The port number of the server
+ *                   (used to calculate forward port)
+ * @param routingTable The routing table
+ * @return 0 on success, 1 on error
+ */
+int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
+                             const int serverPort,
+                             const struct RoutingTable* const routingTable);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_

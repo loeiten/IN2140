@@ -17,16 +17,22 @@ NODE_SRC := $(patsubst %/,%,$(NODE_SRC))
 OBJECT_FILES := $(patsubst $(NODE_SRC)%.c,$(BUILD_OBJ_DIR)%.o,$(NODE_SOURCE_FILES))
 
 # Build the final executable
-$(EXEC_DIR)/node: $(OBJECT_FILES) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+$(EXEC_DIR)/node: $(OBJECT_FILES) $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
 	$(call explain_build,Building node)
 	mkdir -p $(EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
 
 # Building the object files
+# NOTE: The only reason why we add an include path is because we have pretended
+#       that print_lib.h comes from an external library
+#       Since we use statements like
+#       #include "print_lib/include/print_lib.h", and since print_lib doesn't
+#       reside in "this" directory, we need to make sure that the compiler can
+#       find it
 $(BUILD_OBJ_DIR)%.o: $(NODE_SRC)%.c
 	$(call explain_build,Building the object files for node)
 	mkdir -p $(BUILD_OBJ_DIR)
-	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(ASSIGNMENT_FILES_SRC) -c $< -o $@
 
 test:
 	$(MAKE) -C $(SRC_DIR)/test test

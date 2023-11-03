@@ -11,16 +11,26 @@
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
 #include "../../utils/include/dynamic_memory.h"  // for CommunicatedNode
+// NOTE: We are not specifying the full path here
+//       As a consequence we have to do the following
+//       1. Use -I in the compilation to expand the include path of the compiler
+//       2. If you use compile_commands.json for code completion,
+//          compile errors, go-to definition etc. you need to create compile
+//          command
+//          You can do this with for example
+//          bear --output ../build/compile_commands.json --append -- make -B
+#include "print_lib/include/print_lib.h"  // for print_weighted_edge
 
-int getUDPSocket(int* const clientSocket, const int clientPort) {
+int getUDPSocket(int* const connectSocket, const int connectPort) {
   // A great introduction to socket programming can be found at:
   // https://users.cs.jmu.edu/bernstdh/web/common/lectures/summary_unix_udp.php
-  (*clientSocket) = socket(AF_LOCAL,    // We are communicating locally
-                           SOCK_DGRAM,  // Datagrams (connectionless, unreliable
-                                        // messages of a fixed maximum length)
-                           IPPROTO_UDP);  // Use the UDP protocol
-                                          // (redundant because of SOCK_DGRAM)
-  if ((*clientSocket) == -1) {
+  (*connectSocket) =
+      socket(AF_LOCAL,      // We are communicating locally
+             SOCK_DGRAM,    // Datagrams (connectionless, unreliable
+                            // messages of a fixed maximum length)
+             IPPROTO_UDP);  // Use the UDP protocol
+                            // (redundant because of SOCK_DGRAM)
+  if ((*connectSocket) == -1) {
     // NOTE: fprintf(stderr, "%s\n", strerror(errno)) is similar to perror(NULL)
     fprintf(stderr, "Failed to create UPD socket.\nError %d: %s\n", errno,
             strerror(errno));
@@ -41,17 +51,26 @@ int getUDPSocket(int* const clientSocket, const int clientPort) {
   //       send()/sendto()/recv()/recvfrom() using a system-assigned local port
   //       number.
   //       https://stackoverflow.com/a/6194518/2786884
+  // NOTE: In UDP you can connect before sending
+  //       When a UDP socket is created, its local and remote addresses are
+  //       unspecified. Datagrams can be sent immediately using sendto(2) or
+  //       sendmsg(2) with a valid destination address as an argument. When
+  //       connect(2) is called on the socket, the default destination
+  //       address is set and datagrams can now be sent using send(2) or
+  //       write(2) without specifying a destination address.
+  //       https://linux.die.net/man/7/udp
+  //       However, we know all the ports in advance
   // In this assignment the socket will be used to receive from and sending to
   // other nodes
   addr.sin_family = AF_LOCAL;  // We are still communicating locally
   addr.sin_addr.s_addr =
       INADDR_LOOPBACK;  // Only local addresses are accepted (INADDR_ANY would
                         // accept connection to any addresses)
-  addr.sin_port = htons(clientPort);  // The port in network byte order
+  addr.sin_port = htons(connectPort);  // The port in network byte order
 
   // Bind assigns the address specified by sockaddr_in to a socket
   // Traditionally, this operation is called "assigning a name to a socket".
-  int success = bind((*clientSocket), (struct sockaddr*)&addr, sizeof(addr));
+  int success = bind((*connectSocket), (struct sockaddr*)&addr, sizeof(addr));
   if (success != 0) {
     fprintf(stderr, "Binding client socket to address failed.\nError %d: %s\n",
             errno, strerror(errno));
@@ -90,8 +109,11 @@ int getTCPClientSocket(int* const clientSocket, const int serverPort) {
       INADDR_LOOPBACK;  // Equivalent to inet_addr("127.0.0.1")
   serverAddr.sin_port = htons(serverPort);  // The port in network byte order
 
-  // Bind assigns the address specified by sockaddr_in to a socket
-  // Traditionally, this operation is called "assigning a name to a socket".
+  // NOTE: In TCP you can bind before connecting
+  //       If not this is done automatically by the OS
+  // https://idea.popcount.org/2014-04-03-bind-before-connect/
+
+  // Initiate a connection on a socket
   int success = connect((*clientSocket), (struct sockaddr*)&serverAddr,
                         sizeof(serverAddr));
   if (success != 0) {
@@ -109,7 +131,7 @@ int sendEdgeInformation(const int tcpRoutingServerSocketFd,
   ssize_t nBytes = sizeof(int);
   ssize_t bytesSent =
       send(tcpRoutingServerSocketFd, &(communicatedNode->address), nBytes, 0);
-  if (bytesSent == -1) {
+  if (bytesSent != -1) {
     fprintf(stderr, "Sending communicatedNode->address failed.\nError %d: %s\n",
             errno, strerror(errno));
     return EXIT_FAILURE;
@@ -169,51 +191,99 @@ int sendEdgeInformation(const int tcpRoutingServerSocketFd,
 }
 
 int receiveRoutingTable(const int tcpRoutingServerSocketFd,
-                        struct RoutingTable* routingTable,
-                        int* const tableRows) {
-  // FIXME: You are here
-  (void)tcpRoutingServerSocketFd;
-  (void)routingTable;
-  (void)tableRows;
-  /*
+                        struct RoutingTable* routingTable) {
   // NOTE: recv()/send() are specific to socket descriptors, whereas
   //       read()/write() are universal functions working on all descriptors
   //       Both of them are blocking by default
   // Receive the number of rows
+  int nRows;
   ssize_t nBytes = sizeof(int);
   ssize_t bytesReceived =
-      recv(tcpRoutingServerSocketFd, &(routingTable->n), nBytes, MSG_WAITALL);
+      recv(tcpRoutingServerSocketFd, &nRows, nBytes, MSG_WAITALL);
   if (bytesReceived == -1) {
-    fprintf(stderr, "Receiving routingTable->n failed.\nError %d: %s\n", errno,
+    fprintf(stderr, "Receiving nRows failed.\nError %d: %s\n", errno,
             strerror(errno));
     return EXIT_FAILURE;
   } else if (bytesReceived != nBytes) {
-    fprintf(stderr, "Received less bytes than expected for routingTable->n\n");
+    fprintf(stderr, "Received less bytes than expected for nRows\n");
     return EXIT_FAILURE;
   }
-  (*tableRows) = routingTable->n;
 
   // Allocate memory to the routing table
-  int success =
-      allocateRoutingTable(&routingTable, *tableRows, "node routing table");
+  int success = allocateRoutingTable(routingTable, nRows, "node routing table");
   if (success != EXIT_SUCCESS) {
     return EXIT_FAILURE;
   }
 
   // Receive the table
-  nBytes = (*tableRows) * sizeof(struct RoutingTable);
-  bytesReceived = recv(tcpRoutingServerSocketFd, &(routingTable->table), nBytes,
-                       MSG_WAITALL);
+  nBytes = nRows * sizeof(struct RoutingTableRows);
+  bytesReceived = recv(tcpRoutingServerSocketFd,
+                       &(routingTable->routingTableRows), nBytes, MSG_WAITALL);
   if (bytesReceived == -1) {
-    fprintf(stderr, "Receiving routingTable->table failed.\nError %d: %s\n",
+    fprintf(stderr,
+            "Receiving routingTable->table routingTableRows\nError %d: %s\n",
             errno, strerror(errno));
     return EXIT_FAILURE;
   } else if (bytesReceived != nBytes) {
-    fprintf(stderr,
-            "Received less bytes than expected for routingTable->table\n");
+    fprintf(stderr, "Received less bytes than expected for routingTableRows\n");
     return EXIT_FAILURE;
   }
-  */
 
+  return EXIT_SUCCESS;
+}
+
+int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
+                             const int serverPort,
+                             const struct RoutingTable* const routingTable) {
+  unsigned char* packet = NULL;
+  ssize_t bytesReceived = recv(udpSocketFd, packet, MAX_MSG_LENGTH, 0);
+  if (bytesReceived == -1) {
+    fprintf(stderr, "Error when receiving package: %s\n", strerror(errno));
+    return EXIT_FAILURE;
+  }
+  short tmp;
+  unsigned short destination;
+  // NOTE: The packet order is given in the assignment
+  memcpy(&tmp, &packet[2], sizeof(tmp));
+  destination = ntohs(tmp);
+  if (destination == ownAddress) {
+    print_received_pkt(ownAddress, packet);
+  } else {
+    print_forwarded_pkt(ownAddress, packet);
+    // Forward the packet
+    // Find the next hop
+    int nextHop = -1;
+    for (int i = 0; i < routingTable->nRows; ++i) {
+      if (routingTable->routingTableRows[i].destination == destination) {
+        nextHop = routingTable->routingTableRows[i].nextHop;
+        break;
+      }
+    }
+    if (nextHop == -1) {
+      fprintf(stderr,
+              "Could not find the next hop of %d when the destination was %d\n",
+              ownAddress, destination);
+      return EXIT_FAILURE;
+    }
+
+    struct sockaddr_in destAddr;
+    destAddr.sin_family = AF_LOCAL;              // We are communicating locally
+    destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
+    destAddr.sin_port = htons(destination + serverPort);  // This is the port
+
+    memcpy(&tmp, &packet[0], sizeof(tmp));
+    unsigned short length = ntohs(tmp);
+    ssize_t bytesSent = sendto(udpSocketFd, packet, length, 0,
+                               (struct sockaddr*)&destAddr, sizeof(destAddr));
+    if (bytesSent == -1) {
+      fprintf(stderr, "Forwarding from %d to %d failed.\nError %d: %s\n",
+              ownAddress, destination, errno, strerror(errno));
+      return EXIT_FAILURE;
+    } else if (bytesSent != length) {
+      fprintf(stderr, "Sent less bytes than expected from %d to %d failed\n",
+              ownAddress, destination);
+      return EXIT_FAILURE;
+    }
+  }
   return EXIT_SUCCESS;
 }

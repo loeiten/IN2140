@@ -1,6 +1,8 @@
 #ifndef HOME_EXAM_UTILS_INCLUDE_COMMON_H_
 #define HOME_EXAM_UTILS_INCLUDE_COMMON_H_
 
+#define MAX_MSG_LENGTH (1024)
+
 /**
  * @brief Struct representing the communicated node
  */
