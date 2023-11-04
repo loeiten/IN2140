@@ -131,7 +131,7 @@ int main() {
   // Reply to the client
   // Send data back to the connection through the fd
   bzero((void *)buff, sizeof(buff));
-  char *msg = "Message received by the server\n";
+  const char *msg = "Message received by the server\n";
   int strBufferLen = strlen(msg) + 1;
   snprintf(buff, strBufferLen, "%s", msg);
   printf("To client: %s\n", buff);

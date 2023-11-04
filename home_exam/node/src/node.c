@@ -1,13 +1,10 @@
 #include "../include/node.h"
 
-#include <errno.h>
-#include <libgen.h>      // for basename
-#include <netinet/in.h>  // for sockaddr_in, INADDR_LOOPBACK
-#include <stdio.h>       // for fprintf, stderr
-#include <stdlib.h>      // for exit, EXIT_SUCCESS
-#include <string.h>
-#include <sys/socket.h>  // for send, socket, AF_LOCAL, bind
-#include <unistd.h>      // for close
+#include <libgen.h>  // for basename
+#include <stdio.h>   // for fprintf, stderr, NULL
+#include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
+#include <string.h>  // for strcmp
+#include <unistd.h>  // for close
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...

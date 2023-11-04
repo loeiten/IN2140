@@ -1,12 +1,12 @@
 #include <assert.h>  // for assert
 #include <libgen.h>  // for basename
 #include <limits.h>  // for INT_MAX
-#include <stdio.h>   // for fprintf, stderr, NULL
+#include <stdio.h>   // for fprintf, stderr
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/route.h"  // for createRoutingTableArray, Route
-#include "../utils/include/common.h"          // for RoutingTable, Destinati...
+#include "../routing_server/include/route.h"  // for RoutingTableArray, crea...
+#include "../utils/include/common.h"          // for RoutingTable, RoutingTa...
 #include "../utils/include/dynamic_memory.h"  // for freeRoutingTableArray
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following

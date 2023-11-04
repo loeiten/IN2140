@@ -7,7 +7,7 @@
 #include "../../utils/include/dynamic_memory.h"  // for freeRoutingServer
 #include "../include/adjacency_matrix.h"         // for createAdjacencyMatrix
 #include "../include/dijkstra.h"                 // for dijkstra
-#include "../include/route.h"                    // for createRoutingTables
+#include "../include/route.h"                    // for createRoutingTableArray
 #include "../include/server_communication.h"     // for getTCPServerSocket
 #include "../include/validation.h"               // for checkAllNodesReceived
 

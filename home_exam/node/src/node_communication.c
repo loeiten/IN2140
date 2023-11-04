@@ -1,16 +1,16 @@
 #include "../include/node_communication.h"
 
-#include <arpa/inet.h>   // for htons
+#include <arpa/inet.h>   // for htons, ntohs
 #include <errno.h>       // for errno
-#include <netinet/in.h>  // for sockaddr_in, INADDR_LOOPBACK
-#include <stdio.h>       // for fprintf, stderr, ssize_t
-#include <stdlib.h>      // for EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>      // for strerror
+#include <netinet/in.h>  // for sockaddr_in, INADDR_...
+#include <stdio.h>       // for fprintf, stderr, ssi...
+#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
+#include <string.h>      // for strerror, memcpy
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for send, socket, AF_LOCAL, bind
+#include <sys/socket.h>  // for send, recv, socket
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
-#include "../../utils/include/dynamic_memory.h"  // for CommunicatedNode
+#include "../../utils/include/dynamic_memory.h"  // for allocateRoutingTable
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -19,7 +19,7 @@
 //          command
 //          You can do this with for example
 //          bear --output ../build/compile_commands.json --append -- make -B
-#include "print_lib/include/print_lib.h"  // for print_weighted_edge
+#include "print_lib/include/print_lib.h"  // for print_forwarded_pkt
 
 int getUDPSocket(int* const connectSocket, const int connectPort) {
   // A great introduction to socket programming can be found at:

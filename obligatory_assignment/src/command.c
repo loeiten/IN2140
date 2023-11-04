@@ -18,7 +18,7 @@ int getCommand(const char *const commandStr, char **const command,
   // Declare helper variables
   int strLen;
   int charWritten;  // Number of chars not including terminating char
-  char *token;
+  const char *token;
   char *savePtr;
 
   // Copy the commandStr as strtok_r will alter the string
