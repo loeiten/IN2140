@@ -13,9 +13,9 @@ struct RoutingTable;
  * @param udpSocketFd Socket used for UDP communication
  * @param msg Message to be printed to stderr
  */
-void cleanup(struct CommunicatedNode *communicatedNode,
-             struct RoutingTable *routingTable,
-             int *const tcpRoutingServerSocketFd, int *const udpSocketFd,
-             const char *msg);
+void cleanUpNode(struct CommunicatedNode *communicatedNode,
+                 struct RoutingTable *routingTable,
+                 int *const tcpRoutingServerSocketFd, int *const udpSocketFd,
+                 const char *msg);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_H_

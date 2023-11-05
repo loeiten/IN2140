@@ -271,6 +271,11 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
     destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
     destAddr.sin_port = htons(destination + serverPort);  // This is the port
 
+    // Update the source of the packet
+    unsigned short source = htons(ownAddress);
+    memcpy(&packet[4], &source, sizeof(source));
+
+    // Forward the message
     memcpy(&tmp, &packet[0], sizeof(tmp));
     unsigned short length = ntohs(tmp);
     ssize_t bytesSent = sendto(udpSocketFd, packet, length, 0,
@@ -285,5 +290,65 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
       return EXIT_FAILURE;
     }
   }
+  return EXIT_SUCCESS;
+}
+
+int prepareAndSendPackets() {
+  // Open data.txt
+  FILE* fp = fopen("data.txt", "r");
+  if (fp == NULL) {
+    perror("Failed to open data.txt:");
+    return EXIT_FAILURE;
+  }
+
+  char** line = NULL;
+  size_t len = 0;
+
+  // NOTE: getline is from POSIX.1-2008, not the C-standard, see
+  // https://pubs.opengroup.org/onlinepubs/9699919799/functions/getline.html
+  // for specification
+  ssize_t nBytes = 0;
+  while (nBytes != EOF) {
+    nBytes = getline(line, &len, fp);
+    if (ferror(fp)) {
+      perror("Failed to read data.txt");
+      fclose(fp);
+      return EXIT_FAILURE;
+    } else if (feof(fp)) {
+      break;
+    }
+    unsigned short length;
+    unsigned short destination;
+    unsigned short source = 1;
+    const char* msg;
+    int success =
+        extractLengthDestinationAndMessage(*line, &length, &destination, msg);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Failed to extract length, destination and message\n");
+      // FIXME: Make a function which frees this
+      free(*line);
+      *line = NULL;
+      fclose(fp);
+      return EXIT_FAILURE;
+    }
+    if (strcmp(msg, "QUIT") == 0) {
+      fclose(fp);
+      free(*line);
+      return EXIT_SUCCESS;
+    }
+    char* packet = NULL;
+    success = createPacket(length, destination, source, msg, packet);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Failed to create the packet\n");
+      fclose(fp);
+      free(*line);
+      *line = NULL;
+      free(packet);
+      packet = NULL;
+    }
+    // FIXME: Send packet
+  }
+
+  fclose(fp);
   return EXIT_SUCCESS;
 }
