@@ -62,4 +62,48 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
                              const int serverPort,
                              const struct RoutingTable* const routingTable);
 
+/**
+ * @brief Prepare the packets and send them
+ *
+ * @param udpSocketFd The socket to use for communication
+ * @param ownAddress The address of this node
+ * @param serverPort The port number of the server
+ *                   (used to calculate forward port)
+ * @param routingTable The routing table
+ * @return 0 on success, 1 on error
+ */
+int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
+                          const int serverPort,
+                          const struct RoutingTable* const routingTable);
+
+/**
+ * @brief Extract the length, destination and message from a line
+ *
+ * Example:
+ * If the \p line reads
+ *
+ * \code{.unparsed}
+ * 814 Good luck with the home exam\n
+ * \endcode
+ *
+ * Then \p length is \a 35 :
+ * - 2 bytes for the \p length
+ * - 2 bytes for the \p destination
+ * - 2 bytes for the \a source
+ * - 29 bytes for <em>Good luck with the home exam\0</em>
+ *
+ * \p destination is \a 814 and \p message is
+ * <em>Good luck with the home exam\0</em>
+ *
+ * @param line The line to extract from
+ * @param length The length of the message
+ * @param destination The destination of packet
+ * @param msg The message
+ * @return 0 on success, 1 on error
+ */
+int extractLengthDestinationAndMessage(const char* const line,
+                                       unsigned short* const length,
+                                       unsigned short* const destination,
+                                       char* msg);
+
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_

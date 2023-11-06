@@ -90,12 +90,12 @@ int main(int argc, char **argv) {
 
   if (ownAddress == 1) {
     // Send packages to the other nodes
-    sleep(1);
-    // Read line
-    // Extract length, destination and message
-    // Create the packet
-    // Print the packet
-    // Send the package to the next shortest node
+    success = prepareAndSendPackets(udpSocketFd, ownAddress, serverPort,
+                                    routingTablePtr);
+    if (success != EXIT_SUCCESS) {
+      cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
+                  &udpSocketFd, "Failed to prepare and send packets\n");
+    }
   } else {
     // Await packet from the other nodes
     const char *msg = "";

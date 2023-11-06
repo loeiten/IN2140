@@ -8,6 +8,7 @@
 #include <string.h>      // for strerror, memcpy
 #include <strings.h>     // for bzero
 #include <sys/socket.h>  // for send, recv, socket
+#include <unistd.h>
 
 #include "../../utils/include/common.h"          // for CommunicatedNode
 #include "../../utils/include/dynamic_memory.h"  // for allocateRoutingTable
@@ -293,7 +294,12 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
   return EXIT_SUCCESS;
 }
 
-int prepareAndSendPackets() {
+int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
+                          const int serverPort,
+                          const struct RoutingTable* const routingTable) {
+  // Wait for all connections to open
+  sleep(1);
+
   // Open data.txt
   FILE* fp = fopen("data.txt", "r");
   if (fp == NULL) {
@@ -320,12 +326,14 @@ int prepareAndSendPackets() {
     unsigned short length;
     unsigned short destination;
     unsigned short source = 1;
-    const char* msg;
+    char* msg = NULL;
     int success =
         extractLengthDestinationAndMessage(*line, &length, &destination, msg);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Failed to extract length, destination and message\n");
       // FIXME: Make a function which frees this
+      free(msg);
+      msg = NULL;
       free(*line);
       *line = NULL;
       fclose(fp);
@@ -346,9 +354,88 @@ int prepareAndSendPackets() {
       free(packet);
       packet = NULL;
     }
+
     // FIXME: Send packet
+    success = sendUDPPacket(packet, );
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Failed to create the packet\n");
+      fclose(fp);
+      free(*line);
+      *line = NULL;
+      free(packet);
+      packet = NULL;
+    }
   }
 
   fclose(fp);
+  return EXIT_SUCCESS;
+}
+
+int extractLengthDestinationAndMessage(const char* const line,
+                                       unsigned short* const length,
+                                       unsigned short* const destination,
+                                       char* msg) {
+  // Duplicate the line so that we can modify it
+  char* lineCpy = strdup(line);
+  if (lineCpy == NULL) {
+    fprintf(stderr, "Could not duplicate the line '%s'\n", line);
+    return EXIT_FAILURE;
+  }
+
+  // We will:
+  // 1. Loop until the first space
+  // 2. Replace the first space with \0
+  // 3. Use the resulting string as a parameter in atoi
+  // 4. Continue loop until the first \n
+  // 5. Replace with \0
+  // 6. Copy this to msg
+
+  // 1. Loop until the first space
+  int lineLen = strlen(line);
+  int spaceI = 0;
+  for (; spaceI < lineLen; ++spaceI) {
+    if (line[spaceI] == ' ') {
+      break;
+    }
+  }
+  if (spaceI == lineLen) {
+    fprintf(stderr, "Found no spaces in the line '%s'\n", line);
+    free(lineCpy);
+    lineCpy = NULL;
+    return EXIT_FAILURE;
+  }
+
+  // 2. Replace the first space with \0
+  lineCpy[spaceI] = '\0';
+
+  // 3. Use the resulting string as a parameter in atoi
+  (*destination) = (unsigned short)atoi(lineCpy);
+
+  // 4. Continue loop until the first \n
+  int nI = spaceI;
+  for (; nI < lineLen; ++nI) {
+    if (line[nI] == '\n') {
+      break;
+    }
+  }
+  if (nI == lineLen) {
+    fprintf(stderr, "Found no newlines in the line '%s'\n", line);
+    free(lineCpy);
+    lineCpy = NULL;
+    return EXIT_FAILURE;
+  }
+
+  // 5. Replace with \0
+  lineCpy[nI] = '\0';
+
+  // 6. Copy this to msg
+  msg = strdup(&(lineCpy[spaceI]));
+  if (lineCpy == NULL) {
+    free(lineCpy);
+    lineCpy = NULL;
+    fprintf(stderr, "Could not duplicate the line '%s'\n", line);
+    return EXIT_FAILURE;
+  }
+
   return EXIT_SUCCESS;
 }
