@@ -439,3 +439,30 @@ int extractLengthDestinationAndMessage(const char* const line,
 
   return EXIT_SUCCESS;
 }
+
+int createPacket(const int length, const unsigned short destination,
+                 const unsigned short source, const char* const msg,
+                 char* packet) {
+  // Allocate memory to the message
+  packet = (char*)malloc(length * sizeof(char));
+  if (packet == NULL) {
+    perror("Could not allocate memory to the packet: ");
+    return EXIT_FAILURE;
+  }
+
+  // Assign the length to the first 2 bytes of the packet
+  unsigned short tmp = htons(length);
+  memcpy(&packet[0], &tmp, sizeof(tmp));
+
+  // Assign the destination to the next 2 bytes
+  tmp = htons(destination);
+  memcpy(&packet[2], &destination, sizeof(tmp));
+
+  // Assign the source to the next 2 bytes
+  tmp = htons(source);
+  memcpy(&packet[4], &tmp, sizeof(tmp));
+
+  // Finally: Assign the message
+  // +1 for the terminating null character
+  memcpy(&packet[6], &msg, (strlen(msg) + 1) * sizeof(char));
+}

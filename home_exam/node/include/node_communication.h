@@ -106,4 +106,29 @@ int extractLengthDestinationAndMessage(const char* const line,
                                        unsigned short* const destination,
                                        char* msg);
 
+/**
+ * @brief Create a packet
+ *
+ * The packet has the following format:
+ * - packet length (2 bytes in network byte order)
+ * - destination address (2 bytes in network byte order)
+ * - source address (2 bytes in network byte order)
+ * - message (this a string that must always be 0-terminated)
+ *
+ * See also:
+ * https://www.ibm.com/docs/en/zvm/7.3?topic=domains-network-byte-order-host-byte-order
+ * https://commons.wikimedia.org/wiki/File:32bit-Endianess.svg#/media/File:32bit-Endianess.svg
+ * https://en.wikipedia.org/wiki/Endianness
+ *
+ * @param length The length of the message
+ * @param destination The destination of the message
+ * @param source The source of the message
+ * @param msg The message
+ * @param packet The packet to be filled
+ * @return 0 on success, 1 on error
+ */
+int createPacket(const int length, const unsigned short destination,
+                 const unsigned short source, const char* const msg,
+                 char* packet);
+
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
