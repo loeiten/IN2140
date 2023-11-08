@@ -27,7 +27,7 @@ int getUDPSocket(int* const connectSocket, const int connectPort) {
   // https://users.cs.jmu.edu/bernstdh/web/common/lectures/summary_unix_udp.php
   (*connectSocket) =
       socket(AF_LOCAL,      // We are communicating locally
-             SOCK_DGRAM,    // Datagrams (connectionless, unreliable
+             SOCK_DGRAM,    // Datagrams (connection-less, unreliable
                             // messages of a fixed maximum length)
              IPPROTO_UDP);  // Use the UDP protocol
                             // (redundant because of SOCK_DGRAM)
@@ -286,7 +286,7 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
               ownAddress, destination, errno, strerror(errno));
       return EXIT_FAILURE;
     } else if (bytesSent != length) {
-      fprintf(stderr, "Sent less bytes than expected from %d to %d failed\n",
+      fprintf(stderr, "Sent less bytes than expected from %d to %d\n",
               ownAddress, destination);
       return EXIT_FAILURE;
     }
@@ -308,6 +308,8 @@ int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
   }
 
   char** line = NULL;
+  char* msg = NULL;
+  char* packet = NULL;
   size_t len = 0;
 
   // NOTE: getline is from POSIX.1-2008, not the C-standard, see
@@ -326,55 +328,60 @@ int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
     unsigned short length;
     unsigned short destination;
     unsigned short source = 1;
-    char* msg = NULL;
     int success =
-        extractLengthDestinationAndMessage(*line, &length, &destination, msg);
+        extractLengthDestinationAndMessage(*line, &length, &destination, &msg);
     if (success != EXIT_SUCCESS) {
-      fprintf(stderr, "Failed to extract length, destination and message\n");
-      // FIXME: Make a function which frees this
-      free(msg);
-      msg = NULL;
-      free(*line);
-      *line = NULL;
-      fclose(fp);
+      cleanUpPrepareAndSendPackets(
+          fp, line, &msg, &packet,
+          "Failed to extract length, destination and message\n");
       return EXIT_FAILURE;
     }
     if (strcmp(msg, "QUIT") == 0) {
-      fclose(fp);
-      free(*line);
+      cleanUpPrepareAndSendPackets(fp, line, &msg, &packet, "");
       return EXIT_SUCCESS;
     }
-    char* packet = NULL;
-    success = createPacket(length, destination, source, msg, packet);
+    success = createPacket(length, destination, source, msg, &packet);
     if (success != EXIT_SUCCESS) {
-      fprintf(stderr, "Failed to create the packet\n");
-      fclose(fp);
-      free(*line);
-      *line = NULL;
-      free(packet);
-      packet = NULL;
+      cleanUpPrepareAndSendPackets(fp, line, &msg, &packet,
+                                   "Failed to create the packet\n");
+      return EXIT_FAILURE;
     }
 
-    // FIXME: Send packet
-    success = sendUDPPacket(packet, );
+    success = sendUDPPacket(packet, length, udpSocketFd, ownAddress,
+                            destination, serverPort, routingTable);
     if (success != EXIT_SUCCESS) {
-      fprintf(stderr, "Failed to create the packet\n");
-      fclose(fp);
-      free(*line);
-      *line = NULL;
-      free(packet);
-      packet = NULL;
+      cleanUpPrepareAndSendPackets(fp, line, &msg, &packet,
+                                   "Failed to create the packet\n");
+      return EXIT_FAILURE;
     }
   }
 
-  fclose(fp);
+  cleanUpPrepareAndSendPackets(fp, line, &msg, &packet, "");
   return EXIT_SUCCESS;
+}
+
+void cleanUpPrepareAndSendPackets(FILE* fp, char** line, char** msg,
+                                  char** packet, const char* errorMsg) {
+  fprintf(stderr, "%s\n", errorMsg);
+  fclose(fp);
+  if (*line != NULL) {
+    free(*line);
+    *line = NULL;
+  }
+  if (*msg != NULL) {
+    free(*msg);
+    *msg = NULL;
+  }
+  if (*packet != NULL) {
+    free(*packet);
+    *packet = NULL;
+  }
 }
 
 int extractLengthDestinationAndMessage(const char* const line,
                                        unsigned short* const length,
                                        unsigned short* const destination,
-                                       char* msg) {
+                                       char** msg) {
   // Duplicate the line so that we can modify it
   char* lineCpy = strdup(line);
   if (lineCpy == NULL) {
@@ -389,6 +396,7 @@ int extractLengthDestinationAndMessage(const char* const line,
   // 4. Continue loop until the first \n
   // 5. Replace with \0
   // 6. Copy this to msg
+  // 7. Calculate the message length
 
   // 1. Loop until the first space
   int lineLen = strlen(line);
@@ -429,40 +437,88 @@ int extractLengthDestinationAndMessage(const char* const line,
   lineCpy[nI] = '\0';
 
   // 6. Copy this to msg
-  msg = strdup(&(lineCpy[spaceI]));
-  if (lineCpy == NULL) {
+  (*msg) = strdup(&(lineCpy[spaceI]));
+  if (*msg == NULL) {
+    fprintf(stderr, "Could not duplicate the line '%s'\n", line);
     free(lineCpy);
     lineCpy = NULL;
-    fprintf(stderr, "Could not duplicate the line '%s'\n", line);
     return EXIT_FAILURE;
   }
+
+  // 7. Calculate the message length
+  // 2 bytes for packet length
+  // 2 bytes for destination address
+  // 2 bytes for source address
+  // +1 for terminating null character
+  *length = 7 + strlen(*msg);
 
   return EXIT_SUCCESS;
 }
 
 int createPacket(const int length, const unsigned short destination,
                  const unsigned short source, const char* const msg,
-                 char* packet) {
+                 char** packet) {
   // Allocate memory to the message
-  packet = (char*)malloc(length * sizeof(char));
-  if (packet == NULL) {
+  *packet = (char*)malloc(length * sizeof(char));
+  if ((*packet) == NULL) {
     perror("Could not allocate memory to the packet: ");
     return EXIT_FAILURE;
   }
 
   // Assign the length to the first 2 bytes of the packet
   unsigned short tmp = htons(length);
-  memcpy(&packet[0], &tmp, sizeof(tmp));
+  memcpy(&(*packet[0]), &tmp, sizeof(tmp));
 
   // Assign the destination to the next 2 bytes
   tmp = htons(destination);
-  memcpy(&packet[2], &destination, sizeof(tmp));
+  memcpy(&(*packet[2]), &destination, sizeof(tmp));
 
   // Assign the source to the next 2 bytes
   tmp = htons(source);
-  memcpy(&packet[4], &tmp, sizeof(tmp));
+  memcpy(&(*packet[4]), &tmp, sizeof(tmp));
 
   // Finally: Assign the message
   // +1 for the terminating null character
-  memcpy(&packet[6], &msg, (strlen(msg) + 1) * sizeof(char));
+  memcpy(&(*packet[6]), &msg, (strlen(msg) + 1) * sizeof(char));
+
+  return EXIT_SUCCESS;
+}
+
+int sendUDPPacket(const char* const packet, const int length,
+                  const int udpSocketFd, const unsigned short ownAddress,
+                  const unsigned short destination, const int serverPort,
+                  const struct RoutingTable* const routingTable) {
+  // Find next hop from the routing table
+  int nextHop = -1;
+  for (int row = 0; row < routingTable->nRows; ++row) {
+    if (routingTable->routingTableRows[row].destination == destination) {
+      nextHop = routingTable->routingTableRows[row].nextHop;
+    }
+  }
+  if (nextHop == -1) {
+    fprintf(stderr,
+            "Couldn't find destination %d in the routing table of node "
+            "%d",
+            destination, ownAddress);
+    return EXIT_FAILURE;
+  }
+
+  struct sockaddr_in destAddr;
+  destAddr.sin_family = AF_LOCAL;              // We are communicating locally
+  destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
+  destAddr.sin_port = htons(serverPort + nextHop);  // This is the port
+
+  ssize_t bytesSent = sendto(udpSocketFd, packet, length, 0,
+                             (struct sockaddr*)&destAddr, sizeof(destAddr));
+  if (bytesSent == -1) {
+    fprintf(stderr, "Sending from %d to %d failed.\nError %d: %s\n", ownAddress,
+            destination, errno, strerror(errno));
+    return EXIT_FAILURE;
+  } else if (bytesSent != length) {
+    fprintf(stderr, "Sent less bytes than expected from %d to %d.\n",
+            ownAddress, destination);
+    return EXIT_FAILURE;
+  }
+
+  return EXIT_SUCCESS;
 }

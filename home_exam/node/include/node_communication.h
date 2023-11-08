@@ -1,6 +1,8 @@
 #ifndef HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
 #define HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
 
+#include <stdio.h>
+
 // FIXME: These functions are untested
 struct CommunicatedNode;
 struct RoutingTable;
@@ -104,7 +106,19 @@ int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
 int extractLengthDestinationAndMessage(const char* const line,
                                        unsigned short* const length,
                                        unsigned short* const destination,
-                                       char* msg);
+                                       char** msg);
+
+/**
+ * @brief Free memory and close file descriptors for prepareAndSendPackets
+ *
+ * @param fp The file pointer
+ * @param line The line
+ * @param msg The message
+ * @param packet The packet
+ * @param errorMsg The error message
+ */
+void cleanUpPrepareAndSendPackets(FILE* fp, char** line, char** msg,
+                                  char** packet, const char* errorMsg);
 
 /**
  * @brief Create a packet
@@ -129,6 +143,24 @@ int extractLengthDestinationAndMessage(const char* const line,
  */
 int createPacket(const int length, const unsigned short destination,
                  const unsigned short source, const char* const msg,
-                 char* packet);
+                 char** packet);
+
+/**
+ * @brief Send a UDP packet
+ *
+ * @param packet The packet to send
+ * @param length The length of the packet
+ * @param udpSocketFd The socket to use for communication
+ * @param ownAddress The address of this node
+ * @param ownAddress The address of the destination
+ * @param serverPort The port number of the server
+ *                   (used to calculate the destination port)
+ * @param routingTable The routing table used to find the next hop
+ * @return 0 on success, 1 on error
+ */
+int sendUDPPacket(const char* const packet, const int length,
+                  const int udpSocketFd, const unsigned short ownAddress,
+                  const unsigned short destination, const int serverPort,
+                  const struct RoutingTable* const routingTable);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
