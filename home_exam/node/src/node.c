@@ -6,7 +6,7 @@
 #include <string.h>  // for strcmp
 #include <unistd.h>  // for close
 
-#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/common.h"          // for Node
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
 #include "../include/node_communication.h"       // for getTCPClientSocket
 #include "../include/node_parser.h"              // for parseNodes
@@ -36,19 +36,18 @@ int main(int argc, char **argv) {
   // Capture all the neighbors
   // One argument for the file name, one for the port and one for own address
   int nNeighbors = argc - 3;
-  struct CommunicatedNode communicatedNode = {.address = ownAddress,
-                                              .nNeighbors = nNeighbors};
-  int success = allocateNeighborAddressesAndEdgeWeights(
-      &(communicatedNode), nNeighbors, "communicatedNode");
+  struct Node node = {
+      .tcpSocket = -1, .address = ownAddress, .nNeighbors = nNeighbors};
+  int success =
+      allocateNeighborAddressesAndEdgeWeights(&(node), nNeighbors, "node");
   if (success != EXIT_SUCCESS) {
-    cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
-                &udpSocketFd, "\0");
+    cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
+                "\0");
     return EXIT_FAILURE;
   }
-  success = parseNodes((const char *const *const)&(argv[3]), nNeighbors,
-                       &communicatedNode);
+  success = parseNodes((const char *const *const)&(argv[3]), nNeighbors, &node);
   if (success != EXIT_SUCCESS) {
-    freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+    freeNeighborAddressesAndEdgeWeights(&node);
     return EXIT_FAILURE;
   }
 
@@ -57,24 +56,25 @@ int main(int argc, char **argv) {
   int udpPort = serverPort + ownAddress;
   success = getUDPSocket(&udpSocketFd, udpPort);
   if (success != EXIT_SUCCESS) {
-    cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
-                &udpSocketFd, "Failed to get UDP socket, exiting\n");
+    cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
+                "Failed to get UDP socket, exiting\n");
     exit(-1);
   }
 
   // Open a TCP connection to the routing_server
   success = getTCPClientSocket(&tcpRoutingServerSocketFd, serverPort);
   if (success != EXIT_SUCCESS) {
-    cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
-                &udpSocketFd, "Failed to connect to the server, exiting\n");
+    cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
+                "Failed to connect to the server, exiting\n");
     exit(-2);
   }
 
   // Send the edge information
-  success = sendEdgeInformation(tcpRoutingServerSocketFd, &communicatedNode);
+  node.tcpSocket = tcpRoutingServerSocketFd;
+  success = sendEdgeInformation(&node);
   if (success != EXIT_SUCCESS) {
-    cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
-                &udpSocketFd, "Failed to send the edge information\n");
+    cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
+                "Failed to send the edge information\n");
     return EXIT_FAILURE;
   }
 
@@ -83,8 +83,8 @@ int main(int argc, char **argv) {
   routingTablePtr = &routingTable;
   success = receiveRoutingTable(tcpRoutingServerSocketFd, routingTablePtr);
   if (success != EXIT_SUCCESS) {
-    cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
-                &udpSocketFd, "Failed to receive the edge information\n");
+    cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
+                "Failed to receive the edge information\n");
     return EXIT_FAILURE;
   }
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
     success = prepareAndSendPackets(udpSocketFd, ownAddress, serverPort,
                                     routingTablePtr);
     if (success != EXIT_SUCCESS) {
-      cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
+      cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,
                   &udpSocketFd, "Failed to prepare and send packets\n");
     }
   } else {
@@ -103,26 +103,24 @@ int main(int argc, char **argv) {
       success = receiveAndForwardPackets(udpSocketFd, ownAddress, serverPort,
                                          routingTablePtr);
       if (success != EXIT_SUCCESS) {
-        cleanUpNode(&communicatedNode, routingTablePtr,
-                    &tcpRoutingServerSocketFd, &udpSocketFd,
-                    "Failed to receive and forward packets\n");
+        cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,
+                    &udpSocketFd, "Failed to receive and forward packets\n");
         return EXIT_FAILURE;
       }
     }
   }
 
   // Free all memory, close all ports
-  cleanUpNode(&communicatedNode, routingTablePtr, &tcpRoutingServerSocketFd,
-              &udpSocketFd, "\0");
+  cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
+              "\0");
   return EXIT_SUCCESS;
 }
 
-void cleanUpNode(struct CommunicatedNode *communicatedNode,
-                 struct RoutingTable *routingTable,
+void cleanUpNode(struct Node *node, struct RoutingTable *routingTable,
                  int *const tcpRoutingServerSocketFd, int *const udpSocketFd,
                  const char *msg) {
   fprintf(stderr, "%s", msg);
-  freeNeighborAddressesAndEdgeWeights(communicatedNode);
+  freeNeighborAddressesAndEdgeWeights(node);
   freeRoutingTable(routingTable);
   if ((*udpSocketFd) != -1) {
     close(*udpSocketFd);

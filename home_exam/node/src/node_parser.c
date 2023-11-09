@@ -4,10 +4,10 @@
 #include <stdlib.h>  // for free, malloc, EXIT_FAILURE
 #include <string.h>  // for strtok_r, strlen
 
-#include "../../utils/include/common.h"  // for CommunicatedNode
+#include "../../utils/include/common.h"  // for Node
 
 int parseNodes(const char *const *const nodesStr, const int nNeighbors,
-               struct CommunicatedNode *communicatedNode) {
+               struct Node *node) {
   for (int i = 0; i < nNeighbors; ++i) {
     // Initialize memory to be allocated
     char *nodesStrCpy = NULL;
@@ -18,7 +18,7 @@ int parseNodes(const char *const *const nodesStr, const int nNeighbors,
     // Declare helper variables
     int strLen;
     int charWritten;  // Number of chars not including terminating char
-    char *token;
+    const char *token;
     char *savePtr;
 
     // Copy the commandStr as strtok_r will alter the string
@@ -89,9 +89,9 @@ int parseNodes(const char *const *const nodesStr, const int nNeighbors,
       return EXIT_FAILURE;
     }
 
-    // Convert to ints and store in communicatedNode
-    communicatedNode->neighborAddresses[i] = atoi(neighborAddressStr);
-    communicatedNode->edgeWeights[i] = atoi(weightStr);
+    // Convert to ints and store it in the node
+    node->neighborAddresses[i] = atoi(neighborAddressStr);
+    node->edgeWeights[i] = atoi(weightStr);
   }
 
   return EXIT_SUCCESS;

@@ -1,9 +1,8 @@
 #ifndef HOME_EXAM_TEST_INCLUDE_TEST_TOOLS_H_
 #define HOME_EXAM_TEST_INCLUDE_TEST_TOOLS_H_
 
-struct CommunicatedNode;
+struct Node;
 
-int createInvertedAGraphCommunicatedNodeArray(
-    struct CommunicatedNode** communicatedNodeArray);
+int createInvertedAGraphNodeArray(struct Node** nodeArray);
 
 #endif  // HOME_EXAM_TEST_INCLUDE_TEST_TOOLS_H_

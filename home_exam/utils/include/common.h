@@ -4,9 +4,10 @@
 #define MAX_MSG_LENGTH (1024)
 
 /**
- * @brief Struct representing the communicated node
+ * @brief Struct representing the node
  */
-struct CommunicatedNode {
+struct Node {
+  int tcpSocket;          /**< TCP socket used for communication */
   int address;            /**< The address of this node */
   int nNeighbors;         /**< The number of neighbors */
   int* neighborAddresses; /**< Addresses to the other neighbors */

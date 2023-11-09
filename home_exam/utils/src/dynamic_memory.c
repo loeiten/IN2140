@@ -7,7 +7,7 @@
 
 #include "../../routing_server/include/route.h"       // for RoutingTableArray
 #include "../../routing_server/include/validation.h"  // for EdgeCounter
-#include "../include/common.h"                        // for CommunicatedNode
+#include "../include/common.h"                        // for Node
 
 int allocateIntArray(int **intArray, const int n, const char *name) {
   *intArray = (int *)malloc(n * sizeof(int));
@@ -222,54 +222,49 @@ void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray) {
   }
 }
 
-int allocateCommunicatedNodeArray(
-    struct CommunicatedNode **communicatedNodeArray, int n, const char *name) {
-  (*communicatedNodeArray) =
-      (struct CommunicatedNode *)calloc(n, sizeof(struct CommunicatedNode));
-  if ((*communicatedNodeArray) == NULL) {
+int allocateNodeArray(struct Node **nodeArray, int n, const char *name) {
+  (*nodeArray) = (struct Node *)calloc(n, sizeof(struct Node));
+  if ((*nodeArray) == NULL) {
     fprintf(stderr, "Could not allocate memory to %s: %s\n", name,
             strerror(errno));
     return EXIT_FAILURE;
   }
   for (int i = 0; i < n; ++i) {
-    (*communicatedNodeArray)[i].nNeighbors = -1;
+    (*nodeArray)[i].nNeighbors = -1;
+    (*nodeArray)[i].tcpSocket = -1;
   }
   return EXIT_SUCCESS;
 }
 
-int allocateCommunicatedNodeNeighborAndWeights(
-    struct CommunicatedNode *communicatedNode, int nNeighbors,
-    const char *name) {
-  communicatedNode->nNeighbors = nNeighbors;
-  int success = allocateIntArray(&(communicatedNode->neighborAddresses),
-                                 nNeighbors, name);
+int allocateNodeNeighborAndWeights(struct Node *node, int nNeighbors,
+                                   const char *name) {
+  node->nNeighbors = nNeighbors;
+  int success = allocateIntArray(&(node->neighborAddresses), nNeighbors, name);
   if (success != EXIT_SUCCESS) {
-    communicatedNode->nNeighbors = -1;
+    node->nNeighbors = -1;
     fprintf(stderr, "Could not allocate memory to the neighbors of %s: %s\n",
             name, strerror(errno));
     return EXIT_FAILURE;
   }
-  success =
-      allocateIntArray(&(communicatedNode->edgeWeights), nNeighbors, name);
+  success = allocateIntArray(&(node->edgeWeights), nNeighbors, name);
   if (success != EXIT_SUCCESS) {
-    communicatedNode->nNeighbors = -1;
+    node->nNeighbors = -1;
     fprintf(stderr, "Could not allocate memory to the edgeWeights of %s: %s\n",
             name, strerror(errno));
-    freeIntArray(&(communicatedNode->neighborAddresses));
+    freeIntArray(&(node->neighborAddresses));
     return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }
 
-void freeCommunicatedNodeArray(struct CommunicatedNode **communicatedNodeArray,
-                               int n) {
-  if ((*communicatedNodeArray) == NULL) {
+void freeNodeArray(struct Node **nodeArray, int n) {
+  if ((*nodeArray) == NULL) {
     return;
   }
   for (int i = 0; i < n; ++i) {
-    freeNeighborAddressesAndEdgeWeights(&((*communicatedNodeArray)[i]));
+    freeNeighborAddressesAndEdgeWeights(&((*nodeArray)[i]));
   }
-  (*communicatedNodeArray) = NULL;
+  (*nodeArray) = NULL;
 }
 
 int allocateIndexToAddress(struct IndexToAddress *indexToAddress, int n,
@@ -293,18 +288,16 @@ void freeIndexToAddress(struct IndexToAddress *indexToAddress) {
   indexToAddress->n = -1;
 }
 
-int allocateNeighborAddressesAndEdgeWeights(
-    struct CommunicatedNode *communicatedNode, const int nNeighbors,
-    const char *name) {
-  int success = allocateIntArray(&(communicatedNode->neighborAddresses),
-                                 nNeighbors, name);
+int allocateNeighborAddressesAndEdgeWeights(struct Node *node,
+                                            const int nNeighbors,
+                                            const char *name) {
+  int success = allocateIntArray(&(node->neighborAddresses), nNeighbors, name);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "The failure happened when allocating to the neighborAddresses.");
     return EXIT_FAILURE;
   }
-  success =
-      allocateIntArray(&(communicatedNode->edgeWeights), nNeighbors, name);
+  success = allocateIntArray(&(node->edgeWeights), nNeighbors, name);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "The failure happened when allocating to the edgeWeights.");
     return EXIT_FAILURE;
@@ -312,31 +305,28 @@ int allocateNeighborAddressesAndEdgeWeights(
   return EXIT_SUCCESS;
 }
 
-void freeNeighborAddressesAndEdgeWeights(
-    struct CommunicatedNode *communicatedNode) {
-  if (communicatedNode->neighborAddresses != NULL) {
-    free(communicatedNode->neighborAddresses);
-    communicatedNode->neighborAddresses = NULL;
+void freeNeighborAddressesAndEdgeWeights(struct Node *node) {
+  if (node->neighborAddresses != NULL) {
+    free(node->neighborAddresses);
+    node->neighborAddresses = NULL;
   }
-  if (communicatedNode->edgeWeights != NULL) {
-    free(communicatedNode->edgeWeights);
-    communicatedNode->edgeWeights = NULL;
+  if (node->edgeWeights != NULL) {
+    free(node->edgeWeights);
+    node->edgeWeights = NULL;
   }
 }
 
-int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
+int allocateRoutingServer(struct Node **nodeArray,
                           struct EdgeArray *invalidEdgesArray,
                           struct IndexToAddress *indexToAddress,
                           int ***adjacencyMatrix, int **distanceArray,
                           struct Route **routeArray,
                           struct RoutingTableArray *routingTableArray, int n,
                           int maxEdges) {
-  // communicatedNodeArray
-  int success = allocateCommunicatedNodeArray(communicatedNodeArray, n,
-                                              "communicatedNodeArray");
+  // nodeArray
+  int success = allocateNodeArray(nodeArray, n, "nodeArray");
   if (success != EXIT_SUCCESS) {
-    fprintf(stderr,
-            "Allocation of memory to communicatedNodeArray failed, exiting\n");
+    fprintf(stderr, "Allocation of memory to nodeArray failed, exiting\n");
     return EXIT_FAILURE;
   }
   // invalidEdgesArray
@@ -344,7 +334,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Allocation of memory to invalidEdgesArray failed, exiting\n");
-    freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
+    freeRoutingServer(nodeArray, invalidEdgesArray, indexToAddress,
                       adjacencyMatrix, distanceArray, routeArray,
                       routingTableArray, n);
     return EXIT_FAILURE;
@@ -353,7 +343,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   success = allocateIndexToAddress(indexToAddress, n, "indexToAddress");
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory to indexToAddress failed, exiting\n");
-    freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
+    freeRoutingServer(nodeArray, invalidEdgesArray, indexToAddress,
                       adjacencyMatrix, distanceArray, routeArray,
                       routingTableArray, n);
     return EXIT_FAILURE;
@@ -363,7 +353,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Allocation of memory to adjacencyMatrix failed, exiting\n");
-    freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
+    freeRoutingServer(nodeArray, invalidEdgesArray, indexToAddress,
                       adjacencyMatrix, distanceArray, routeArray,
                       routingTableArray, n);
     return EXIT_FAILURE;
@@ -372,7 +362,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   success = allocateIntArray(distanceArray, n, "distanceArray");
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory to distanceArray failed, exiting\n");
-    freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
+    freeRoutingServer(nodeArray, invalidEdgesArray, indexToAddress,
                       adjacencyMatrix, distanceArray, routeArray,
                       routingTableArray, n);
     return EXIT_FAILURE;
@@ -381,7 +371,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   success = allocateRouteArray(routeArray, n, "routeArray");
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Allocation of memory to routeArray failed, exiting\n");
-    freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
+    freeRoutingServer(nodeArray, invalidEdgesArray, indexToAddress,
                       adjacencyMatrix, distanceArray, routeArray,
                       routingTableArray, n);
     return EXIT_FAILURE;
@@ -392,7 +382,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   if (success != EXIT_SUCCESS) {
     fprintf(stderr,
             "Allocation of memory to routingTableArray failed, exiting\n");
-    freeRoutingServer(communicatedNodeArray, invalidEdgesArray, indexToAddress,
+    freeRoutingServer(nodeArray, invalidEdgesArray, indexToAddress,
                       adjacencyMatrix, distanceArray, routeArray,
                       routingTableArray, n);
     return EXIT_FAILURE;
@@ -401,13 +391,13 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
   return EXIT_SUCCESS;
 }
 
-void freeRoutingServer(struct CommunicatedNode **communicatedNodeArray,
+void freeRoutingServer(struct Node **nodeArray,
                        struct EdgeArray *invalidEdgesArray,
                        struct IndexToAddress *indexToAddress,
                        int ***adjacencyMatrix, int **distanceArray,
                        struct Route **routeArray,
                        struct RoutingTableArray *routingTableArray, int n) {
-  freeCommunicatedNodeArray(communicatedNodeArray, n);
+  freeNodeArray(nodeArray, n);
   freeEdgeArray(invalidEdgesArray);
   freeIndexToAddress(indexToAddress);
   freeIntMatrix(adjacencyMatrix, n);

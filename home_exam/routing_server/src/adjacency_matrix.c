@@ -5,11 +5,10 @@
 #include "../../utils/include/common.h"          // for getIndexFromAddress
 #include "../../utils/include/dynamic_memory.h"  // for allocateIntMatrix
 
-int createAdjacencyMatrix(
-    const struct CommunicatedNode* const communicatedNodeArray,
-    const struct IndexToAddress* const indexToAddress,
-    const struct EdgeArray* const invalidEdgesArray, int*** adjacencyMatrix,
-    const int n) {
+int createAdjacencyMatrix(const struct Node* const nodeArray,
+                          const struct IndexToAddress* const indexToAddress,
+                          const struct EdgeArray* const invalidEdgesArray,
+                          int*** adjacencyMatrix, const int n) {
   // Allocate memory to the adjacency matrix
   // Note that this allocation is zero initalized
   int success = allocateIntMatrix(adjacencyMatrix, n, "adjacencyMatrix");
@@ -22,25 +21,25 @@ int createAdjacencyMatrix(
   // (given that they are valid)
   for (int nodeIdx = 0; nodeIdx < n; ++nodeIdx) {
     // Loop through the neighbors
-    int nNeighbors = communicatedNodeArray[nodeIdx].nNeighbors;
+    int nNeighbors = nodeArray[nodeIdx].nNeighbors;
     int firstIndex;
-    success = getIndexFromAddress(communicatedNodeArray[nodeIdx].address,
-                                  indexToAddress, &firstIndex);
+    success = getIndexFromAddress(nodeArray[nodeIdx].address, indexToAddress,
+                                  &firstIndex);
     if (success != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }
 
     for (int neighborIdx = 0; neighborIdx < nNeighbors; ++neighborIdx) {
       int secondIndex;
-      success = getIndexFromAddress(
-          communicatedNodeArray[nodeIdx].neighborAddresses[neighborIdx],
-          indexToAddress, &secondIndex);
+      success =
+          getIndexFromAddress(nodeArray[nodeIdx].neighborAddresses[neighborIdx],
+                              indexToAddress, &secondIndex);
       if (success != EXIT_SUCCESS) {
         return EXIT_FAILURE;
       }
       // Set the weight
       (*adjacencyMatrix)[firstIndex][secondIndex] =
-          communicatedNodeArray[nodeIdx].edgeWeights[neighborIdx];
+          nodeArray[nodeIdx].edgeWeights[neighborIdx];
     }
   }
 

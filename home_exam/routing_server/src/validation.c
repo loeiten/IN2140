@@ -6,7 +6,7 @@
 #include "../../utils/include/common.h"          // for Edge, EdgeArray, Com...
 #include "../../utils/include/dynamic_memory.h"  // for freeEdgeCounterArray
 
-int checkAllNodesReceived(struct CommunicatedNode* communicatedNodeArray,
+int checkAllNodesReceived(struct Node* nodeArray,
                           struct EdgeArray* invalidEdgesArray, int n) {
   // NOTE: In a undirected graph there can be at most n*(n-1)/2 edges
   int maxEdges = (n * (n - 1) / 2);
@@ -22,14 +22,12 @@ int checkAllNodesReceived(struct CommunicatedNode* communicatedNodeArray,
                                               .array = edgeCounterArrayArray};
 
   for (int addressIdx = 0; addressIdx < n; ++addressIdx) {
-    int addressOfFirstIndex = communicatedNodeArray[addressIdx].address;
-    for (int neighborIdx = 0;
-         neighborIdx < communicatedNodeArray[addressIdx].nNeighbors;
+    int addressOfFirstIndex = nodeArray[addressIdx].address;
+    for (int neighborIdx = 0; neighborIdx < nodeArray[addressIdx].nNeighbors;
          ++neighborIdx) {
       int neighborAddress =
-          communicatedNodeArray[addressIdx].neighborAddresses[neighborIdx];
-      int edgeWeight =
-          communicatedNodeArray[addressIdx].edgeWeights[neighborIdx];
+          nodeArray[addressIdx].neighborAddresses[neighborIdx];
+      int edgeWeight = nodeArray[addressIdx].edgeWeights[neighborIdx];
       int searchLowAddress = addressOfFirstIndex < neighborAddress
                                  ? addressOfFirstIndex
                                  : neighborAddress;

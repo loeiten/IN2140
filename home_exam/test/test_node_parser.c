@@ -5,28 +5,26 @@
 #include <string.h>  // for strcmp
 
 #include "../node/include/node_parser.h"      // for parseNodes
-#include "../utils/include/common.h"          // for CommunicatedNode
+#include "../utils/include/common.h"          // for Node
 #include "../utils/include/dynamic_memory.h"  // for allocateCommunicatedNod...
 
 void testParseNodes(void) {
 #define N (4)
   const char* nodes[N] = {"12:9", "17:1", "123:113", "88:99"};
-  struct CommunicatedNode communicatedNode;
-  allocateCommunicatedNodeNeighborAndWeights(&communicatedNode, N,
-                                             "communicatedNode");
-  assert(communicatedNode.nNeighbors == N);
-  int success =
-      parseNodes((const char* const* const)nodes, N, &communicatedNode);
+  struct Node node;
+  allocateNodeNeighborAndWeights(&node, N, "node");
+  assert(node.nNeighbors == N);
+  int success = parseNodes((const char* const* const)nodes, N, &node);
   assert(success == EXIT_SUCCESS);
-  assert(communicatedNode.neighborAddresses[0] == 12);
-  assert(communicatedNode.neighborAddresses[1] == 17);
-  assert(communicatedNode.neighborAddresses[2] == 123);
-  assert(communicatedNode.neighborAddresses[3] == 88);
-  assert(communicatedNode.edgeWeights[0] == 9);
-  assert(communicatedNode.edgeWeights[1] == 1);
-  assert(communicatedNode.edgeWeights[2] == 113);
-  assert(communicatedNode.edgeWeights[3] == 99);
-  freeNeighborAddressesAndEdgeWeights(&communicatedNode);
+  assert(node.neighborAddresses[0] == 12);
+  assert(node.neighborAddresses[1] == 17);
+  assert(node.neighborAddresses[2] == 123);
+  assert(node.neighborAddresses[3] == 88);
+  assert(node.edgeWeights[0] == 9);
+  assert(node.edgeWeights[1] == 1);
+  assert(node.edgeWeights[2] == 113);
+  assert(node.edgeWeights[3] == 99);
+  freeNeighborAddressesAndEdgeWeights(&node);
 #undef N
   return;
 }

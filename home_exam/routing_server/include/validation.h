@@ -35,12 +35,12 @@ struct EdgeCounterArray {
  * For edges where this is not the case, a warning will be printed and the edge
  * will be added to the invalidEdgesArray.
  *
- * @param communicatedNodeArray Array of the communicated nodes
+ * @param nodeArray Array of the nodes
  * @param invalidEdgesArray Array of the non-valid edges
  * @param n The number of nodes in the graph
  * @returns 0 on success, 1 on error
  */
-int checkAllNodesReceived(struct CommunicatedNode* communicatedNodeArray,
+int checkAllNodesReceived(struct Node* nodeArray,
                           struct EdgeArray* invalidEdgesArray, int n);
 
 /**

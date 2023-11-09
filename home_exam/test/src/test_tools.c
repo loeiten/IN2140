@@ -1,10 +1,9 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 
-#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/common.h"          // for Node
 #include "../../utils/include/dynamic_memory.h"  // for allocateCommunicated...
 
-int createInvertedAGraphCommunicatedNodeArray(
-    struct CommunicatedNode** communicatedNodeArray) {
+int createInvertedAGraphNodeArray(struct Node** nodeArray) {
   // Graph
   // The weight are written on the edges
   // The ids are written on the vertices
@@ -17,74 +16,73 @@ int createInvertedAGraphCommunicatedNodeArray(
   int n = 5;
   int success;
 
-  // Malloc the communicatedNodeArray
-  success = allocateCommunicatedNodeArray(
-      communicatedNodeArray, n, "communicatedNodeArray of invertedAGraph");
+  // Malloc the nodeArray
+  success = allocateNodeArray(nodeArray, n, "nodeArray of invertedAGraph");
   if (success != EXIT_SUCCESS) {
     return EXIT_FAILURE;
   }
 
-  // Fill the communicatedNodeArray
+  // Fill the nodeArray
   // Node 1
-  success = allocateCommunicatedNodeNeighborAndWeights(
-      &((*communicatedNodeArray)[0]), 2, "communicatedNodeArray[0]");
+  success =
+      allocateNodeNeighborAndWeights(&((*nodeArray)[0]), 2, "nodeArray[0]");
   if (success != EXIT_SUCCESS) {
-    freeCommunicatedNodeArray(communicatedNodeArray, n);
+    freeNodeArray(nodeArray, n);
     return EXIT_FAILURE;
   }
-  (*communicatedNodeArray)[0].address = 1;
-  (*communicatedNodeArray)[0].neighborAddresses[0] = 3;
-  (*communicatedNodeArray)[0].neighborAddresses[1] = 5;
-  (*communicatedNodeArray)[0].edgeWeights[0] = 1;
-  (*communicatedNodeArray)[0].edgeWeights[1] = 3;
+  (*nodeArray)[0].address = 1;
+  (*nodeArray)[0].neighborAddresses[0] = 3;
+  (*nodeArray)[0].neighborAddresses[1] = 5;
+  (*nodeArray)[0].edgeWeights[0] = 1;
+  (*nodeArray)[0].edgeWeights[1] = 3;
   // Node 3
-  success = allocateCommunicatedNodeNeighborAndWeights(
-      &((*communicatedNodeArray)[1]), 3, "communicatedNodeArray[1]");
+  success =
+      allocateNodeNeighborAndWeights(&((*nodeArray)[1]), 3, "nodeArray[1]");
   if (success != EXIT_SUCCESS) {
-    freeCommunicatedNodeArray(communicatedNodeArray, n);
+    freeNodeArray(nodeArray, n);
     return EXIT_FAILURE;
   }
-  (*communicatedNodeArray)[1].address = 3;
-  (*communicatedNodeArray)[1].neighborAddresses[0] = 1;
-  (*communicatedNodeArray)[1].neighborAddresses[1] = 5;
-  (*communicatedNodeArray)[1].neighborAddresses[2] = 10;
-  (*communicatedNodeArray)[1].edgeWeights[0] = 1;
-  (*communicatedNodeArray)[1].edgeWeights[1] = 2;
-  (*communicatedNodeArray)[1].edgeWeights[2] = 1;
+  (*nodeArray)[1].address = 3;
+  (*nodeArray)[1].neighborAddresses[0] = 1;
+  (*nodeArray)[1].neighborAddresses[1] = 5;
+  (*nodeArray)[1].neighborAddresses[2] = 10;
+  (*nodeArray)[1].edgeWeights[0] = 1;
+  (*nodeArray)[1].edgeWeights[1] = 2;
+  (*nodeArray)[1].edgeWeights[2] = 1;
   // Node 5
-  success = allocateCommunicatedNodeNeighborAndWeights(
-      &((*communicatedNodeArray)[2]), 3, "communicatedNodeArray[2]");
+  success =
+      allocateNodeNeighborAndWeights(&((*nodeArray)[2]), 3, "nodeArray[2]");
   if (success != EXIT_SUCCESS) {
-    freeCommunicatedNodeArray(communicatedNodeArray, n);
+    freeNodeArray(nodeArray, n);
     return EXIT_FAILURE;
   }
-  (*communicatedNodeArray)[2].address = 5;
-  (*communicatedNodeArray)[2].neighborAddresses[0] = 3;
-  (*communicatedNodeArray)[2].neighborAddresses[1] = 1;
-  (*communicatedNodeArray)[2].neighborAddresses[2] = 17;
-  (*communicatedNodeArray)[2].edgeWeights[0] = 2;
-  (*communicatedNodeArray)[2].edgeWeights[1] = 3;
-  (*communicatedNodeArray)[2].edgeWeights[2] = 1;
+  (*nodeArray)[2].address = 5;
+  (*nodeArray)[2].neighborAddresses[0] = 3;
+  (*nodeArray)[2].neighborAddresses[1] = 1;
+  (*nodeArray)[2].neighborAddresses[2] = 17;
+  (*nodeArray)[2].edgeWeights[0] = 2;
+  (*nodeArray)[2].edgeWeights[1] = 3;
+  (*nodeArray)[2].edgeWeights[2] = 1;
   // Node 10
-  success = allocateCommunicatedNodeNeighborAndWeights(
-      &((*communicatedNodeArray)[3]), 1, "communicatedNodeArray[3]");
+  success =
+      allocateNodeNeighborAndWeights(&((*nodeArray)[3]), 1, "nodeArray[3]");
   if (success != EXIT_SUCCESS) {
-    freeCommunicatedNodeArray(communicatedNodeArray, n);
+    freeNodeArray(nodeArray, n);
     return EXIT_FAILURE;
   }
-  (*communicatedNodeArray)[3].address = 10;
-  (*communicatedNodeArray)[3].neighborAddresses[0] = 3;
-  (*communicatedNodeArray)[3].edgeWeights[0] = 1;
+  (*nodeArray)[3].address = 10;
+  (*nodeArray)[3].neighborAddresses[0] = 3;
+  (*nodeArray)[3].edgeWeights[0] = 1;
   // Node 17
-  success = allocateCommunicatedNodeNeighborAndWeights(
-      &((*communicatedNodeArray)[4]), 1, "communicatedNodeArray[4]");
+  success =
+      allocateNodeNeighborAndWeights(&((*nodeArray)[4]), 1, "nodeArray[4]");
   if (success != EXIT_SUCCESS) {
-    freeCommunicatedNodeArray(communicatedNodeArray, n);
+    freeNodeArray(nodeArray, n);
     return EXIT_FAILURE;
   }
-  (*communicatedNodeArray)[4].address = 17;
-  (*communicatedNodeArray)[4].neighborAddresses[0] = 5;
-  (*communicatedNodeArray)[4].edgeWeights[0] = 1;
+  (*nodeArray)[4].address = 17;
+  (*nodeArray)[4].neighborAddresses[0] = 5;
+  (*nodeArray)[4].edgeWeights[0] = 1;
 
   return EXIT_SUCCESS;
 }

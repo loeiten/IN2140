@@ -10,7 +10,7 @@
 #include <sys/socket.h>  // for send, recv, socket
 #include <unistd.h>
 
-#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/common.h"          // for Node
 #include "../../utils/include/dynamic_memory.h"  // for allocateRoutingTable
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
@@ -126,65 +126,52 @@ int getTCPClientSocket(int* const clientSocket, const int serverPort) {
   return EXIT_SUCCESS;
 }
 
-int sendEdgeInformation(const int tcpRoutingServerSocketFd,
-                        struct CommunicatedNode* const communicatedNode) {
+int sendEdgeInformation(struct Node* const node) {
   // Send own address
   ssize_t nBytes = sizeof(int);
-  ssize_t bytesSent =
-      send(tcpRoutingServerSocketFd, &(communicatedNode->address), nBytes, 0);
+  ssize_t bytesSent = send(node->tcpSocket, &(node->address), nBytes, 0);
   if (bytesSent != -1) {
-    fprintf(stderr, "Sending communicatedNode->address failed.\nError %d: %s\n",
-            errno, strerror(errno));
+    fprintf(stderr, "Sending node->address failed.\nError %d: %s\n", errno,
+            strerror(errno));
     return EXIT_FAILURE;
   } else if (bytesSent != nBytes) {
-    fprintf(stderr,
-            "Sent less bytes than expected for communicatedNode->address\n");
+    fprintf(stderr, "Sent less bytes than expected for node->address\n");
     return EXIT_FAILURE;
   }
 
   // Send the size of the array
-  bytesSent = send(tcpRoutingServerSocketFd, &(communicatedNode->nNeighbors),
-                   nBytes, 0);
+  bytesSent = send(node->tcpSocket, &(node->nNeighbors), nBytes, 0);
   if (bytesSent == -1) {
-    fprintf(stderr,
-            "Sending communicatedNode->nNeighbors failed.\nError %d: %s\n",
-            errno, strerror(errno));
+    fprintf(stderr, "Sending node->nNeighbors failed.\nError %d: %s\n", errno,
+            strerror(errno));
     return EXIT_FAILURE;
   } else if (bytesSent != nBytes) {
-    fprintf(stderr,
-            "Sent less bytes than expected for communicatedNode->nNeighbors\n");
+    fprintf(stderr, "Sent less bytes than expected for node->nNeighbors\n");
     return EXIT_FAILURE;
   }
 
   // Send the neighbor address array
-  nBytes *= communicatedNode->nNeighbors;
-  bytesSent = send(tcpRoutingServerSocketFd,
-                   &(communicatedNode->neighborAddresses), nBytes, 0);
+  nBytes *= node->nNeighbors;
+  bytesSent = send(node->tcpSocket, &(node->neighborAddresses), nBytes, 0);
   if (bytesSent == -1) {
-    fprintf(
-        stderr,
-        "Sending communicatedNode->neighborAddresses failed.\nError %d: %s\n",
-        errno, strerror(errno));
+    fprintf(stderr, "Sending node->neighborAddresses failed.\nError %d: %s\n",
+            errno, strerror(errno));
     return EXIT_FAILURE;
   } else if (bytesSent != nBytes) {
     fprintf(stderr,
             "Sent less bytes than expected for "
-            "communicatedNode->neighborAddresses\n");
+            "node->neighborAddresses\n");
     return EXIT_FAILURE;
   }
 
   // Send the neighbor weight array
-  bytesSent = send(tcpRoutingServerSocketFd, &(communicatedNode->edgeWeights),
-                   nBytes, 0);
+  bytesSent = send(node->tcpSocket, &(node->edgeWeights), nBytes, 0);
   if (bytesSent == -1) {
-    fprintf(stderr,
-            "Sending communicatedNode->edgeWeights failed.\nError %d: %s\n",
-            errno, strerror(errno));
+    fprintf(stderr, "Sending node->edgeWeights failed.\nError %d: %s\n", errno,
+            strerror(errno));
     return EXIT_FAILURE;
   } else if (bytesSent != nBytes) {
-    fprintf(
-        stderr,
-        "Sent less bytes than expected for communicatedNode->edgeWeights\n");
+    fprintf(stderr, "Sent less bytes than expected for node->edgeWeights\n");
     return EXIT_FAILURE;
   }
 

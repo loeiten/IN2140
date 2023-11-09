@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 // FIXME: These functions are untested
-struct CommunicatedNode;
+struct Node;
 struct RoutingTable;
 
 /**
@@ -31,13 +31,10 @@ int getTCPClientSocket(int* const clientSocket, const int serverPort);
 /**
  * @brief Send the edge information to the routing server
  *
- * @param tcpRoutingServerSocketFd The connected TCP socket to use for
- *                                 communication
- * @param communicatedNode The node to be communicated
+ * @param node The node to be communicated
  * @return 0 on success, 1 on error
  */
-int sendEdgeInformation(const int tcpRoutingServerSocketFd,
-                        struct CommunicatedNode* const communicatedNode);
+int sendEdgeInformation(struct Node* const node);
 
 /**
  * @brief Receive the routing table

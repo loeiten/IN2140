@@ -10,7 +10,7 @@
 #include <sys/socket.h>  // for recv, MSG_WAITALL
 #include <unistd.h>      // for close
 
-#include "../../utils/include/common.h"          // for CommunicatedNode
+#include "../../utils/include/common.h"          // for Node
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
 
 int getTCPServerSocket(int* const listenSocket, const int listenPort) {
@@ -86,9 +86,8 @@ int getTCPServerSocket(int* const listenSocket, const int listenPort) {
   return EXIT_SUCCESS;
 }
 
-int populateCommunicatedNodeArray(
-    const int listenSocket, struct CommunicatedNode* communicatedNodeArray,
-    const int n) {
+int populateNodeArray(const int listenSocket, struct Node* nodeArray,
+                      const int n) {
   // NOTE: For large nodes, we could consider to fork (create a new process
   //       which does not share memory) or make a posix-thread (which does share
   //       memory)
@@ -98,6 +97,7 @@ int populateCommunicatedNodeArray(
     // descriptor referring to that socket
     struct sockaddr_in clientAddr;
     socklen_t clientAddrLen;
+    // Accept is blocking
     int newSocketFd = accept(
         listenSocket,
         (struct sockaddr*)&clientAddr,  // Will be filled with the address of
@@ -114,30 +114,28 @@ int populateCommunicatedNodeArray(
     //       Both of them are blocking by default
     // Receive the address
     ssize_t nBytes = sizeof(int);
-    ssize_t bytesReceived = recv(
-        newSocketFd, &(communicatedNodeArray[i].address), nBytes, MSG_WAITALL);
+    ssize_t bytesReceived =
+        recv(newSocketFd, &(nodeArray[i].address), nBytes, MSG_WAITALL);
     if (bytesReceived == -1) {
-      fprintf(
-          stderr,
-          "Receiving communicatedNodeArray[%d].address failed.\nError %d: %s\n",
-          i, errno, strerror(errno));
+      fprintf(stderr, "Receiving nodeArray[%d].address failed.\nError %d: %s\n",
+              i, errno, strerror(errno));
       close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
               "Received less bytes than expected for "
-              "communicatedNodeArray[%d].address\n",
+              "nodeArray[%d].address\n",
               i);
       close(newSocketFd);
       return EXIT_FAILURE;
     }
 
     // Receive the size of the array
-    bytesReceived = recv(newSocketFd, &(communicatedNodeArray[i].nNeighbors),
-                         nBytes, MSG_WAITALL);
+    bytesReceived =
+        recv(newSocketFd, &(nodeArray[i].nNeighbors), nBytes, MSG_WAITALL);
     if (bytesReceived == -1) {
       fprintf(stderr,
-              "Receiving communicatedNodeArray[%d].nNeighbors failed.\nError "
+              "Receiving nodeArray[%d].nNeighbors failed.\nError "
               "%d: %s\n",
               i, errno, strerror(errno));
       close(newSocketFd);
@@ -145,7 +143,7 @@ int populateCommunicatedNodeArray(
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
               "Received less bytes than expected for "
-              "communicatedNodeArray[%d].nNeighbors\n",
+              "nodeArray[%d].nNeighbors\n",
               i);
       close(newSocketFd);
       return EXIT_FAILURE;
@@ -153,55 +151,53 @@ int populateCommunicatedNodeArray(
 
     // Allocate memory to the addresses and weights
     int success = allocateNeighborAddressesAndEdgeWeights(
-        &(communicatedNodeArray[i]), communicatedNodeArray[i].nNeighbors,
-        "communicatedNodeArray[i]");
+        &(nodeArray[i]), nodeArray[i].nNeighbors, "nodeArray[i]");
     if (success != EXIT_SUCCESS) {
-      freeNeighborAddressesAndEdgeWeights(&(communicatedNodeArray[i]));
+      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       close(newSocketFd);
       return EXIT_FAILURE;
     }
 
     // Receive the neighbor array
-    nBytes *= communicatedNodeArray[i].nNeighbors;
-    bytesReceived =
-        recv(newSocketFd, &(communicatedNodeArray[i].neighborAddresses), nBytes,
-             MSG_WAITALL);
+    nBytes *= nodeArray[i].nNeighbors;
+    bytesReceived = recv(newSocketFd, &(nodeArray[i].neighborAddresses), nBytes,
+                         MSG_WAITALL);
     if (bytesReceived == -1) {
       fprintf(stderr,
-              "Receiving communicatedNodeArray[%d].neighborAddresses "
+              "Receiving nodeArray[%d].neighborAddresses "
               "failed.\nError "
               "%d: %s\n",
               i, errno, strerror(errno));
-      freeNeighborAddressesAndEdgeWeights(&(communicatedNodeArray[i]));
+      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
               "Received less bytes than expected for "
-              "communicatedNodeArray[%d].neighborAddresses\n",
+              "nodeArray[%d].neighborAddresses\n",
               i);
-      freeNeighborAddressesAndEdgeWeights(&(communicatedNodeArray[i]));
+      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       close(newSocketFd);
       return EXIT_FAILURE;
     }
 
     // Receive the weight array
-    bytesReceived = recv(newSocketFd, &(communicatedNodeArray[i].edgeWeights),
-                         nBytes, MSG_WAITALL);
+    bytesReceived =
+        recv(newSocketFd, &(nodeArray[i].edgeWeights), nBytes, MSG_WAITALL);
     if (bytesReceived == -1) {
       fprintf(stderr,
-              "Receiving communicatedNodeArray[%d].edgeWeights failed.\nError "
+              "Receiving nodeArray[%d].edgeWeights failed.\nError "
               "%d: %s\n",
               i, errno, strerror(errno));
-      freeNeighborAddressesAndEdgeWeights(&(communicatedNodeArray[i]));
+      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
               "Received less bytes than expected for "
-              "communicatedNodeArray[%d].edgeWeights\n",
+              "nodeArray[%d].edgeWeights\n",
               i);
-      freeNeighborAddressesAndEdgeWeights(&(communicatedNodeArray[i]));
+      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       close(newSocketFd);
       return EXIT_FAILURE;
     }

@@ -23,9 +23,8 @@ void testCreateAdjacencyMatrix(void) {
   //   1  \     /  3
   //       1 [0]
   // Allocate and initialize
-  struct CommunicatedNode* communicatedNodeArray = NULL;
-  int success =
-      createInvertedAGraphCommunicatedNodeArray(&communicatedNodeArray);
+  struct Node* nodeArray = NULL;
+  int success = createInvertedAGraphNodeArray(&nodeArray);
   assert(success == EXIT_SUCCESS);
   struct EdgeArray invalidEdgesArray;
   struct EdgeArray* invalidEdgesArrayPtr = &invalidEdgesArray;
@@ -35,7 +34,7 @@ void testCreateAdjacencyMatrix(void) {
   int map[N] = {1, 3, 10, 5, 17};
   const struct IndexToAddress indexToAddress = {.n = N, .map = map};
   int** adjacencyMatrix = NULL;
-  success = createAdjacencyMatrix(communicatedNodeArray, &indexToAddress,
+  success = createAdjacencyMatrix(nodeArray, &indexToAddress,
                                   invalidEdgesArrayPtr, &adjacencyMatrix, N);
   assert(success == EXIT_SUCCESS);
 
@@ -81,7 +80,7 @@ void testCreateAdjacencyMatrix(void) {
   invalidEdgesArray.array[0].highNodeAddress = 5;
   invalidEdgesArray.array[1].lowNodeAddress = 3;
   invalidEdgesArray.array[1].highNodeAddress = 10;
-  success = createAdjacencyMatrix(communicatedNodeArray, &indexToAddress,
+  success = createAdjacencyMatrix(nodeArray, &indexToAddress,
                                   invalidEdgesArrayPtr, &adjacencyMatrix, N);
   assert(success == EXIT_SUCCESS);
 
@@ -117,7 +116,7 @@ void testCreateAdjacencyMatrix(void) {
   assert(adjacencyMatrix[4][4] == 0);
 
   freeEdgeArray(invalidEdgesArrayPtr);
-  freeCommunicatedNodeArray(&communicatedNodeArray, N);
+  freeNodeArray(&nodeArray, N);
   freeIntMatrix(&adjacencyMatrix, N);
 #undef MAX_EDGES
 #undef N

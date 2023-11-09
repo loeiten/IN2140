@@ -4,7 +4,7 @@
 struct EdgeArray;
 struct EdgeCounter;
 struct IndexToAddress;
-struct CommunicatedNode;
+struct Node;
 struct Route;
 struct RoutingTable;
 struct RoutingTableArray;
@@ -146,36 +146,33 @@ int allocateEdgeCounterArray(struct EdgeCounter **edgeCounterArray,
 void freeEdgeCounterArray(struct EdgeCounter **edgeCounterArray);
 
 /**
- * @brief Allocate memory and initialize the values to a communicated node array
+ * @brief Allocate memory and initialize the values to a node array
  *
- * @param communicatedNodeArray The array of communicated nodes
- * @param n The number of communicated nodes
- * @param name Name of the communicated node array
+ * @param nodeArray The array of nodes
+ * @param n The number of nodes
+ * @param name Name of the node array
  * @returns 0 on success, 1 on error
  */
-int allocateCommunicatedNodeArray(
-    struct CommunicatedNode **communicatedNodeArray, int n, const char *name);
+int allocateNodeArray(struct Node **nodeArray, int n, const char *name);
 
 /**
  * @brief Allocate memory to a neighbor addresses and corresponding weights
  *
- * @param communicatedNode The communicated node
+ * @param node The node
  * @param nNeighbors The number of neighbors
  * @param name Name of the neighbor
  * @returns 0 on success, 1 on error
  */
-int allocateCommunicatedNodeNeighborAndWeights(
-    struct CommunicatedNode *communicatedNode, int nNeighbors,
-    const char *name);
+int allocateNodeNeighborAndWeights(struct Node *node, int nNeighbors,
+                                   const char *name);
 
 /**
- * @brief Free the memory of the communicated node array
+ * @brief Free the memory of the node array
  *
- * @param communicatedNodeArray The array of communicated nodes
- * @param n The number of communicated nodes
+ * @param nodeArray The array of nodes
+ * @param n The number of nodes
  */
-void freeCommunicatedNodeArray(struct CommunicatedNode **communicatedNodeArray,
-                               int n);
+void freeNodeArray(struct Node **nodeArray, int n);
 
 /**
  * @brief Allocate memory to an index to address struct
@@ -191,22 +188,21 @@ int allocateIndexToAddress(struct IndexToAddress *indexToAddress, int n,
 /**
  * @brief Allocate memory to the neighbor addresses and edge weights
  *
- * @param communicatedNode The node to allocate memory to
+ * @param node The node to allocate memory to
  * @param nNeighbors The number of neighbors
  * @param name The name of the communication node
  * @return 0 on success, 1 on error
  */
-int allocateNeighborAddressesAndEdgeWeights(
-    struct CommunicatedNode *communicatedNode, const int nNeighbors,
-    const char *name);
+int allocateNeighborAddressesAndEdgeWeights(struct Node *node,
+                                            const int nNeighbors,
+                                            const char *name);
 
 /**
  * @brief Free memory of the neighbor addresses and edge weights
  *
- * @param communicatedNode The node to free memory from
+ * @param node The node to free memory from
  */
-void freeNeighborAddressesAndEdgeWeights(
-    struct CommunicatedNode *communicatedNode);
+void freeNeighborAddressesAndEdgeWeights(struct Node *node);
 
 /**
  * @brief Free the memory of the edge counter array
@@ -218,7 +214,7 @@ void freeIndexToAddress(struct IndexToAddress *indexToAddress);
 /**
  * @brief Allocate all memory for the routing server
  *
- * @param communicatedNodeArray The array of communicated nodes
+ * @param nodeArray The array of nodes
  * @param invalidEdgesArray The invalid edges array
  * @param indexToAddress The index to array map
  * @param adjacencyMatrix The adjacency matrix
@@ -229,7 +225,7 @@ void freeIndexToAddress(struct IndexToAddress *indexToAddress);
  * @param maxEdges The maximum number of edges
  * @return 0 on success, 1 on error
  */
-int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
+int allocateRoutingServer(struct Node **nodeArray,
                           struct EdgeArray *invalidEdgesArray,
                           struct IndexToAddress *indexToAddress,
                           int ***adjacencyMatrix, int **distanceArray,
@@ -240,7 +236,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
 /**
  * @brief Free memory allocated to the routing server
  *
- * @param communicatedNodeArray The array of communicated nodes
+ * @param nodeArray The array of nodes
  * @param invalidEdgesArray The invalid edges array
  * @param indexToAddress The index to array map
  * @param adjacencyMatrix The adjacency matrix
@@ -249,7 +245,7 @@ int allocateRoutingServer(struct CommunicatedNode **communicatedNodeArray,
  * @param routingTableArray The routing table
  * @param n The number of nodes
  */
-void freeRoutingServer(struct CommunicatedNode **communicatedNodeArray,
+void freeRoutingServer(struct Node **nodeArray,
                        struct EdgeArray *invalidEdgesArray,
                        struct IndexToAddress *indexToAddress,
                        int ***adjacencyMatrix, int **distanceArray,
