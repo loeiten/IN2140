@@ -22,7 +22,7 @@
 //          bear --output ../build/compile_commands.json --append -- make -B
 #include "print_lib/include/print_lib.h"  // for print_forwarded_pkt
 
-int getUDPSocket(int* const connectSocket, const int connectPort) {
+int getUDPSocket(int* const connectSocket, const int basePort) {
   // A great introduction to socket programming can be found at:
   // https://users.cs.jmu.edu/bernstdh/web/common/lectures/summary_unix_udp.php
   (*connectSocket) =
@@ -67,7 +67,7 @@ int getUDPSocket(int* const connectSocket, const int connectPort) {
   addr.sin_addr.s_addr =
       INADDR_LOOPBACK;  // Only local addresses are accepted (INADDR_ANY would
                         // accept connection to any addresses)
-  addr.sin_port = htons(connectPort);  // The port in network byte order
+  addr.sin_port = htons(basePort);  // The port in network byte order
 
   // Bind assigns the address specified by sockaddr_in to a socket
   // Traditionally, this operation is called "assigning a name to a socket".

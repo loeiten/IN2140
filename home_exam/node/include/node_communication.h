@@ -11,10 +11,10 @@ struct RoutingTable;
  * @brief Assign a UDP socket to connectSocket for sending and receiving
  *
  * @param connectSocket The socket descriptor which can send and receive
- * @param connectPort The port to bind the socket to
+ * @param basePort The port to bind the socket to
  * @return 0 on success, 1 on error
  */
-int getUDPSocket(int* const connectSocket, const int connectPort);
+int getUDPSocket(int* const connectSocket, const int basePort);
 
 /**
  * @brief Assign a connected TCP socket to connectSocket

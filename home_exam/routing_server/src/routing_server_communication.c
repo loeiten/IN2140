@@ -1,4 +1,4 @@
-#include "../include/server_communication.h"
+#include "../include/routing_server_communication.h"
 
 #include <arpa/inet.h>   // for htons
 #include <errno.h>       // for errno
@@ -12,8 +12,9 @@
 
 #include "../../utils/include/common.h"          // for Node
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
+#include "../include/route.h"
 
-int getTCPServerSocket(int* const listenSocket, const int listenPort) {
+int getTCPServerSocket(int* const listenSocket, const int basePort) {
   // Abbreviations:
   // ARPA - Address and Routing Parameter Area
   // AF - Address family
@@ -59,7 +60,7 @@ int getTCPServerSocket(int* const listenSocket, const int listenPort) {
   serverAddr.sin_addr.s_addr =
       INADDR_LOOPBACK;  // Only local addresses are accepted (INADDR_ANY would
                         // accept connection to any addresses)
-  serverAddr.sin_port = htons(listenPort);  // The port in network byte order
+  serverAddr.sin_port = htons(basePort);  // The port in network byte order
 
   // Bind assigns the address specified by sockaddr_in to a socket
   // Traditionally, this operation is called "assigning a name to a socket".
@@ -109,6 +110,8 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
       return EXIT_FAILURE;
     }
 
+    nodeArray[i].tcpSocket = newSocketFd;
+
     // NOTE: recv()/send() are specific to socket descriptors, whereas
     //       read()/write() are universal functions working on all descriptors
     //       Both of them are blocking by default
@@ -119,14 +122,12 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
     if (bytesReceived == -1) {
       fprintf(stderr, "Receiving nodeArray[%d].address failed.\nError %d: %s\n",
               i, errno, strerror(errno));
-      close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
               "Received less bytes than expected for "
               "nodeArray[%d].address\n",
               i);
-      close(newSocketFd);
       return EXIT_FAILURE;
     }
 
@@ -138,14 +139,12 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
               "Receiving nodeArray[%d].nNeighbors failed.\nError "
               "%d: %s\n",
               i, errno, strerror(errno));
-      close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
               "Received less bytes than expected for "
               "nodeArray[%d].nNeighbors\n",
               i);
-      close(newSocketFd);
       return EXIT_FAILURE;
     }
 
@@ -154,7 +153,6 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
         &(nodeArray[i]), nodeArray[i].nNeighbors, "nodeArray[i]");
     if (success != EXIT_SUCCESS) {
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      close(newSocketFd);
       return EXIT_FAILURE;
     }
 
@@ -169,7 +167,6 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
               "%d: %s\n",
               i, errno, strerror(errno));
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
@@ -177,7 +174,6 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
               "nodeArray[%d].neighborAddresses\n",
               i);
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      close(newSocketFd);
       return EXIT_FAILURE;
     }
 
@@ -190,7 +186,6 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
               "%d: %s\n",
               i, errno, strerror(errno));
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      close(newSocketFd);
       return EXIT_FAILURE;
     } else if (bytesReceived != nBytes) {
       fprintf(stderr,
@@ -198,10 +193,40 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
               "nodeArray[%d].edgeWeights\n",
               i);
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      close(newSocketFd);
       return EXIT_FAILURE;
     }
-    close(newSocketFd);
+  }
+  return EXIT_SUCCESS;
+}
+
+int sendRoutingTables(const struct Node* const nodeArray,
+                      const struct RoutingTableArray* const routingTableArray) {
+  for (int i = 0; routingTableArray->n; ++i) {
+    // FIXME: We must match the nodeArray to the routingTables
+    // FIXME: This will be communicated
+    routingTableArray->routingTables[i].nRows;
+    routingTableArray->routingTables[i].routingTableRows;
+    // FIXME: Unsure if the the i's refer to the same address
+    nodeArray[i].address;
+    nodeArray[i].tcpSocket;
+    // nodeArray is created by populateNodeArray
+    //     We do not know what order the nodes will come in
+    // nodeArray is used by createAdjacencyMatrix, which creates adjacencyMatrix
+    //     createAdjacencyMatrix uses indexToArray, as the adjacencyMatrix
+    //     operates on indices
+    // routeArray is created by dijkstra which uses adjacencyMatrix
+    //     routeArray also operates on indices
+    // routingTableArray is created by createRoutingTableArray using routeArray
+    //     The routingTableArray also operates on indices
+    // Hence both the nodeArray and routingTableArray operates on indices
+    // This means that we need to translate the nextHop and destination to
+    // addresses before sending them
+    // FIXME: You are here: Make a function which translates the routing table
+    //        to addresses (see test_route and node_communication for details)
+    // Loop through the nodes
+    // For each node translate the routingTable from indices to addresses
+    // Then send the routing table to the address indicated by nodeArray using
+    // the TCP socket of that node
   }
   return EXIT_SUCCESS;
 }

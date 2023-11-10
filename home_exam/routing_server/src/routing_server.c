@@ -8,8 +8,8 @@
 #include "../include/adjacency_matrix.h"         // for createAdjacencyMatrix
 #include "../include/dijkstra.h"                 // for dijkstra
 #include "../include/route.h"                    // for createRoutingTableArray
-#include "../include/server_communication.h"     // for getTCPServerSocket
-#include "../include/validation.h"               // for checkAllNodesReceived
+#include "../include/routing_server_communication.h"  // for getTCPServerSocket
+#include "../include/validation.h"  // for checkAllNodesReceived
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
   }
 
   // Set variables from the arguments
-  int listenPort = atoi(argv[1]);
+  int basePort = atoi(argv[1]);
   int n = atoi(argv[2]);
   int maxEdges = (n * (n - 1) / 2);
 
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
   }
 
   int listenSocket = -1;
-  success = getTCPServerSocket(&listenSocket, listenPort);
+  success = getTCPServerSocket(&listenSocket, basePort);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Obtaining the listen socket failed, exiting\n");
     freeRoutingServer(&nodeArray, &invalidEdgesArray, &indexToAddress,
@@ -101,6 +101,7 @@ int main(int argc, char** argv) {
   // We overcome the problem with discarding qualifiers with a cast
   // We can do this as we are sure that the function is not modifying the data
   // If that was the case we would've ended up with undefined behaviour
+  // FIXME: 0 refers to the index, we need to find the node with ownAddress == 1
   success = dijkstra(0, (const int* const*)adjacencyMatrix, distanceArray,
                      &routeArray, n);
   if (success != EXIT_SUCCESS) {
@@ -130,8 +131,7 @@ int main(int argc, char** argv) {
 
   // Send the routing tables
   // FIXME:
-  /*
-  success = sendRoutingTables(listenPort, routeArray, routingTableArray, n);
+  success = sendRoutingTables(nodeArray, routingTableArray);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Could not send the routing tables, exiting\n");
     freeRoutingServer(&nodeArray, &invalidEdgesArray, &indexToAddress,
@@ -140,9 +140,7 @@ int main(int argc, char** argv) {
     close(listenSocket);
     return EXIT_FAILURE;
   }
-  */
 
-  // FIXME:
   // Close ports
   close(listenSocket);
 

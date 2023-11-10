@@ -4,6 +4,7 @@
 #include <stdio.h>   // for fprintf, NULL
 #include <stdlib.h>  // for free, EXIT_FAILURE
 #include <string.h>  // for strerror
+#include <unistd.h>  // for close
 
 #include "../../routing_server/include/route.h"       // for RoutingTableArray
 #include "../../routing_server/include/validation.h"  // for EdgeCounter
@@ -262,6 +263,9 @@ void freeNodeArray(struct Node **nodeArray, int n) {
     return;
   }
   for (int i = 0; i < n; ++i) {
+    if (nodeArray[i]->tcpSocket != -1) {
+      close(nodeArray[i]->tcpSocket);
+    }
     freeNeighborAddressesAndEdgeWeights(&((*nodeArray)[i]));
   }
   (*nodeArray) = NULL;
