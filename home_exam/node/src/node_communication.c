@@ -82,7 +82,7 @@ int getUDPSocket(int* const connectSocket, const int basePort) {
   return EXIT_SUCCESS;
 }
 
-int getTCPClientSocket(int* const clientSocket, const int serverPort) {
+int getTCPClientSocket(int* const clientSocket, const int basePort) {
   // https://man7.org/linux/man-pages/man2/socket.2.html
   // Create the socket file descriptor for the server
   // This is an endpoint for the communication
@@ -108,7 +108,7 @@ int getTCPClientSocket(int* const clientSocket, const int serverPort) {
   serverAddr.sin_family = AF_LOCAL;  // We are still communicating locally
   serverAddr.sin_addr.s_addr =
       INADDR_LOOPBACK;  // Equivalent to inet_addr("127.0.0.1")
-  serverAddr.sin_port = htons(serverPort);  // The port in network byte order
+  serverAddr.sin_port = htons(basePort);  // The port in network byte order
 
   // NOTE: In TCP you can bind before connecting
   //       If not this is done automatically by the OS
@@ -221,7 +221,7 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
 }
 
 int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
-                             const int serverPort,
+                             const int basePort,
                              const struct RoutingTable* const routingTable) {
   unsigned char* packet = NULL;
   ssize_t bytesReceived = recv(udpSocketFd, packet, MAX_MSG_LENGTH, 0);
@@ -255,9 +255,12 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
     }
 
     struct sockaddr_in destAddr;
+    // For safety measure: Erase data by writing 0's to the memory location
+    // https://stackoverflow.com/q/36086642/2786884
+    bzero((void*)&destAddr, sizeof(destAddr));
     destAddr.sin_family = AF_LOCAL;              // We are communicating locally
     destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
-    destAddr.sin_port = htons(destination + serverPort);  // This is the port
+    destAddr.sin_port = htons(destination + basePort);  // This is the port
 
     // Update the source of the packet
     unsigned short source = htons(ownAddress);
@@ -282,7 +285,7 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
 }
 
 int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
-                          const int serverPort,
+                          const int basePort,
                           const struct RoutingTable* const routingTable) {
   // Wait for all connections to open
   sleep(1);
@@ -335,7 +338,7 @@ int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
     }
 
     success = sendUDPPacket(packet, length, udpSocketFd, ownAddress,
-                            destination, serverPort, routingTable);
+                            destination, basePort, routingTable);
     if (success != EXIT_SUCCESS) {
       cleanUpPrepareAndSendPackets(fp, line, &msg, &packet,
                                    "Failed to create the packet\n");
@@ -473,7 +476,7 @@ int createPacket(const int length, const unsigned short destination,
 
 int sendUDPPacket(const char* const packet, const int length,
                   const int udpSocketFd, const unsigned short ownAddress,
-                  const unsigned short destination, const int serverPort,
+                  const unsigned short destination, const int basePort,
                   const struct RoutingTable* const routingTable) {
   // Find next hop from the routing table
   int nextHop = -1;
@@ -491,9 +494,12 @@ int sendUDPPacket(const char* const packet, const int length,
   }
 
   struct sockaddr_in destAddr;
+  // For safety measure: Erase data by writing 0's to the memory location
+  // https://stackoverflow.com/q/36086642/2786884
+  bzero((void*)&destAddr, sizeof(destAddr));
   destAddr.sin_family = AF_LOCAL;              // We are communicating locally
   destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
-  destAddr.sin_port = htons(serverPort + nextHop);  // This is the port
+  destAddr.sin_port = htons(basePort + nextHop);  // This is the port
 
   ssize_t bytesSent = sendto(udpSocketFd, packet, length, 0,
                              (struct sockaddr*)&destAddr, sizeof(destAddr));

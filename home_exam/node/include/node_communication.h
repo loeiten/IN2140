@@ -23,10 +23,10 @@ int getUDPSocket(int* const connectSocket, const int basePort);
  * NOTE: The serverAddress will always be localhost (i.e. 127.0.0.1)
  *
  * @param clientSocket The socket descriptor which can send and receive
- * @param serverPort The port to bind the socket to
+ * @param basePort The port to bind the socket to
  * @return 0 on success, 1 on error
  */
-int getTCPClientSocket(int* const clientSocket, const int serverPort);
+int getTCPClientSocket(int* const clientSocket, const int basePort);
 
 /**
  * @brief Send the edge information to the routing server
@@ -52,13 +52,13 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
  *
  * @param udpSocketFd The socket to use for communication
  * @param ownAddress The address of this node
- * @param serverPort The port number of the server
+ * @param basePort The port number of the server
  *                   (used to calculate forward port)
  * @param routingTable The routing table
  * @return 0 on success, 1 on error
  */
 int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
-                             const int serverPort,
+                             const int basePort,
                              const struct RoutingTable* const routingTable);
 
 /**
@@ -66,13 +66,13 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
  *
  * @param udpSocketFd The socket to use for communication
  * @param ownAddress The address of this node
- * @param serverPort The port number of the server
+ * @param basePort The port number of the server
  *                   (used to calculate forward port)
  * @param routingTable The routing table
  * @return 0 on success, 1 on error
  */
 int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
-                          const int serverPort,
+                          const int basePort,
                           const struct RoutingTable* const routingTable);
 
 /**
@@ -150,14 +150,14 @@ int createPacket(const int length, const unsigned short destination,
  * @param udpSocketFd The socket to use for communication
  * @param ownAddress The address of this node
  * @param ownAddress The address of the destination
- * @param serverPort The port number of the server
+ * @param basePort The port number of the server
  *                   (used to calculate the destination port)
  * @param routingTable The routing table used to find the next hop
  * @return 0 on success, 1 on error
  */
 int sendUDPPacket(const char* const packet, const int length,
                   const int udpSocketFd, const unsigned short ownAddress,
-                  const unsigned short destination, const int serverPort,
+                  const unsigned short destination, const int basePort,
                   const struct RoutingTable* const routingTable);
 
 #endif  // HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_

@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   }
 
-  int serverPort = atoi(argv[1]);
+  int basePort = atoi(argv[1]);
   int ownAddress = atoi(argv[2]);
 
   // Initialize variables to be cleaned
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
 
   // We now make a UDP socket we can both send to and receive from
   // The UDP port should be port + ownAddress
-  int udpPort = serverPort + ownAddress;
+  int udpPort = basePort + ownAddress;
   success = getUDPSocket(&udpSocketFd, udpPort);
   if (success != EXIT_SUCCESS) {
     cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
   }
 
   // Open a TCP connection to the routing_server
-  success = getTCPClientSocket(&tcpRoutingServerSocketFd, serverPort);
+  success = getTCPClientSocket(&tcpRoutingServerSocketFd, basePort);
   if (success != EXIT_SUCCESS) {
     cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,
                 "Failed to connect to the server, exiting\n");
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 
   if (ownAddress == 1) {
     // Send packages to the other nodes
-    success = prepareAndSendPackets(udpSocketFd, ownAddress, serverPort,
+    success = prepareAndSendPackets(udpSocketFd, ownAddress, basePort,
                                     routingTablePtr);
     if (success != EXIT_SUCCESS) {
       cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
     // Await packet from the other nodes
     const char *msg = "";
     while (strcmp(msg, "QUIT") != 0) {
-      success = receiveAndForwardPackets(udpSocketFd, ownAddress, serverPort,
+      success = receiveAndForwardPackets(udpSocketFd, ownAddress, basePort,
                                          routingTablePtr);
       if (success != EXIT_SUCCESS) {
         cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,

@@ -200,33 +200,105 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
 }
 
 int sendRoutingTables(const struct Node* const nodeArray,
-                      const struct RoutingTableArray* const routingTableArray) {
+                      const struct RoutingTableArray* const routingTableArray,
+                      const struct IndexToAddress* const indexToAddress) {
+  struct RoutingTable addressRoutingTable;
+  addressRoutingTable.routingTableRows = NULL;
+
+  // NOTE: About what the index i actually means
+  //       nodeArray is created by populateNodeArray
+  //           We do not know what order the nodes will come in
+  //       nodeArray is used by createAdjacencyMatrix, which creates
+  //       adjacencyMatrix
+  //           createAdjacencyMatrix uses indexToArray, as the adjacencyMatrix
+  //           operates on indices
+  //       routeArray is created by dijkstra which uses adjacencyMatrix
+  //           routeArray also operates on indices
+  //       routingTableArray is created by createRoutingTableArray using
+  //       routeArray
+  //           The routingTableArray also operates on indices
+  //       Hence both the nodeArray and routingTableArray operates on indices
+  //       This means that we need to translate the nextHop and destination to
+  //       addresses before sending them
+
   for (int i = 0; routingTableArray->n; ++i) {
-    // FIXME: We must match the nodeArray to the routingTables
-    // FIXME: This will be communicated
-    routingTableArray->routingTables[i].nRows;
-    routingTableArray->routingTables[i].routingTableRows;
-    // FIXME: Unsure if the the i's refer to the same address
-    nodeArray[i].address;
-    nodeArray[i].tcpSocket;
-    // nodeArray is created by populateNodeArray
-    //     We do not know what order the nodes will come in
-    // nodeArray is used by createAdjacencyMatrix, which creates adjacencyMatrix
-    //     createAdjacencyMatrix uses indexToArray, as the adjacencyMatrix
-    //     operates on indices
-    // routeArray is created by dijkstra which uses adjacencyMatrix
-    //     routeArray also operates on indices
-    // routingTableArray is created by createRoutingTableArray using routeArray
-    //     The routingTableArray also operates on indices
-    // Hence both the nodeArray and routingTableArray operates on indices
-    // This means that we need to translate the nextHop and destination to
-    // addresses before sending them
-    // FIXME: You are here: Make a function which translates the routing table
-    //        to addresses (see test_route and node_communication for details)
-    // Loop through the nodes
-    // For each node translate the routingTable from indices to addresses
-    // Then send the routing table to the address indicated by nodeArray using
-    // the TCP socket of that node
+    int success =
+        translateTableFromIdxToAddress(&(routingTableArray->routingTables[i]),
+                                       indexToAddress, &addressRoutingTable);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr,
+              "Failed to translate routing table from idx to address for index "
+              "%d \n",
+              i);
+      if (addressRoutingTable.routingTableRows != NULL) {
+        free(addressRoutingTable.routingTableRows);
+        addressRoutingTable.routingTableRows = NULL;
+      }
+    }
+
+    ssize_t nBytes = sizeof(int);
+    ssize_t bytesSent =
+        send(nodeArray[i].tcpSocket, &(addressRoutingTable.nRows), nBytes, 0);
+    if (bytesSent == -1) {
+      fprintf(stderr,
+              "Sending addressRoutingTable.nRows failed.\nError %d: %s\n",
+              errno, strerror(errno));
+      free(addressRoutingTable.routingTableRows);
+      addressRoutingTable.routingTableRows = NULL;
+      return EXIT_FAILURE;
+    } else if (bytesSent != nBytes) {
+      fprintf(stderr,
+              "Sent less bytes than expected for addressRoutingTable.nRows\n");
+      free(addressRoutingTable.routingTableRows);
+      addressRoutingTable.routingTableRows = NULL;
+      return EXIT_FAILURE;
+    }
+
+    nBytes = addressRoutingTable.nRows * sizeof(int);
+    bytesSent = send(nodeArray[i].tcpSocket,
+                     &(addressRoutingTable.routingTableRows), nBytes, 0);
+    if (bytesSent == -1) {
+      fprintf(stderr,
+              "Sending addressRoutingTable.routingTableRows failed.\nError %d: "
+              "%s\n",
+              errno, strerror(errno));
+      free(addressRoutingTable.routingTableRows);
+      addressRoutingTable.routingTableRows = NULL;
+      return EXIT_FAILURE;
+    } else if (bytesSent != nBytes) {
+      fprintf(stderr,
+              "Sent less bytes than expected for "
+              "addressRoutingTable.routingTableRows\n");
+      free(addressRoutingTable.routingTableRows);
+      addressRoutingTable.routingTableRows = NULL;
+      return EXIT_FAILURE;
+    }
   }
+  // Free the temporary addressRouting
+  free(addressRoutingTable.routingTableRows);
+  addressRoutingTable.routingTableRows = NULL;
+  return EXIT_SUCCESS;
+}
+
+int translateTableFromIdxToAddress(
+    const struct RoutingTable* const idxRoutingTable,
+    const struct IndexToAddress* const indexToAddress,
+    struct RoutingTable* addressRoutingTable) {
+  addressRoutingTable->nRows = idxRoutingTable->nRows;
+  addressRoutingTable->routingTableRows =
+      realloc(addressRoutingTable->routingTableRows,
+              addressRoutingTable->nRows * sizeof(struct RoutingTableRows));
+  if (addressRoutingTable->routingTableRows == NULL) {
+    perror("Failed to realloc addressRoutingTable.routingTableRows: ");
+    return EXIT_FAILURE;
+  }
+
+  for (int row = 0; row < addressRoutingTable->nRows; ++row) {
+    addressRoutingTable->routingTableRows[row].destination =
+        indexToAddress->map[idxRoutingTable->routingTableRows[row].destination];
+    addressRoutingTable->routingTableRows[row].nextHop =
+        indexToAddress->map[idxRoutingTable->routingTableRows[row].nextHop];
+  }
+
   return EXIT_SUCCESS;
 }

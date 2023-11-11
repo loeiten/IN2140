@@ -4,6 +4,8 @@
 // FIXME: These functions are untested
 
 struct Node;
+struct IndexToAddress;
+struct RoutingTable;
 struct RoutingTableArray;
 
 /**
@@ -29,11 +31,26 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
 /**
  * @brief Send the routing tables to the nodes
  *
- * @param nodeArray The array of nodes
- * @param routingTableArray  The array of routing tables
+ * @param nodeArray The array of nodes (contains the tcp socket)
+ * @param routingTableArray The array of routing tables
+ * @param indexToAddress Object mapping indices to addresses
  * @return 0 on success, 1 on error
  */
 int sendRoutingTables(const struct Node* const nodeArray,
-                      const struct RoutingTableArray* const routingTableArray);
+                      const struct RoutingTableArray* const routingTableArray,
+                      const struct IndexToAddress* const indexToAddress);
+
+/**
+ * @brief Translate routing table from index to address
+ *
+ * @param idxRoutingTable Original routing table using indices
+ * @param indexToAddress Object mapping indices to addresses
+ * @param addressRoutingTable New routing table using addresses
+ * @return 0 on success, 1 on error
+ */
+int translateTableFromIdxToAddress(
+    const struct RoutingTable* const idxRoutingTable,
+    const struct IndexToAddress* const indexToAddress,
+    struct RoutingTable* addressRoutingTable);
 
 #endif  // HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTING_SERVER_COMMUNICATION_H_

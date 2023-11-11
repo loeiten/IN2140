@@ -31,11 +31,11 @@ struct RoutingTable {
 };
 
 /**
- * @brief Map from index to node id
+ * @brief Map from index to node address
  */
 struct IndexToAddress {
   int n;    /**< Number of elements */
-  int* map; /**< The index to id map */
+  int* map; /**< The index to address map */
 };
 
 /**

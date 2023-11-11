@@ -130,8 +130,7 @@ int main(int argc, char** argv) {
   }
 
   // Send the routing tables
-  // FIXME:
-  success = sendRoutingTables(nodeArray, routingTableArray);
+  success = sendRoutingTables(nodeArray, routingTableArray, &indexToAddress);
   if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Could not send the routing tables, exiting\n");
     freeRoutingServer(&nodeArray, &invalidEdgesArray, &indexToAddress,
@@ -141,12 +140,12 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  // Close ports
-  close(listenSocket);
-
   // Free memory
   freeRoutingServer(&nodeArray, &invalidEdgesArray, &indexToAddress,
                     &adjacencyMatrix, &distanceArray, &routeArray,
                     routingTableArray, n);
+
+  // Close listenSocket
+  close(listenSocket);
   return EXIT_SUCCESS;
 }
