@@ -3,14 +3,14 @@
 #include <arpa/inet.h>   // for htons, ntohs
 #include <errno.h>       // for errno
 #include <netinet/in.h>  // for sockaddr_in, INADDR_...
-#include <stdio.h>       // for fprintf, stderr, ssi...
-#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
-#include <string.h>      // for strerror, memcpy
+#include <stdio.h>       // for fprintf, stderr, NULL
+#include <stdlib.h>      // for EXIT_FAILURE, free
+#include <string.h>      // for strerror, strlen
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for send, recv, socket
-#include <unistd.h>
+#include <sys/socket.h>  // for send, recv, AF_LOCAL
+#include <unistd.h>      // for sleep
 
-#include "../../utils/include/common.h"          // for Node
+#include "../../utils/include/common.h"          // for Node, RoutingTableRows
 #include "../../utils/include/dynamic_memory.h"  // for allocateRoutingTable
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following

@@ -1,7 +1,7 @@
 #ifndef HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
 #define HOME_EXAM_NODE_INCLUDE_NODE_COMMUNICATION_H_
 
-#include <stdio.h>
+#include <stdio.h>  // for FILE
 
 // FIXME: These functions are untested
 struct Node;

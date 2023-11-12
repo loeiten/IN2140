@@ -3,7 +3,7 @@
 #include <stdio.h>   // for fprintf, fflush, printf
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
 
-#include "../../utils/include/common.h"          // for Edge, EdgeArray, Com...
+#include "../../utils/include/common.h"          // for Edge, EdgeArray, Node
 #include "../../utils/include/dynamic_memory.h"  // for freeEdgeCounterArray
 
 int checkAllNodesReceived(struct Node* nodeArray,

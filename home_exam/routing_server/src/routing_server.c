@@ -1,15 +1,15 @@
 #include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, stderr, NULL
-#include <stdlib.h>  // for EXIT_FAILURE, EXIT_S...
+#include <stdio.h>   // for fprintf, stderr
+#include <stdlib.h>  // for EXIT_FAILURE
 #include <unistd.h>  // for close
 
-#include "../../utils/include/common.h"          // for Node
-#include "../../utils/include/dynamic_memory.h"  // for freeRoutingServer
-#include "../include/adjacency_matrix.h"         // for createAdjacencyMatrix
-#include "../include/dijkstra.h"                 // for dijkstra
-#include "../include/route.h"                    // for createRoutingTableArray
+#include "../../utils/include/common.h"               // for getIndexFromAdd...
+#include "../../utils/include/dynamic_memory.h"       // for freeRoutingServer
+#include "../include/adjacency_matrix.h"              // for createAdjacency...
+#include "../include/dijkstra.h"                      // for dijkstra
+#include "../include/route.h"                         // for createRoutingTa...
 #include "../include/routing_server_communication.h"  // for getTCPServerSocket
-#include "../include/validation.h"  // for checkAllNodesReceived
+#include "../include/validation.h"                    // for checkAllNodesRe...
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -101,9 +101,18 @@ int main(int argc, char** argv) {
   // We overcome the problem with discarding qualifiers with a cast
   // We can do this as we are sure that the function is not modifying the data
   // If that was the case we would've ended up with undefined behaviour
-  // FIXME: 0 refers to the index, we need to find the node with ownAddress == 1
-  success = dijkstra(0, (const int* const*)adjacencyMatrix, distanceArray,
-                     &routeArray, n);
+  int indexOfOwnAddress1;
+  success = getIndexFromAddress(1, &indexToAddress, &indexOfOwnAddress1);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Could find index of address 1, exiting\n");
+    freeRoutingServer(&nodeArray, &invalidEdgesArray, &indexToAddress,
+                      &adjacencyMatrix, &distanceArray, &routeArray,
+                      routingTableArray, n);
+    close(listenSocket);
+    return EXIT_FAILURE;
+  }
+  success = dijkstra(indexOfOwnAddress1, (const int* const*)adjacencyMatrix,
+                     distanceArray, &routeArray, n);
   if (success != EXIT_SUCCESS) {
     fprintf(
         stderr,

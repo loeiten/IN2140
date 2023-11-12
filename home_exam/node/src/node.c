@@ -6,7 +6,7 @@
 #include <string.h>  // for strcmp
 #include <unistd.h>  // for close
 
-#include "../../utils/include/common.h"          // for Node
+#include "../../utils/include/common.h"          // for Node, RoutingTable
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
 #include "../include/node_communication.h"       // for getTCPClientSocket
 #include "../include/node_parser.h"              // for parseNodes

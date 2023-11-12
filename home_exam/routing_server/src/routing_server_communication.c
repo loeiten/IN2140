@@ -3,16 +3,15 @@
 #include <arpa/inet.h>   // for htons
 #include <errno.h>       // for errno
 #include <netinet/in.h>  // for sockaddr_in, INADDR_...
-#include <stdio.h>       // for fprintf, stderr, ssi...
-#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
+#include <stdio.h>       // for fprintf, stderr, NULL
+#include <stdlib.h>      // for EXIT_FAILURE, free
 #include <string.h>      // for strerror
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for recv, MSG_WAITALL
-#include <unistd.h>      // for close
+#include <sys/socket.h>  // for recv, send, MSG_WAITALL
 
-#include "../../utils/include/common.h"          // for Node
+#include "../../utils/include/common.h"          // for RoutingTable, Node
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
-#include "../include/route.h"
+#include "../include/route.h"                    // for RoutingTableArray
 
 int getTCPServerSocket(int* const listenSocket, const int basePort) {
   // Abbreviations:

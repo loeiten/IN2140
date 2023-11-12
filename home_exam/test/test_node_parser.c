@@ -6,7 +6,7 @@
 
 #include "../node/include/node_parser.h"      // for parseNodes
 #include "../utils/include/common.h"          // for Node
-#include "../utils/include/dynamic_memory.h"  // for allocateCommunicatedNod...
+#include "../utils/include/dynamic_memory.h"  // for allocateNodeNeighborAnd...
 
 void testParseNodes(void) {
 #define N (4)

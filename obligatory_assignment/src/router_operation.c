@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
   }
 
   // Check if we are reading one command or a command file
-  char* dot = strrchr(commandArg, '.');
+  const char* dot = strrchr(commandArg, '.');
   if ((dot != NULL) && (strcmp(dot, ".txt") == 0)) {
     // Open the file
     FILE* fp;

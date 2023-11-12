@@ -5,7 +5,7 @@
 #include <string.h>  // for strcmp
 
 #include "../routing_server/include/validation.h"  // for EdgeCounter, check...
-#include "../utils/include/common.h"               // for Edge, EdgeArray
+#include "../utils/include/common.h"               // for Edge, EdgeArray, Node
 #include "../utils/include/dynamic_memory.h"       // for allocateEdgeArray
 #include "include/test_tools.h"                    // for createInvertedAGra...
 
