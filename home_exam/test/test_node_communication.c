@@ -4,6 +4,8 @@
 #include <stdlib.h>  // for EXIT_SUCCESS
 #include <string.h>  // for strcmp
 
+#include "../node/include/node_communication.h"
+
 void testGetUDPSocket(void) { assert(1 == 0); }
 
 void testGetTCPClientSocket(void) { assert(1 == 0); }
@@ -16,7 +18,28 @@ void testReceiveAndForwardPackets(void) { assert(1 == 0); }
 
 void testPrepareAndSendPackets(void) { assert(1 == 0); }
 
-void testExtractLengthDestinationAndMessage(void) { assert(1 == 0); }
+void testExtractLengthDestinationAndMessage(void) {
+  const char* line1 = "814 Good luck with the home exam\n";
+  unsigned short length;
+  unsigned short destination;
+  char* msg;
+  int success =
+      extractLengthDestinationAndMessage(line1, &length, &destination, &msg);
+  assert(success == EXIT_SUCCESS);
+  assert(length == 35);
+  assert(destination == 814);
+  assert(strcmp(msg, "Good luck with the home exam") == 0);
+  free(msg);
+
+  const char* line2 = "12 Foo bar baz\n";
+  success =
+      extractLengthDestinationAndMessage(line2, &length, &destination, &msg);
+  assert(success == EXIT_SUCCESS);
+  assert(length == 18);
+  assert(destination == 12);
+  assert(strcmp(msg, "Foo bar baz") == 0);
+  free(msg);
+}
 
 void testCreatePacket(void) { assert(1 == 0); }
 

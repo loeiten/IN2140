@@ -12,6 +12,7 @@ TESTS := run_test_adjacency_matrix_1 \
 		 run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
+		 run_test_node_communication_7 \
 		 run_test_node_parser_1 \
 		 run_test_route_1 \
 		 run_test_route_2 \
@@ -92,6 +93,30 @@ run_test_dijkstra_2: $(TEST_EXEC_DIR)/test_dijkstra
 
 run_test_dijkstra_3: $(TEST_EXEC_DIR)/test_dijkstra
 	$(call run_test,$@,$< dijkstra)
+# ==============================================================================
+
+# NODE_COMMUNICATION
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_node_communication: $(BUILD_TEST_DIR)/test_node_communication.o $(BUILD_OBJ_DIR)/node_communication.o $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
+# Building the object files
+# NOTE: The only reason why we add an include path is because we have pretended
+#       that print_lib.h comes from an external library
+#       Since we use statements like
+#       #include "print_lib/include/print_lib.h", and since print_lib doesn't
+#       reside in "this" directory, we need to make sure that the compiler can
+#       find it
+$(BUILD_TEST_DIR)/test_node_communication.o: test_node_communication.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(ASSIGNMENT_FILES_SRC) -c $< -o $@
+
+# Tests
+run_test_node_communication_7 : $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@,$< extractLengthDestinationAndMessage)
 # ==============================================================================
 
 # NODE_PARSER

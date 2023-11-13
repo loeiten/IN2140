@@ -427,7 +427,7 @@ int extractLengthDestinationAndMessage(const char* const line,
   lineCpy[nI] = '\0';
 
   // 6. Copy this to msg
-  (*msg) = strdup(&(lineCpy[spaceI]));
+  (*msg) = strdup(&(lineCpy[spaceI + 1]));
   if (*msg == NULL) {
     fprintf(stderr, "Could not duplicate the line '%s'\n", line);
     free(lineCpy);
