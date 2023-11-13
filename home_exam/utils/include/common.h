@@ -1,6 +1,8 @@
 #ifndef HOME_EXAM_UTILS_INCLUDE_COMMON_H_
 #define HOME_EXAM_UTILS_INCLUDE_COMMON_H_
 
+#include <sys/socket.h>  // for ssize_t
+
 #define MAX_MSG_LENGTH (1024)
 // Non-privileged users are not allowed to bind to privileged ports (port
 // numbers below 1024)
@@ -71,6 +73,38 @@ int getIndexFromAddress(const int address,
                         const struct IndexToAddress* const indexToAddress,
                         int* index);
 
-// FIXME: YOU ARE HERE: Add a unified recv call
+/**
+ * @brief Receive message from a socket which is nBytes long
+ *
+ * @param sockFd The socket to use for receiving
+ * @param buf The buffer to store the data to
+ * @param nBytes The number of bytes expected
+ * @param flag The flags
+ * @return 0 in success, 1 on error
+ */
+int receiveNBytesMessage(const int sockFd, void* buf, const ssize_t nBytes,
+                         const int flag);
+
+/**
+ * @brief Receive message from a socket with unknown length
+ *
+ * @param sockFd The socket to use for receiving
+ * @param buf The buffer to store the data to
+ * @param flag The flags
+ * @return 0 in success, 1 on error
+ */
+int receiveMessage(const int sockFd, void* buf, const int flag);
+
+/**
+ * @brief Send a message from a socket
+ *
+ * @param sockFd The socket to use for receiving
+ * @param buf The buffer to store the data to
+ * @param nBytes The number of bytes expected
+ * @param flag The flags
+ * @return 0 in success, 1 on error
+ */
+int sendMessage(const int sockFd, void* buf, const ssize_t nBytes,
+                const int flag);
 
 #endif  // HOME_EXAM_UTILS_INCLUDE_COMMON_H_

@@ -1,16 +1,16 @@
 #include "../include/node_communication.h"
 
-#include <arpa/inet.h>   // for htons, ntohs
+#include <arpa/inet.h>   // for htons, htonl, ntohs
 #include <errno.h>       // for errno
-#include <netinet/in.h>  // for sockaddr_in, INADDR_...
+#include <netinet/in.h>  // for sockaddr_in, in_addr
 #include <stdio.h>       // for fprintf, stderr, NULL
-#include <stdlib.h>      // for EXIT_FAILURE, free
+#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
 #include <string.h>      // for strerror, strlen
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for send, recv, AF_INET
+#include <sys/socket.h>  // for AF_INET, sendto, socket
 #include <unistd.h>      // for sleep
 
-#include "../../utils/include/common.h"          // for Node, RoutingTableRows
+#include "../../utils/include/common.h"          // for sendMessage, Node
 #include "../../utils/include/dynamic_memory.h"  // for allocateRoutingTable
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
@@ -23,7 +23,7 @@
 #include "print_lib/include/print_lib.h"  // for print_forwarded_pkt
 
 int getUDPSocket(int* const connectSocket, const int basePort) {
-  if ((basePort < MIN_PORT) || (basePort > MIN_PORT)) {
+  if ((basePort < MIN_PORT) || (basePort > MAX_PORT)) {
     fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
             MAX_PORT);
   }
@@ -88,7 +88,7 @@ int getUDPSocket(int* const connectSocket, const int basePort) {
 }
 
 int getTCPClientSocket(int* const clientSocket, const int basePort) {
-  if ((basePort < MIN_PORT) || (basePort > MIN_PORT)) {
+  if ((basePort < MIN_PORT) || (basePort > MAX_PORT)) {
     fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
             MAX_PORT);
   }
@@ -139,49 +139,31 @@ int getTCPClientSocket(int* const clientSocket, const int basePort) {
 int sendEdgeInformation(struct Node* const node) {
   // Send own address
   ssize_t nBytes = sizeof(int);
-  ssize_t bytesSent = send(node->tcpSocket, &(node->address), nBytes, 0);
-  if (bytesSent != -1) {
-    fprintf(stderr, "Sending node->address failed.\nError %d: %s\n", errno,
-            strerror(errno));
-    return EXIT_FAILURE;
-  } else if (bytesSent != nBytes) {
-    fprintf(stderr, "Sent less bytes than expected for node->address\n");
+  int success = sendMessage(node->tcpSocket, &(node->address), nBytes, 0);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Sending node->address failed.\n");
     return EXIT_FAILURE;
   }
 
   // Send the size of the array
-  bytesSent = send(node->tcpSocket, &(node->nNeighbors), nBytes, 0);
-  if (bytesSent == -1) {
-    fprintf(stderr, "Sending node->nNeighbors failed.\nError %d: %s\n", errno,
-            strerror(errno));
-    return EXIT_FAILURE;
-  } else if (bytesSent != nBytes) {
-    fprintf(stderr, "Sent less bytes than expected for node->nNeighbors\n");
+  success = sendMessage(node->tcpSocket, &(node->nNeighbors), nBytes, 0);
+  if (success == EXIT_SUCCESS) {
+    fprintf(stderr, "Sending node->nNeighbors failed.\n");
     return EXIT_FAILURE;
   }
 
   // Send the neighbor address array
   nBytes *= node->nNeighbors;
-  bytesSent = send(node->tcpSocket, &(node->neighborAddresses), nBytes, 0);
-  if (bytesSent == -1) {
-    fprintf(stderr, "Sending node->neighborAddresses failed.\nError %d: %s\n",
-            errno, strerror(errno));
-    return EXIT_FAILURE;
-  } else if (bytesSent != nBytes) {
-    fprintf(stderr,
-            "Sent less bytes than expected for "
-            "node->neighborAddresses\n");
+  success = sendMessage(node->tcpSocket, &(node->neighborAddresses), nBytes, 0);
+  if (success == EXIT_SUCCESS) {
+    fprintf(stderr, "Sending node->neighborAddresses failed.\n");
     return EXIT_FAILURE;
   }
 
   // Send the neighbor weight array
-  bytesSent = send(node->tcpSocket, &(node->edgeWeights), nBytes, 0);
-  if (bytesSent == -1) {
-    fprintf(stderr, "Sending node->edgeWeights failed.\nError %d: %s\n", errno,
-            strerror(errno));
-    return EXIT_FAILURE;
-  } else if (bytesSent != nBytes) {
-    fprintf(stderr, "Sent less bytes than expected for node->edgeWeights\n");
+  success = sendMessage(node->tcpSocket, &(node->edgeWeights), nBytes, 0);
+  if (success == EXIT_SUCCESS) {
+    fprintf(stderr, "Sending node->edgeWeights failed.\n");
     return EXIT_FAILURE;
   }
 
@@ -196,34 +178,26 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
   // Receive the number of rows
   int nRows;
   ssize_t nBytes = sizeof(int);
-  ssize_t bytesReceived =
-      recv(tcpRoutingServerSocketFd, &nRows, nBytes, MSG_WAITALL);
-  if (bytesReceived == -1) {
-    fprintf(stderr, "Receiving nRows failed.\nError %d: %s\n", errno,
-            strerror(errno));
-    return EXIT_FAILURE;
-  } else if (bytesReceived != nBytes) {
-    fprintf(stderr, "Received less bytes than expected for nRows\n");
+  int success = receiveNBytesMessage(tcpRoutingServerSocketFd, &nRows, nBytes,
+                                     MSG_WAITALL);
+  if (success == EXIT_FAILURE) {
+    fprintf(stderr, "Receiving nRows failed\n");
     return EXIT_FAILURE;
   }
 
   // Allocate memory to the routing table
-  int success = allocateRoutingTable(routingTable, nRows, "node routing table");
+  success = allocateRoutingTable(routingTable, nRows, "node routing table");
   if (success != EXIT_SUCCESS) {
     return EXIT_FAILURE;
   }
 
   // Receive the table
   nBytes = nRows * sizeof(struct RoutingTableRows);
-  bytesReceived = recv(tcpRoutingServerSocketFd,
-                       &(routingTable->routingTableRows), nBytes, MSG_WAITALL);
-  if (bytesReceived == -1) {
-    fprintf(stderr,
-            "Receiving routingTable->table routingTableRows\nError %d: %s\n",
-            errno, strerror(errno));
-    return EXIT_FAILURE;
-  } else if (bytesReceived != nBytes) {
-    fprintf(stderr, "Received less bytes than expected for routingTableRows\n");
+  success = receiveNBytesMessage(tcpRoutingServerSocketFd,
+                                 &(routingTable->routingTableRows), nBytes,
+                                 MSG_WAITALL);
+  if (success == EXIT_FAILURE) {
+    fprintf(stderr, "Receiving routingTable->table failed\n");
     return EXIT_FAILURE;
   }
 
@@ -234,11 +208,12 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
                              const int basePort,
                              const struct RoutingTable* const routingTable) {
   unsigned char* packet = NULL;
-  ssize_t bytesReceived = recv(udpSocketFd, packet, MAX_MSG_LENGTH, 0);
-  if (bytesReceived == -1) {
-    fprintf(stderr, "Error when receiving package: %s\n", strerror(errno));
+  int success = receiveNBytesMessage(udpSocketFd, packet, MAX_MSG_LENGTH, 0);
+  if (success != EXIT_SUCCESS) {
+    fprintf(stderr, "Error when receiving packet\n");
     return EXIT_FAILURE;
   }
+
   short tmp;
   unsigned short destination;
   // NOTE: The packet order is given in the assignment

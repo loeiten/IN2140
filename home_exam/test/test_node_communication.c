@@ -1,29 +1,43 @@
 #include <arpa/inet.h>  // for ntohs
 #include <assert.h>     // for assert
 #include <libgen.h>     // for basename
-#include <stdio.h>      // for fprintf, NULL
-#include <stdlib.h>     // for EXIT_SUCCESS
-#include <string.h>     // for strcmp
-#include <unistd.h>     // for close
+#include <stdio.h>      // for fprintf, stderr
+#include <stdlib.h>     // for free, EXIT_SUCCESS
+#include <string.h>     // for strcmp, memcpy, strndup
+#include <unistd.h>     // for close, sleep
 
-#include "../node/include/node_communication.h"
+#include "../node/include/node_communication.h"  // for createPacket, extrac...
+#include "../utils/include/common.h"             // for sendMessage
 
 void testGetUDPSocket(const char* basePortStr) {
-  int connectSocket;
+  int connectSocket = -1;
   int basePort = atoi(basePortStr);
   int success = getUDPSocket(&connectSocket, basePort);
+  if ((success != EXIT_SUCCESS) && (connectSocket != -1)) {
+    close(connectSocket);
+  }
   assert(success == EXIT_SUCCESS);
   assert(connectSocket > 0);
   close(connectSocket);
 }
 
 void testGetTCPClientSocket(const char* basePortStr) {
-  int clientSocket;
+  int clientSocket = -1;
   int basePort = atoi(basePortStr);
   sleep(1);
   int success = getTCPClientSocket(&clientSocket, basePort);
+  if ((success != EXIT_SUCCESS) && (clientSocket != -1)) {
+    close(clientSocket);
+  }
   assert(success == EXIT_SUCCESS);
   assert(clientSocket > 0);
+  const char* message = "QUIT";
+  // +1 for terminating /0 character
+  success = sendMessage(clientSocket, (void*)message, strlen(message) + 1, 0);
+  if ((success != EXIT_SUCCESS) && (clientSocket != -1)) {
+    close(clientSocket);
+  }
+  assert(success == EXIT_SUCCESS);
   close(clientSocket);
 }
 

@@ -1,25 +1,43 @@
-#include <arpa/inet.h>   // for htons
-#include <assert.h>      // for assert
-#include <libgen.h>      // for basename
-#include <stdio.h>       // for fprintf, NULL
-#include <stdlib.h>      // for EXIT_SUCCESS
-#include <string.h>      // for strcmp
-#include <sys/socket.h>  // for recv, send, MSG_WAITALL
+#include <assert.h>  // for assert
+#include <libgen.h>  // for basename
+#include <stdio.h>   // for fprintf, NULL
+#include <stdlib.h>  // for EXIT_SUCCESS
+#include <string.h>  // for strcmp
+#include <unistd.h>  // for recv, send, MSG_WAITALL
 
 #include "../routing_server/include/routing_server_communication.h"
+#include "../utils/include/common.h"
 
 void openTCP(const char* basePortStr) {
-  int listenSocket;
+  int listenSocket = -1;
   int basePort = atoi(basePortStr);
   int success = getTCPServerSocket(&listenSocket, basePort);
   assert(success == EXIT_SUCCESS);
   assert(listenSocket != 1);
 
   // Accept a connection
-  int newSocketFd;
+  int newSocketFd = -1;
   success = acceptConnection(listenSocket, &newSocketFd);
+  if (newSocketFd == -1) {
+    close(listenSocket);
+  }
   assert(success == EXIT_SUCCESS);
   assert(newSocketFd != 1);
+
+  char msg[MAX_MSG_LENGTH];
+  while (1) {
+    // NOTE: Do NOT use MSG_WAITALL as we don't need to fill the whole buffer
+    success = receiveMessage(newSocketFd, msg, 0);
+    if (success != EXIT_SUCCESS) {
+      close(listenSocket);
+      close(newSocketFd);
+    }
+    assert(success == EXIT_SUCCESS);
+    printf("Received: %s\n", msg);
+    if (strcmp(msg, "QUIT") == 0) {
+      return;
+    }
+  }
 }
 
 void testGetTCPServerSocket(const char* basePortStr) {

@@ -82,8 +82,8 @@ run_test_adjacency_matrix_1: $(TEST_EXEC_DIR)/test_adjacency_matrix
 # ROUTING_SERVER_COMMUNICATION
 
 # Test
-run_test_communication_1 : $(TEST_EXEC_DIR)/test_node_communication $(TEST_EXEC_DIR)/test_routing_server_communication
-	$(call run_test,$@,test_routing_server_communication getTCPServerSocket 1026 & test_node_communication getTCPClientSocket 1026)
+run_test_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@,$(TEST_EXEC_DIR)/test_routing_server_communication openTCP 1028 2>&1 | tee $(TEST_EXEC_DIR)/test_communication_1_output.txt & $(TEST_EXEC_DIR)/test_node_communication getTCPClientSocket 1028 && diff data/test_communication_1_output.txt $(TEST_EXEC_DIR)/test_communication_1_output.txt)
 # ==============================================================================
 
 # DIJKSTRA

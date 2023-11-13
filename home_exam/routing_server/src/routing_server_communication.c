@@ -1,20 +1,20 @@
 #include "../include/routing_server_communication.h"
 
-#include <arpa/inet.h>   // for htons
+#include <arpa/inet.h>   // for htonl, htons
 #include <errno.h>       // for errno
 #include <netinet/in.h>  // for sockaddr_in, INADDR_...
 #include <stdio.h>       // for fprintf, stderr, NULL
-#include <stdlib.h>      // for EXIT_FAILURE, free
+#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
 #include <string.h>      // for strerror
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for recv, send, MSG_WAITALL
+#include <sys/socket.h>  // for MSG_WAITALL, accept
 
 #include "../../utils/include/common.h"          // for RoutingTable, Node
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
 #include "../include/route.h"                    // for RoutingTableArray
 
 int getTCPServerSocket(int* const listenSocket, const int basePort) {
-  if ((basePort < MIN_PORT) || (basePort > MIN_PORT)) {
+  if ((basePort < MIN_PORT) || (basePort > MAX_PORT)) {
     fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
             MAX_PORT);
   }
@@ -110,34 +110,18 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
     //       Both of them are blocking by default
     // Receive the address
     ssize_t nBytes = sizeof(int);
-    ssize_t bytesReceived =
-        recv(newSocketFd, &(nodeArray[i].address), nBytes, MSG_WAITALL);
-    if (bytesReceived == -1) {
-      fprintf(stderr, "Receiving nodeArray[%d].address failed.\nError %d: %s\n",
-              i, errno, strerror(errno));
-      return EXIT_FAILURE;
-    } else if (bytesReceived != nBytes) {
-      fprintf(stderr,
-              "Received less bytes than expected for "
-              "nodeArray[%d].address\n",
-              i);
+    success = receiveNBytesMessage(newSocketFd, &(nodeArray[i].address), nBytes,
+                                   MSG_WAITALL);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Receiving nodeArray[%d].address failed.\n", i);
       return EXIT_FAILURE;
     }
 
     // Receive the size of the array
-    bytesReceived =
-        recv(newSocketFd, &(nodeArray[i].nNeighbors), nBytes, MSG_WAITALL);
-    if (bytesReceived == -1) {
-      fprintf(stderr,
-              "Receiving nodeArray[%d].nNeighbors failed.\nError "
-              "%d: %s\n",
-              i, errno, strerror(errno));
-      return EXIT_FAILURE;
-    } else if (bytesReceived != nBytes) {
-      fprintf(stderr,
-              "Received less bytes than expected for "
-              "nodeArray[%d].nNeighbors\n",
-              i);
+    success = receiveNBytesMessage(newSocketFd, &(nodeArray[i].nNeighbors),
+                                   nBytes, MSG_WAITALL);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Receiving nodeArray[%d].nNeighbors failed.\n", i);
       return EXIT_FAILURE;
     }
 
@@ -151,40 +135,19 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
 
     // Receive the neighbor array
     nBytes *= nodeArray[i].nNeighbors;
-    bytesReceived = recv(newSocketFd, &(nodeArray[i].neighborAddresses), nBytes,
-                         MSG_WAITALL);
-    if (bytesReceived == -1) {
-      fprintf(stderr,
-              "Receiving nodeArray[%d].neighborAddresses "
-              "failed.\nError "
-              "%d: %s\n",
-              i, errno, strerror(errno));
-      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      return EXIT_FAILURE;
-    } else if (bytesReceived != nBytes) {
-      fprintf(stderr,
-              "Received less bytes than expected for "
-              "nodeArray[%d].neighborAddresses\n",
-              i);
+    success = receiveNBytesMessage(
+        newSocketFd, &(nodeArray[i].neighborAddresses), nBytes, MSG_WAITALL);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Receiving nodeArray[%d].neighborAddresses failed.\n", i);
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       return EXIT_FAILURE;
     }
 
     // Receive the weight array
-    bytesReceived =
-        recv(newSocketFd, &(nodeArray[i].edgeWeights), nBytes, MSG_WAITALL);
-    if (bytesReceived == -1) {
-      fprintf(stderr,
-              "Receiving nodeArray[%d].edgeWeights failed.\nError "
-              "%d: %s\n",
-              i, errno, strerror(errno));
-      freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
-      return EXIT_FAILURE;
-    } else if (bytesReceived != nBytes) {
-      fprintf(stderr,
-              "Received less bytes than expected for "
-              "nodeArray[%d].edgeWeights\n",
-              i);
+    success = receiveNBytesMessage(newSocketFd, &(nodeArray[i].edgeWeights),
+                                   nBytes, MSG_WAITALL);
+    if (success != EXIT_FAILURE) {
+      fprintf(stderr, "Receiving nodeArray[%d].edgeWeights failed.\n", i);
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       return EXIT_FAILURE;
     }
@@ -250,38 +213,20 @@ int sendRoutingTables(const struct Node* const nodeArray,
     }
 
     ssize_t nBytes = sizeof(int);
-    ssize_t bytesSent =
-        send(nodeArray[i].tcpSocket, &(addressRoutingTable.nRows), nBytes, 0);
-    if (bytesSent == -1) {
-      fprintf(stderr,
-              "Sending addressRoutingTable.nRows failed.\nError %d: %s\n",
-              errno, strerror(errno));
-      free(addressRoutingTable.routingTableRows);
-      addressRoutingTable.routingTableRows = NULL;
-      return EXIT_FAILURE;
-    } else if (bytesSent != nBytes) {
-      fprintf(stderr,
-              "Sent less bytes than expected for addressRoutingTable.nRows\n");
+    success = sendMessage(nodeArray[i].tcpSocket, &(addressRoutingTable.nRows),
+                          nBytes, 0);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Sending addressRoutingTable.nRows failed.\n");
       free(addressRoutingTable.routingTableRows);
       addressRoutingTable.routingTableRows = NULL;
       return EXIT_FAILURE;
     }
 
     nBytes = addressRoutingTable.nRows * sizeof(int);
-    bytesSent = send(nodeArray[i].tcpSocket,
-                     &(addressRoutingTable.routingTableRows), nBytes, 0);
-    if (bytesSent == -1) {
-      fprintf(stderr,
-              "Sending addressRoutingTable.routingTableRows failed.\nError %d: "
-              "%s\n",
-              errno, strerror(errno));
-      free(addressRoutingTable.routingTableRows);
-      addressRoutingTable.routingTableRows = NULL;
-      return EXIT_FAILURE;
-    } else if (bytesSent != nBytes) {
-      fprintf(stderr,
-              "Sent less bytes than expected for "
-              "addressRoutingTable.routingTableRows\n");
+    success = sendMessage(nodeArray[i].tcpSocket,
+                          &(addressRoutingTable.routingTableRows), nBytes, 0);
+    if (success != EXIT_SUCCESS) {
+      fprintf(stderr, "Sending addressRoutingTable.routingTableRows failed.\n");
       free(addressRoutingTable.routingTableRows);
       addressRoutingTable.routingTableRows = NULL;
       return EXIT_FAILURE;
