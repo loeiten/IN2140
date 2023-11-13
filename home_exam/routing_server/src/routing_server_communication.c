@@ -14,13 +14,17 @@
 #include "../include/route.h"                    // for RoutingTableArray
 
 int getTCPServerSocket(int* const listenSocket, const int basePort) {
+  if ((basePort < MIN_PORT) || (basePort > MIN_PORT)) {
+    fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
+            MAX_PORT);
+  }
   // Abbreviations:
   // ARPA - Address and Routing Parameter Area
   // AF - Address family
   //      Address families are categorization of network addresses and protocols
   //      Examples: AF_INET (AddressFamily - InterNET) for IPv4
   //      Examples: AF_INET6 (AddressFamily - InterNET) for IPv6
-  //      Examples: AF_LOCAL (AddressFamily - Local) for local communication
+  //      Examples: AF_LOCAL (AddressFamily - Local) for UNIX domain socket
   //      See https://man7.org/linux/man-pages/man7/address_families.7.html
   // IN - Internet
   // SIN - Shorthand for sockaddr_in
@@ -31,7 +35,7 @@ int getTCPServerSocket(int* const listenSocket, const int basePort) {
   // Create the socket file descriptor for the server
   // This is an endpoint for the communication
   // Note that this is not the socket that will send and receive messages
-  (*listenSocket) = socket(AF_LOCAL,      // We are communicating locally
+  (*listenSocket) = socket(AF_INET,       // We are communicating using IPv4
                            SOCK_STREAM,   // Sequenced, reliable, two-way,
                                           // connection-based byte streams (TCP)
                            IPPROTO_TCP);  // Use the TCP protocol
@@ -55,10 +59,10 @@ int getTCPServerSocket(int* const listenSocket, const int basePort) {
   // In this case, only one IP socket may be bound to any given local (address,
   // port) pair. When INADDR_ANY is specified in the bind call, the socket will
   // be bound to all local interfaces.
-  serverAddr.sin_family = AF_LOCAL;  // We are still communicating locally
+  serverAddr.sin_family = AF_INET;  // We are communicating through IPv4
   serverAddr.sin_addr.s_addr =
-      INADDR_LOOPBACK;  // Only local addresses are accepted (INADDR_ANY would
-                        // accept connection to any addresses)
+      htonl(INADDR_LOOPBACK);  // Only local addresses are accepted (INADDR_ANY
+                               // would accept connection to any addresses)
   serverAddr.sin_port = htons(basePort);  // The port in network byte order
 
   // Bind assigns the address specified by sockaddr_in to a socket
@@ -93,19 +97,9 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
   //       memory)
   for (int i = 0; i < n; ++i) {
     // Accept a connection
-    // Extract first connection request from the queue and return a new file
-    // descriptor referring to that socket
-    struct sockaddr_in clientAddr;
-    socklen_t clientAddrLen;
-    // Accept is blocking
-    int newSocketFd = accept(
-        listenSocket,
-        (struct sockaddr*)&clientAddr,  // Will be filled with the address of
-                                        // the peer socket
-        &clientAddrLen);  // Will be filled with the length of the peer address
-    if (newSocketFd == -1) {
-      fprintf(stderr, "Accepting request failed.\nError %d: %s\n", errno,
-              strerror(errno));
+    int newSocketFd;
+    int success = acceptConnection(listenSocket, &newSocketFd);
+    if (success != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }
 
@@ -148,7 +142,7 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
     }
 
     // Allocate memory to the addresses and weights
-    int success = allocateNeighborAddressesAndEdgeWeights(
+    success = allocateNeighborAddressesAndEdgeWeights(
         &(nodeArray[i]), nodeArray[i].nNeighbors, "nodeArray[i]");
     if (success != EXIT_SUCCESS) {
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
@@ -195,6 +189,26 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
       return EXIT_FAILURE;
     }
   }
+  return EXIT_SUCCESS;
+}
+
+int acceptConnection(const int listenSocket, int* newSocketFd) {
+  // Extract first connection request from the queue and return a new file
+  // descriptor referring to that socket
+  struct sockaddr_in clientAddr;
+  socklen_t clientAddrLen;
+  // Accept is blocking
+  *newSocketFd = accept(
+      listenSocket,
+      (struct sockaddr*)&clientAddr,  // Will be filled with the address of
+                                      // the peer socket
+      &clientAddrLen);  // Will be filled with the length of the peer address
+  if ((*newSocketFd) == -1) {
+    fprintf(stderr, "Accepting request failed.\nError %d: %s\n", errno,
+            strerror(errno));
+    return EXIT_FAILURE;
+  }
+
   return EXIT_SUCCESS;
 }
 

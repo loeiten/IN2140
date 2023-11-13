@@ -1,14 +1,31 @@
-#include <assert.h>  // for assert
-#include <libgen.h>  // for basename
-#include <stdio.h>   // for fprintf, NULL
-#include <stdlib.h>  // for EXIT_SUCCESS
-#include <string.h>  // for strcmp
+#include <arpa/inet.h>  // for ntohs
+#include <assert.h>     // for assert
+#include <libgen.h>     // for basename
+#include <stdio.h>      // for fprintf, NULL
+#include <stdlib.h>     // for EXIT_SUCCESS
+#include <string.h>     // for strcmp
+#include <unistd.h>     // for close
 
 #include "../node/include/node_communication.h"
 
-void testGetUDPSocket(void) { assert(1 == 0); }
+void testGetUDPSocket(const char* basePortStr) {
+  int connectSocket;
+  int basePort = atoi(basePortStr);
+  int success = getUDPSocket(&connectSocket, basePort);
+  assert(success == EXIT_SUCCESS);
+  assert(connectSocket > 0);
+  close(connectSocket);
+}
 
-void testGetTCPClientSocket(void) { assert(1 == 0); }
+void testGetTCPClientSocket(const char* basePortStr) {
+  int clientSocket;
+  int basePort = atoi(basePortStr);
+  sleep(1);
+  int success = getTCPClientSocket(&clientSocket, basePort);
+  assert(success == EXIT_SUCCESS);
+  assert(clientSocket > 0);
+  close(clientSocket);
+}
 
 void testSendEdgeInformation(void) { assert(1 == 0); }
 
@@ -22,7 +39,7 @@ void testExtractLengthDestinationAndMessage(void) {
   const char* line1 = "814 Good luck with the home exam\n";
   unsigned short length;
   unsigned short destination;
-  char* msg;
+  char* msg = NULL;
   int success =
       extractLengthDestinationAndMessage(line1, &length, &destination, &msg);
   assert(success == EXIT_SUCCESS);
@@ -30,6 +47,7 @@ void testExtractLengthDestinationAndMessage(void) {
   assert(destination == 814);
   assert(strcmp(msg, "Good luck with the home exam") == 0);
   free(msg);
+  msg = NULL;
 
   const char* line2 = "12 Foo bar baz\n";
   success =
@@ -39,9 +57,65 @@ void testExtractLengthDestinationAndMessage(void) {
   assert(destination == 12);
   assert(strcmp(msg, "Foo bar baz") == 0);
   free(msg);
+  msg = NULL;
 }
 
-void testCreatePacket(void) { assert(1 == 0); }
+void testCreatePacket(void) {
+  unsigned short length = 35;
+  unsigned short destination = 814;
+  unsigned short source = 1;
+  const char* msg1 = "Good luck with the home exam";
+  char* packet = NULL;
+  int success = createPacket(length, destination, source, msg1, &packet);
+  assert(success == EXIT_SUCCESS);
+  unsigned short tmp;
+  // Assert length
+  memcpy(&tmp, &(packet[0]), sizeof(tmp));
+  unsigned short readLength = ntohs(tmp);
+  assert(length == readLength);
+  // Assert destination
+  memcpy(&tmp, &(packet[2]), sizeof(tmp));
+  unsigned short readDestination = ntohs(tmp);
+  assert(destination == readDestination);
+  // Assert source
+  memcpy(&tmp, &(packet[4]), sizeof(tmp));
+  unsigned short readSource = ntohs(tmp);
+  assert(source == readSource);
+  // Assert message
+  char* readMsg = NULL;
+  readMsg = strndup(&(packet[6]), length - 6);
+  assert(strcmp(msg1, readMsg) == 0);
+  free(readMsg);
+  readMsg = NULL;
+  free(packet);
+  packet = NULL;
+
+  const char* msg2 = "Foo bar baz";
+  length = 18;
+  destination = 2;
+  source = 1973;
+  success = createPacket(length, destination, source, msg2, &packet);
+  assert(success == EXIT_SUCCESS);
+  // Assert length
+  memcpy(&tmp, &(packet[0]), sizeof(tmp));
+  readLength = ntohs(tmp);
+  assert(length == readLength);
+  // Assert destination
+  memcpy(&tmp, &(packet[2]), sizeof(tmp));
+  readDestination = ntohs(tmp);
+  assert(destination == readDestination);
+  // Assert source
+  memcpy(&tmp, &(packet[4]), sizeof(tmp));
+  readSource = ntohs(tmp);
+  assert(source == readSource);
+  // Assert message
+  readMsg = strndup(&(packet[6]), length - 6);
+  assert(strcmp(msg2, readMsg) == 0);
+  free(readMsg);
+  readMsg = NULL;
+  free(packet);
+  packet = NULL;
+}
 
 void testSendUDPPacket(void) { assert(1 == 0); }
 
@@ -57,9 +131,9 @@ int main(int argc, char** argv) {
   }
 
   if (strcmp(argv[1], "getUDPSocket") == 0) {
-    testGetUDPSocket();
+    testGetUDPSocket(argv[2]);
   } else if (strcmp(argv[1], "getTCPClientSocket") == 0) {
-    testGetTCPClientSocket();
+    testGetTCPClientSocket(argv[2]);
   } else if (strcmp(argv[1], "sendEdgeInformation") == 0) {
     testSendEdgeInformation();
   } else if (strcmp(argv[1], "receiveRoutingTable") == 0) {

@@ -2,6 +2,10 @@
 #define HOME_EXAM_UTILS_INCLUDE_COMMON_H_
 
 #define MAX_MSG_LENGTH (1024)
+// Non-privileged users are not allowed to bind to privileged ports (port
+// numbers below 1024)
+#define MIN_PORT (1024)
+#define MAX_PORT (65500)
 
 /**
  * @brief Struct representing the node
@@ -66,5 +70,7 @@ struct EdgeArray {
 int getIndexFromAddress(const int address,
                         const struct IndexToAddress* const indexToAddress,
                         int* index);
+
+// FIXME: YOU ARE HERE: Add a unified recv call
 
 #endif  // HOME_EXAM_UTILS_INCLUDE_COMMON_H_

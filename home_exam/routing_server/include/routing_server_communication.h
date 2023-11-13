@@ -29,6 +29,15 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
                       const int n);
 
 /**
+ * @brief Accept a connection from the listening port
+ *
+ * @param listenSocket The socket which is in listen mode
+ * @param newSocketFd The socket obtained from a successful call to `accept`
+ * @return 0 on success, 1 on error
+ */
+int acceptConnection(const int listenSocket, int* newSocketFd);
+
+/**
  * @brief Send the routing tables to the nodes
  *
  * @param nodeArray The array of nodes (contains the tcp socket)

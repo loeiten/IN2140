@@ -9,13 +9,17 @@ include ../common.mk
 #		   Hence, we are adding the tests one by one
 
 TESTS := run_test_adjacency_matrix_1 \
+		 run_test_communication_1 \
 		 run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
+		 run_test_node_communication_1 \
+		 run_test_node_communication_6 \
 		 run_test_node_communication_7 \
 		 run_test_node_parser_1 \
 		 run_test_route_1 \
 		 run_test_route_2 \
+		 run_test_routing_server_communication_1 \
 		 run_test_validation_1 \
 		 run_test_validation_2 \
 		 run_test_validation_3 \
@@ -72,6 +76,16 @@ run_test_adjacency_matrix_1: $(TEST_EXEC_DIR)/test_adjacency_matrix
 	$(call run_test,$@,$< createAdjacencyMatrix)
 # ==============================================================================
 
+# COMMUNICATION
+# ==============================================================================
+# Note the binaries are created in other NODE_COMMUNICATION and
+# ROUTING_SERVER_COMMUNICATION
+
+# Test
+run_test_communication_1 : $(TEST_EXEC_DIR)/test_node_communication $(TEST_EXEC_DIR)/test_routing_server_communication
+	$(call run_test,$@,test_routing_server_communication getTCPServerSocket 1026 & test_node_communication getTCPClientSocket 1026)
+# ==============================================================================
+
 # DIJKSTRA
 # ==============================================================================
 $(TEST_EXEC_DIR)/test_dijkstra: $(BUILD_TEST_DIR)/test_dijkstra.o $(BUILD_OBJ_DIR)/dijkstra.o $(BUILD_OBJ_DIR)/dynamic_memory.o
@@ -115,8 +129,16 @@ $(BUILD_TEST_DIR)/test_node_communication.o: test_node_communication.c
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(ASSIGNMENT_FILES_SRC) -c $< -o $@
 
 # Tests
-run_test_node_communication_7 : $(TEST_EXEC_DIR)/test_node_communication
+run_test_node_communication_1 : $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@,$< getUDPSocket 2256)
+
+# NOTE: getTCPClientSocket is tested in test_communication_1
+
+run_test_node_communication_6 : $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< extractLengthDestinationAndMessage)
+
+run_test_node_communication_7 : $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@,$< createPacket)
 # ==============================================================================
 
 # NODE_PARSER
@@ -162,6 +184,24 @@ run_test_route_1: $(TEST_EXEC_DIR)/test_route
 
 run_test_route_2: $(TEST_EXEC_DIR)/test_route
 	$(call run_test,$@,$< createRoutingTableArray)
+# ==============================================================================
+
+# ROUTING_SERVER_COMMUNICATION
+# ==============================================================================
+$(TEST_EXEC_DIR)/test_routing_server_communication: $(BUILD_TEST_DIR)/test_routing_server_communication.o $(BUILD_OBJ_DIR)/routing_server_communication.o $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(TEST_EXEC_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
+
+# Building the object files
+$(BUILD_TEST_DIR)/test_routing_server_communication.o: test_routing_server_communication.c
+	$(call explain_build,Making $(notdir $@))
+	mkdir -p $(BUILD_TEST_DIR)
+	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
+
+# Tests
+run_test_routing_server_communication_1 : $(TEST_EXEC_DIR)/test_routing_server_communication
+	$(call run_test,$@,$< getTCPServerSocket 1025)
 # ==============================================================================
 
 # VALIDATION

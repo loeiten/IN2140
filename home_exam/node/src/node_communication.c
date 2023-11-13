@@ -7,7 +7,7 @@
 #include <stdlib.h>      // for EXIT_FAILURE, free
 #include <string.h>      // for strerror, strlen
 #include <strings.h>     // for bzero
-#include <sys/socket.h>  // for send, recv, AF_LOCAL
+#include <sys/socket.h>  // for send, recv, AF_INET
 #include <unistd.h>      // for sleep
 
 #include "../../utils/include/common.h"          // for Node, RoutingTableRows
@@ -23,12 +23,17 @@
 #include "print_lib/include/print_lib.h"  // for print_forwarded_pkt
 
 int getUDPSocket(int* const connectSocket, const int basePort) {
+  if ((basePort < MIN_PORT) || (basePort > MIN_PORT)) {
+    fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
+            MAX_PORT);
+  }
   // A great introduction to socket programming can be found at:
   // https://users.cs.jmu.edu/bernstdh/web/common/lectures/summary_unix_udp.php
   (*connectSocket) =
-      socket(AF_LOCAL,      // We are communicating locally
-             SOCK_DGRAM,    // Datagrams (connection-less, unreliable
-                            // messages of a fixed maximum length)
+      socket(AF_INET,     // We are using IPv4 protocols (LOCAL is referring to
+                          // UNIX domain sockets)
+             SOCK_DGRAM,  // Datagrams (connection-less, unreliable
+                          // messages of a fixed maximum length)
              IPPROTO_UDP);  // Use the UDP protocol
                             // (redundant because of SOCK_DGRAM)
   if ((*connectSocket) == -1) {
@@ -63,10 +68,10 @@ int getUDPSocket(int* const connectSocket, const int basePort) {
   //       However, we know all the ports in advance
   // In this assignment the socket will be used to receive from and sending to
   // other nodes
-  addr.sin_family = AF_LOCAL;  // We are still communicating locally
+  addr.sin_family = AF_INET;  // We are still communicating locally
   addr.sin_addr.s_addr =
-      INADDR_LOOPBACK;  // Only local addresses are accepted (INADDR_ANY would
-                        // accept connection to any addresses)
+      htonl(INADDR_ANY);  // Only local addresses are accepted (INADDR_ANY would
+                          // accept connection to any addresses)
   addr.sin_port = htons(basePort);  // The port in network byte order
 
   // Bind assigns the address specified by sockaddr_in to a socket
@@ -83,10 +88,14 @@ int getUDPSocket(int* const connectSocket, const int basePort) {
 }
 
 int getTCPClientSocket(int* const clientSocket, const int basePort) {
+  if ((basePort < MIN_PORT) || (basePort > MIN_PORT)) {
+    fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
+            MAX_PORT);
+  }
   // https://man7.org/linux/man-pages/man2/socket.2.html
   // Create the socket file descriptor for the server
   // This is an endpoint for the communication
-  (*clientSocket) = socket(AF_LOCAL,      // We are communicating locally
+  (*clientSocket) = socket(AF_INET,       // We are communicating using IPv4
                            SOCK_STREAM,   // Sequenced, reliable, two-way,
                                           // connection-based byte streams (TCP)
                            IPPROTO_TCP);  // Use the TCP protocol
@@ -105,9 +114,10 @@ int getTCPClientSocket(int* const clientSocket, const int basePort) {
   bzero((void*)&serverAddr, sizeof(serverAddr));
 
   // Bind the socket to an address
-  serverAddr.sin_family = AF_LOCAL;  // We are still communicating locally
+  serverAddr.sin_family =
+      AF_INET;  // Use IPv4 socket (LOCAL refers to UNIX domain sockets)
   serverAddr.sin_addr.s_addr =
-      INADDR_LOOPBACK;  // Equivalent to inet_addr("127.0.0.1")
+      htonl(INADDR_LOOPBACK);  // Equivalent to inet_addr("127.0.0.1")
   serverAddr.sin_port = htons(basePort);  // The port in network byte order
 
   // NOTE: In TCP you can bind before connecting
@@ -258,8 +268,9 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
     // For safety measure: Erase data by writing 0's to the memory location
     // https://stackoverflow.com/q/36086642/2786884
     bzero((void*)&destAddr, sizeof(destAddr));
-    destAddr.sin_family = AF_LOCAL;              // We are communicating locally
-    destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
+    destAddr.sin_family = AF_INET;  // We are communicating using IPv4
+    destAddr.sin_addr.s_addr =
+        htonl(INADDR_LOOPBACK);  // The destination is local
     destAddr.sin_port = htons(destination + basePort);  // This is the port
 
     // Update the source of the packet
@@ -457,19 +468,19 @@ int createPacket(const int length, const unsigned short destination,
 
   // Assign the length to the first 2 bytes of the packet
   unsigned short tmp = htons(length);
-  memcpy(&(*packet[0]), &tmp, sizeof(tmp));
+  memcpy(&((*packet)[0]), &tmp, sizeof(tmp));
 
   // Assign the destination to the next 2 bytes
   tmp = htons(destination);
-  memcpy(&(*packet[2]), &destination, sizeof(tmp));
+  memcpy(&((*packet)[2]), &tmp, sizeof(tmp));
 
   // Assign the source to the next 2 bytes
   tmp = htons(source);
-  memcpy(&(*packet[4]), &tmp, sizeof(tmp));
+  memcpy(&((*packet)[4]), &tmp, sizeof(tmp));
 
   // Finally: Assign the message
   // +1 for the terminating null character
-  memcpy(&(*packet[6]), &msg, (strlen(msg) + 1) * sizeof(char));
+  memcpy(&((*packet)[6]), msg, (strlen(msg) + 1) * sizeof(char));
 
   return EXIT_SUCCESS;
 }
@@ -497,8 +508,9 @@ int sendUDPPacket(const char* const packet, const int length,
   // For safety measure: Erase data by writing 0's to the memory location
   // https://stackoverflow.com/q/36086642/2786884
   bzero((void*)&destAddr, sizeof(destAddr));
-  destAddr.sin_family = AF_LOCAL;              // We are communicating locally
-  destAddr.sin_addr.s_addr = INADDR_LOOPBACK;  // The destination is local
+  destAddr.sin_family = AF_INET;  // We are communicating using IPv4
+  destAddr.sin_addr.s_addr =
+      htonl(INADDR_LOOPBACK);                     // The destination is local
   destAddr.sin_port = htons(basePort + nextHop);  // This is the port
 
   ssize_t bytesSent = sendto(udpSocketFd, packet, length, 0,
