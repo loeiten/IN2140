@@ -4,7 +4,8 @@
 #include <stdio.h>      // for fprintf, stderr
 #include <stdlib.h>     // for free, EXIT_SUCCESS
 #include <string.h>     // for strcmp, memcpy, strndup
-#include <unistd.h>     // for close, sleep
+#include <time.h>
+#include <unistd.h>  // for close, sleep
 
 #include "../node/include/node_communication.h"  // for createPacket, extrac...
 #include "../utils/include/common.h"             // for sendMessage
@@ -22,9 +23,11 @@ void testGetUDPSocket(const char* basePortStr) {
 }
 
 void testGetTCPClientSocket(const char* basePortStr) {
+  // Wait until the server is set up
+  sleep(1);
+
   int clientSocket = -1;
   int basePort = atoi(basePortStr);
-  sleep(1);
   int success = getTCPClientSocket(&clientSocket, basePort);
   if ((success != EXIT_SUCCESS) && (clientSocket != -1)) {
     close(clientSocket);
@@ -41,7 +44,60 @@ void testGetTCPClientSocket(const char* basePortStr) {
   close(clientSocket);
 }
 
-void testSendEdgeInformation(void) { assert(1 == 0); }
+void testSendEdgeInformation(const char* basePortStr, const char* addressStr) {
+  // Wait until the server is set up
+  sleep(1);
+
+  // We're working with the following graph:
+  //    7   22
+  //  o - o - o
+  // 101  15 42
+  int basePort = atoi(basePortStr);
+  int address = atoi(addressStr);
+
+  struct Node node = {.tcpSocket = -1, .address = address};
+
+  int clientSocket = -1;
+  int success = getTCPClientSocket(&clientSocket, basePort);
+  if ((success != EXIT_SUCCESS) && (clientSocket != -1)) {
+    close(clientSocket);
+  }
+  assert(success == EXIT_SUCCESS);
+  node.tcpSocket = clientSocket;
+  // Declare variable here so that they are in scope
+  int neighborAddresses[2];
+  int edgeWeights[2];
+  if (address == 101) {
+    node.nNeighbors = 1;
+    neighborAddresses[0] = 15;
+    edgeWeights[0] = 7;
+    node.neighborAddresses = neighborAddresses;
+    node.edgeWeights = edgeWeights;
+  } else if (address == 15) {
+    node.nNeighbors = 2;
+    neighborAddresses[0] = 101;
+    neighborAddresses[1] = 42;
+    edgeWeights[0] = 7;
+    edgeWeights[1] = 22;
+    node.neighborAddresses = neighborAddresses;
+    node.edgeWeights = edgeWeights;
+  } else if (address == 42) {
+    node.nNeighbors = 1;
+    neighborAddresses[0] = 15;
+    edgeWeights[0] = 22;
+    node.neighborAddresses = neighborAddresses;
+    node.edgeWeights = edgeWeights;
+  } else {
+    fprintf(stderr, "address = %d was not expected", address);
+    return;
+  }
+  success = sendEdgeInformation(&node);
+  if ((success != EXIT_SUCCESS) && (clientSocket != -1)) {
+    close(clientSocket);
+  }
+  assert(success == EXIT_SUCCESS);
+  close(node.tcpSocket);
+}
 
 void testReceiveRoutingTable(void) { assert(1 == 0); }
 
@@ -149,7 +205,7 @@ int main(int argc, char** argv) {
   } else if (strcmp(argv[1], "getTCPClientSocket") == 0) {
     testGetTCPClientSocket(argv[2]);
   } else if (strcmp(argv[1], "sendEdgeInformation") == 0) {
-    testSendEdgeInformation();
+    testSendEdgeInformation(argv[2], argv[3]);
   } else if (strcmp(argv[1], "receiveRoutingTable") == 0) {
     testReceiveRoutingTable();
   } else if (strcmp(argv[1], "receiveAndForwardPackets") == 0) {

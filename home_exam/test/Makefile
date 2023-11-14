@@ -10,6 +10,7 @@ include ../common.mk
 
 TESTS := run_test_adjacency_matrix_1 \
 		 run_test_communication_1 \
+		 run_test_communication_2 \
 		 run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
@@ -82,8 +83,23 @@ run_test_adjacency_matrix_1: $(TEST_EXEC_DIR)/test_adjacency_matrix
 # ROUTING_SERVER_COMMUNICATION
 
 # Test
+PORT := 1028
 run_test_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
-	$(call run_test,$@,$(TEST_EXEC_DIR)/test_routing_server_communication openTCP 1028 2>&1 | tee $(TEST_EXEC_DIR)/test_communication_1_output.txt & $(TEST_EXEC_DIR)/test_node_communication getTCPClientSocket 1028 && diff data/test_communication_1_output.txt $(TEST_EXEC_DIR)/test_communication_1_output.txt)
+	$(call run_test,$@, \
+	  $(TEST_EXEC_DIR)/test_routing_server_communication openTCP $(PORT) \
+	  2>&1 | tee $(TEST_EXEC_DIR)/test_communication_1_output.txt & \
+	  $(TEST_EXEC_DIR)/test_node_communication getTCPClientSocket $(PORT) && \
+	  diff data/test_communication_1_output.txt $(TEST_EXEC_DIR)/test_communication_1_output.txt)
+
+PORT := 1029
+run_test_communication_2: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@, \
+	  $(TEST_EXEC_DIR)/test_routing_server_communication populateNodeArray $(PORT) \
+	  2>&1 | tee $(TEST_EXEC_DIR)/test_communication_2_output.txt & \
+	  $(TEST_EXEC_DIR)/test_node_communication sendEdgeInformation $(PORT) 101 & \
+	  $(TEST_EXEC_DIR)/test_node_communication sendEdgeInformation $(PORT) 15 & \
+	  $(TEST_EXEC_DIR)/test_node_communication sendEdgeInformation $(PORT) 42 && \
+	  diff data/test_communication_1_output.txt $(TEST_EXEC_DIR)/test_communication_1_output.txt)
 # ==============================================================================
 
 # DIJKSTRA
@@ -133,6 +149,7 @@ run_test_node_communication_1 : $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< getUDPSocket 2256)
 
 # NOTE: getTCPClientSocket is tested in test_communication_1
+# NOTE: sendEdgeInformation is tested in test_communication_2
 
 run_test_node_communication_6 : $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< extractLengthDestinationAndMessage)

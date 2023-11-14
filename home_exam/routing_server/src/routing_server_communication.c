@@ -97,8 +97,9 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
   //       memory)
   for (int i = 0; i < n; ++i) {
     // Accept a connection
-    int newSocketFd;
+    int newSocketFd = -1;
     int success = acceptConnection(listenSocket, &newSocketFd);
+    // NOTE: Ports are closed in the freeNodeArray function
     if (success != EXIT_SUCCESS) {
       return EXIT_FAILURE;
     }

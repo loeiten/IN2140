@@ -7,6 +7,7 @@
 
 #include "../routing_server/include/routing_server_communication.h"
 #include "../utils/include/common.h"
+#include "../utils/include/dynamic_memory.h"
 
 void openTCP(const char* basePortStr) {
   int listenSocket = -1;
@@ -41,14 +42,79 @@ void openTCP(const char* basePortStr) {
 }
 
 void testGetTCPServerSocket(const char* basePortStr) {
+  int listenSocket = -1;
+  int basePort = atoi(basePortStr);
+  int success = getTCPServerSocket(&listenSocket, basePort);
+  if ((success != EXIT_SUCCESS) && (listenSocket == -1)) {
+    close(listenSocket);
+  }
+  assert(success == EXIT_SUCCESS);
+  assert(listenSocket != -1);
+  close(listenSocket);
+}
+
+void testPopulateNodeArray(const char* basePortStr) {
+  // We're working with the following graph:
+  //    7   22
+  //  o - o - o
+  // 101  15 42
+#define N (3)
   int listenSocket;
   int basePort = atoi(basePortStr);
   int success = getTCPServerSocket(&listenSocket, basePort);
   assert(success == EXIT_SUCCESS);
-  assert(listenSocket != 1);
+  if ((success != EXIT_SUCCESS) && (listenSocket == -1)) {
+    close(listenSocket);
+  }
+  assert(success == EXIT_SUCCESS);
+  struct Node* nodeArray = NULL;
+  allocateNodeArray(&nodeArray, N, "testPopulateNodeArray");
+  success = populateNodeArray(listenSocket, nodeArray, N);
+  if (success != EXIT_SUCCESS) {
+    freeNodeArray(&nodeArray, N);
+  }
+  assert(success == EXIT_SUCCESS);
+  // NOTE: We don't know what order the nodes are sent to us, therefore we make
+  //       a map in order to tie the ordering Assert node 0
+  int indexMap[N];
+  for (int i = 0; i < N; ++i) {
+    if (nodeArray[i].address == 101) {
+      indexMap[0] = i;
+    } else if (nodeArray[i].address == 15) {
+      indexMap[1] = i;
+    } else if (nodeArray[i].address == 42) {
+      indexMap[2] = i;
+    } else {
+      fprintf(stderr, "nodeArray[%d].address = %d was not expected", i,
+              nodeArray[i].address);
+      freeNodeArray(&nodeArray, N);
+      return;
+    }
+  }
+  // Assert address 101
+  assert(nodeArray[indexMap[0]].tcpSocket != -1);
+  assert(nodeArray[indexMap[0]].address == 101);
+  assert(nodeArray[indexMap[0]].nNeighbors == 1);
+  assert(nodeArray[indexMap[0]].neighborAddresses[0] == 15);
+  assert(nodeArray[indexMap[0]].edgeWeights[0] == 7);
+  // Assert address 15
+  assert(nodeArray[indexMap[1]].tcpSocket != -1);
+  assert(nodeArray[indexMap[1]].address == 42);
+  assert(nodeArray[indexMap[1]].nNeighbors == 2);
+  assert(nodeArray[indexMap[1]].neighborAddresses[0] == 101);
+  assert(nodeArray[indexMap[1]].neighborAddresses[1] == 42);
+  assert(nodeArray[indexMap[1]].edgeWeights[0] == 7);
+  assert(nodeArray[indexMap[1]].edgeWeights[1] == 22);
+  // Assert address 42
+  assert(nodeArray[indexMap[2]].tcpSocket != -1);
+  assert(nodeArray[indexMap[2]].address == 42);
+  assert(nodeArray[indexMap[2]].nNeighbors == 1);
+  assert(nodeArray[indexMap[2]].neighborAddresses[0] == 15);
+  assert(nodeArray[indexMap[2]].edgeWeights[0] == 22);
+  freeNodeArray(&nodeArray, N);
+#undef N
+  printf("NodeArray received successfully!\n");
 }
-
-void testPopulateNodeArray(void) { assert(1 == 0); }
 
 void testSendRoutingTables(void) { assert(1 == 0); }
 
@@ -68,7 +134,7 @@ int main(int argc, char** argv) {
   if (strcmp(argv[1], "getTCPServerSocket") == 0) {
     testGetTCPServerSocket(argv[2]);
   } else if (strcmp(argv[1], "populateNodeArray") == 0) {
-    testPopulateNodeArray();
+    testPopulateNodeArray(argv[2]);
   } else if (strcmp(argv[1], "sendRoutingTables") == 0) {
     testSendRoutingTables();
   } else if (strcmp(argv[1], "translateTableFromIdxToAddress") == 0) {
