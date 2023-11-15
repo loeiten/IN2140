@@ -44,6 +44,7 @@ void testGetTCPClientSocket(const char* basePortStr) {
   close(clientSocket);
 }
 
+// FIXME: Can maybe make a simpler test first
 void testSendEdgeInformation(const char* basePortStr, const char* addressStr) {
   // Wait until the server is set up
   sleep(1);

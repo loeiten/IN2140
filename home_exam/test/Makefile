@@ -28,9 +28,17 @@ TESTS := run_test_adjacency_matrix_1 \
 		 run_test_validation_5 \
 		 run_test_validation_6 \
 
+BINARIES := $(TEST_EXEC_DIR)/test_adjacency_matrix \
+	 		$(TEST_EXEC_DIR)/test_dijkstra \
+	 		$(TEST_EXEC_DIR)/test_node_communication \
+	 		$(TEST_EXEC_DIR)/test_node_parser \
+	 		$(TEST_EXEC_DIR)/test_route \
+	 		$(TEST_EXEC_DIR)/test_routing_server_communication \
+	 		$(TEST_EXEC_DIR)/test_validation
+
 .PHONY: all clean test $(TESTS)
-all: $(TEST_EXEC_DIR)/test_dijkstra \
-	 $(TEST_EXEC_DIR)/test_route
+
+all: $(BINARIES)
 
 test: $(TESTS)
 
@@ -82,24 +90,15 @@ run_test_adjacency_matrix_1: $(TEST_EXEC_DIR)/test_adjacency_matrix
 # Note the binaries are created in other NODE_COMMUNICATION and
 # ROUTING_SERVER_COMMUNICATION
 
-# Test
-PORT := 1028
-run_test_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
-	$(call run_test,$@, \
-	  $(TEST_EXEC_DIR)/test_routing_server_communication openTCP $(PORT) \
-	  2>&1 | tee $(TEST_EXEC_DIR)/test_communication_1_output.txt & \
-	  $(TEST_EXEC_DIR)/test_node_communication getTCPClientSocket $(PORT) && \
-	  diff data/test_communication_1_output.txt $(TEST_EXEC_DIR)/test_communication_1_output.txt)
+PORT_1 := 1028
+PORT_2 := 1029
 
-PORT := 1029
+# Test
+run_test_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@, bash $(TEST_DATA_DIR)/../test_communication_1.sh $(PORT_2) $(TEST_EXEC_DIR) $(TEST_DATA_DIR))
+
 run_test_communication_2: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
-	$(call run_test,$@, \
-	  $(TEST_EXEC_DIR)/test_routing_server_communication populateNodeArray $(PORT) \
-	  2>&1 | tee $(TEST_EXEC_DIR)/test_communication_2_output.txt & \
-	  $(TEST_EXEC_DIR)/test_node_communication sendEdgeInformation $(PORT) 101 & \
-	  $(TEST_EXEC_DIR)/test_node_communication sendEdgeInformation $(PORT) 15 & \
-	  $(TEST_EXEC_DIR)/test_node_communication sendEdgeInformation $(PORT) 42 && \
-	  diff data/test_communication_1_output.txt $(TEST_EXEC_DIR)/test_communication_1_output.txt)
+	$(call run_test,$@, bash $(TEST_DATA_DIR)/../test_communication_2.sh $(PORT_2) $(TEST_EXEC_DIR) $(TEST_DATA_DIR))
 # ==============================================================================
 
 # DIJKSTRA
@@ -197,7 +196,7 @@ $(BUILD_TEST_DIR)/test_route.o: test_route.c
 
 # Tests
 run_test_route_1: $(TEST_EXEC_DIR)/test_route
-	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges && diff data/test_route_1_logfile.txt $(TEST_EXEC_DIR)/logfile.txt)
+	$(call run_test,$@,LOG_DIR=$(TEST_EXEC_DIR) $< printEdges && diff $(TEST_DATA_DIR)/test_route_1_logfile.txt $(TEST_EXEC_DIR)/logfile.txt)
 
 run_test_route_2: $(TEST_EXEC_DIR)/test_route
 	$(call run_test,$@,$< createRoutingTableArray)
@@ -242,16 +241,19 @@ run_test_validation_2: $(TEST_EXEC_DIR)/test_validation
 	$(call run_test,$@,$< addEdgeToEdgeCounterArray)
 
 run_test_validation_3: $(TEST_EXEC_DIR)/test_validation
-	$(call run_test,$@,$< addInvalidEdge 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_3_output.txt && diff data/test_validation_3_output.txt $(TEST_EXEC_DIR)/test_validation_3_output.txt)
+	$(call run_test,$@,$< addInvalidEdge 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_3_output.txt && \
+	  diff $(TEST_DATA_DIR)/test_validation_3_output.txt $(TEST_EXEC_DIR)/test_validation_3_output.txt)
 
 run_test_validation_4: $(TEST_EXEC_DIR)/test_validation
 	$(call run_test,$@,$< checkDualReport)
 
 run_test_validation_5: $(TEST_EXEC_DIR)/test_validation
-	$(call run_test,$@,$< checkIfEdgeIsValid 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_5_output.txt && diff data/test_validation_5_output.txt $(TEST_EXEC_DIR)/test_validation_5_output.txt)
+	$(call run_test,$@,$< checkIfEdgeIsValid 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_5_output.txt && \
+	  diff $(TEST_DATA_DIR)/test_validation_5_output.txt $(TEST_EXEC_DIR)/test_validation_5_output.txt)
 
 run_test_validation_6: $(TEST_EXEC_DIR)/test_validation
-	$(call run_test,$@,$< checkAllNodesReceived 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_6_output.txt && diff data/test_validation_6_output.txt $(TEST_EXEC_DIR)/test_validation_6_output.txt)
+	$(call run_test,$@,$< checkAllNodesReceived 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_6_output.txt && \
+	  diff $(TEST_DATA_DIR)/test_validation_6_output.txt $(TEST_EXEC_DIR)/test_validation_6_output.txt)
 # ==============================================================================
 
 clean:

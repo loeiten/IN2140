@@ -99,7 +99,7 @@ void testPopulateNodeArray(const char* basePortStr) {
   assert(nodeArray[indexMap[0]].edgeWeights[0] == 7);
   // Assert address 15
   assert(nodeArray[indexMap[1]].tcpSocket != -1);
-  assert(nodeArray[indexMap[1]].address == 42);
+  assert(nodeArray[indexMap[1]].address == 15);
   assert(nodeArray[indexMap[1]].nNeighbors == 2);
   assert(nodeArray[indexMap[1]].neighborAddresses[0] == 101);
   assert(nodeArray[indexMap[1]].neighborAddresses[1] == 42);

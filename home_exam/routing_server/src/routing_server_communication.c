@@ -136,8 +136,8 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
 
     // Receive the neighbor array
     nBytes *= nodeArray[i].nNeighbors;
-    success = receiveNBytesMessage(
-        newSocketFd, &(nodeArray[i].neighborAddresses), nBytes, MSG_WAITALL);
+    success = receiveNBytesMessage(newSocketFd, nodeArray[i].neighborAddresses,
+                                   nBytes, MSG_WAITALL);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Receiving nodeArray[%d].neighborAddresses failed.\n", i);
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
@@ -145,9 +145,9 @@ int populateNodeArray(const int listenSocket, struct Node* nodeArray,
     }
 
     // Receive the weight array
-    success = receiveNBytesMessage(newSocketFd, &(nodeArray[i].edgeWeights),
+    success = receiveNBytesMessage(newSocketFd, nodeArray[i].edgeWeights,
                                    nBytes, MSG_WAITALL);
-    if (success != EXIT_FAILURE) {
+    if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Receiving nodeArray[%d].edgeWeights failed.\n", i);
       freeNeighborAddressesAndEdgeWeights(&(nodeArray[i]));
       return EXIT_FAILURE;

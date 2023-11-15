@@ -147,22 +147,22 @@ int sendEdgeInformation(struct Node* const node) {
 
   // Send the size of the array
   success = sendMessage(node->tcpSocket, &(node->nNeighbors), nBytes, 0);
-  if (success == EXIT_SUCCESS) {
+  if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Sending node->nNeighbors failed.\n");
     return EXIT_FAILURE;
   }
 
   // Send the neighbor address array
   nBytes *= node->nNeighbors;
-  success = sendMessage(node->tcpSocket, &(node->neighborAddresses), nBytes, 0);
-  if (success == EXIT_SUCCESS) {
+  success = sendMessage(node->tcpSocket, node->neighborAddresses, nBytes, 0);
+  if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Sending node->neighborAddresses failed.\n");
     return EXIT_FAILURE;
   }
 
   // Send the neighbor weight array
-  success = sendMessage(node->tcpSocket, &(node->edgeWeights), nBytes, 0);
-  if (success == EXIT_SUCCESS) {
+  success = sendMessage(node->tcpSocket, node->edgeWeights, nBytes, 0);
+  if (success != EXIT_SUCCESS) {
     fprintf(stderr, "Sending node->edgeWeights failed.\n");
     return EXIT_FAILURE;
   }
