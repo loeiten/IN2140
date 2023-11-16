@@ -8,6 +8,7 @@
 #include "../routing_server/include/routing_server_communication.h"
 #include "../utils/include/common.h"
 #include "../utils/include/dynamic_memory.h"
+#include "include/test_tools.h"
 
 void openTCP(const char* basePortStr) {
   int listenSocket = -1;
@@ -53,11 +54,18 @@ void testGetTCPServerSocket(const char* basePortStr) {
   close(listenSocket);
 }
 
-void testPopulateNodeArray(const char* basePortStr) {
+void testPopulateNodeArrayAndSendRoutingTables(const char* basePortStr) {
+  // NOTE: We combine the test of populateNodeArray and sendRoutingTables as
+  //       the new sockets created during accept in the populateNodeArray is
+  //       reused
+
   // We're working with the following graph:
   //    7   22
   //  o - o - o
   // 101  15 42
+
+  // Test populateNodeArray
+  // ===========================================================================
 #define N (3)
   int listenSocket;
   int basePort = atoi(basePortStr);
@@ -72,6 +80,7 @@ void testPopulateNodeArray(const char* basePortStr) {
   success = populateNodeArray(listenSocket, nodeArray, N);
   if (success != EXIT_SUCCESS) {
     freeNodeArray(&nodeArray, N);
+    close(listenSocket);
   }
   assert(success == EXIT_SUCCESS);
   // NOTE: We don't know what order the nodes are sent to us, therefore we make
@@ -88,6 +97,7 @@ void testPopulateNodeArray(const char* basePortStr) {
       fprintf(stderr, "nodeArray[%d].address = %d was not expected", i,
               nodeArray[i].address);
       freeNodeArray(&nodeArray, N);
+      close(listenSocket);
       return;
     }
   }
@@ -111,14 +121,34 @@ void testPopulateNodeArray(const char* basePortStr) {
   assert(nodeArray[indexMap[2]].nNeighbors == 1);
   assert(nodeArray[indexMap[2]].neighborAddresses[0] == 15);
   assert(nodeArray[indexMap[2]].edgeWeights[0] == 22);
-  freeNodeArray(&nodeArray, N);
-#undef N
   printf("NodeArray received successfully!\n");
+  // ===========================================================================
+
+  // Test sendRoutingTables
+  // ===========================================================================
+  struct IndexToAddress indexToAddress;
+  indexToAddress.n = N;
+  indexToAddress.map = indexMap;
+  // Manually create the routingTableArray
+  struct RoutingTableArray routingTableArray;
+
+  success = sendRoutingTables(nodeArray, &routingTableArray, &indexToAddress);
+  assert(success == EXIT_SUCCESS);
+  freeNodeArray(&nodeArray, N);
+  printf("RoutingArray sent successfully!\n");
+  close(listenSocket);
+  // ===========================================================================
+#undef N
 }
 
-void testSendRoutingTables(void) { assert(1 == 0); }
-
-void testTranslateTableFromIdxToAddress(void) { assert(1 == 0); }
+void testTranslateTableFromIdxToAddress(void) {
+  struct RoutingTable addressRoutingTable;
+  addressRoutingTable.routingTableRows = NULL;
+  /*
+  int success = translateTableFromIdxToAddress();
+  assert(success == EXIT_SUCCESS);
+  */
+}
 
 int main(int argc, char** argv) {
   if (argc < 2) {
@@ -133,10 +163,8 @@ int main(int argc, char** argv) {
 
   if (strcmp(argv[1], "getTCPServerSocket") == 0) {
     testGetTCPServerSocket(argv[2]);
-  } else if (strcmp(argv[1], "populateNodeArray") == 0) {
-    testPopulateNodeArray(argv[2]);
-  } else if (strcmp(argv[1], "sendRoutingTables") == 0) {
-    testSendRoutingTables();
+  } else if (strcmp(argv[1], "populateNodeArrayAndSendRoutingTables") == 0) {
+    testPopulateNodeArrayAndSendRoutingTables(argv[2]);
   } else if (strcmp(argv[1], "translateTableFromIdxToAddress") == 0) {
     testTranslateTableFromIdxToAddress();
   } else if (strcmp(argv[1], "openTCP") == 0) {

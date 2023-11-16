@@ -2,6 +2,7 @@
 #define HOME_EXAM_TEST_INCLUDE_TEST_TOOLS_H_
 
 struct Node;
+struct RoutingTableArray;
 
 /**
  * @brief Create a Inverted "A" Graph
@@ -22,5 +23,9 @@ struct Node;
  * @return 0 on success, 1 on error
  */
 int createInvertedAGraphNodeArray(struct Node** nodeArray);
+
+int createIGraphRoutingTableArray(struct RoutingTableArray* routingTableArray,
+                                  const int* const indexMap, const int n,
+                                  const char* name);
 
 #endif  // HOME_EXAM_TEST_INCLUDE_TEST_TOOLS_H_

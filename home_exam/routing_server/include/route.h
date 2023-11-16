@@ -2,6 +2,7 @@
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTE_H_
 
 struct IndexToAddress;
+struct RoutingTableArray;
 
 /**
  * @brief Representation of a route to an endpoint using indices
@@ -9,11 +10,6 @@ struct IndexToAddress;
 struct Route {
   int nHops;  /**< Number of hops from the starting point */
   int *route; /**< The route taken */
-};
-
-struct RoutingTableArray {
-  int n;                              /**< Size of the array*/
-  struct RoutingTable *routingTables; /**< Elements of the array */
 };
 
 /**

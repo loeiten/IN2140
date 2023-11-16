@@ -86,3 +86,35 @@ int createInvertedAGraphNodeArray(struct Node** nodeArray) {
 
   return EXIT_SUCCESS;
 }
+
+// FIXME: YOU ARE HERE
+/*
+int createIGraphRoutingTableArray(struct RoutingTableArray routingTableArray){
+success = allocateRoutingTableArray(&routingTableArray, N,
+"testSendRoutingTables");
+
+  routingTableArray.n = N;
+  struct RoutingTable routingTables[N];
+
+  // Address 101
+  routingTables[indexMap[0]].nRows = 2;
+  struct RoutingTableRow routingTableRows101[2] = {
+      {.destination = indexMap[1], .nextHop = indexMap[1]},
+      {.destination = indexMap[2], .nextHop = indexMap[1]}};
+  routingTables[indexMap[0]].routingTableRows = routingTableRows101;
+  // Address 15
+  routingTables[indexMap[1]].nRows = 2;
+  struct RoutingTableRow routingTableRows15[2] = {
+      {.destination = indexMap[0], .nextHop = indexMap[0]},
+      {.destination = indexMap[2], .nextHop = indexMap[2]}};
+  routingTables[indexMap[1]].routingTableRows = routingTableRows15;
+  // Address 42
+  routingTables[indexMap[2]].nRows = 2;
+  struct RoutingTableRow routingTableRows42[2] = {
+      {.destination = indexMap[0], .nextHop = indexMap[1]},
+      {.destination = indexMap[1], .nextHop = indexMap[1]}};
+  routingTables[indexMap[2]].routingTableRows = routingTableRows42;
+
+
+}
+*/

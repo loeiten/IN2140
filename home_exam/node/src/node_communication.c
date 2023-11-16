@@ -192,7 +192,7 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
   }
 
   // Receive the table
-  nBytes = nRows * sizeof(struct RoutingTableRows);
+  nBytes = nRows * sizeof(struct RoutingTableRow);
   success = receiveNBytesMessage(tcpRoutingServerSocketFd,
                                  &(routingTable->routingTableRows), nBytes,
                                  MSG_WAITALL);

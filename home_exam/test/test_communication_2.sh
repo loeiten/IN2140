@@ -13,14 +13,14 @@ COMMANDS=()
 #    command to exit with a non-zero status, or zero if all commands in the
 #    pipeline exit successfully.
 COMMANDS+=("set -o pipefail; $TEST_EXEC_DIR/test_routing_server_communication \
-           populateNodeArray $PORT \
+           populateNodeArrayAndSendRoutingTables $PORT \
            2>&1 | tee $TEST_EXEC_DIR/test_communication_2_output.txt")
 COMMANDS+=("$TEST_EXEC_DIR/test_node_communication \
-            sendEdgeInformation $PORT 101")
+            sendEdgeInformationAndReceiveRoutingTable $PORT 101")
 COMMANDS+=("$TEST_EXEC_DIR/test_node_communication \
-            sendEdgeInformation $PORT 15")
+            sendEdgeInformationAndReceiveRoutingTable $PORT 15")
 COMMANDS+=("$TEST_EXEC_DIR/test_node_communication \
-            sendEdgeInformation $PORT 42")
+            sendEdgeInformationAndReceiveRoutingTable $PORT 42")
 
 # Run all the commands as subprocesses
 # NOTE: Does not work if one use $()

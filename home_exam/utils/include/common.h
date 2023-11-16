@@ -21,9 +21,9 @@ struct Node {
 };
 
 /**
- * @brief Elements in the routing table
+ * @brief Element in the routing table
  */
-struct RoutingTableRows {
+struct RoutingTableRow {
   int destination; /**< Destination of package */
   int nextHop;     /**< The next hop needed in order to reach the destination */
 };
@@ -32,8 +32,16 @@ struct RoutingTableRows {
  * @brief The routing table
  */
 struct RoutingTable {
-  int nRows;                                 /**< Number of elements */
-  struct RoutingTableRows* routingTableRows; /**< Array of routingTables */
+  int nRows;                                /**< Number of elements */
+  struct RoutingTableRow* routingTableRows; /**< Array of routingTables */
+};
+
+/**
+ * @brief An array of routing tables
+ */
+struct RoutingTableArray {
+  int n;                              /**< Size of the array*/
+  struct RoutingTable* routingTables; /**< Elements of the array */
 };
 
 /**

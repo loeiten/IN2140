@@ -246,7 +246,7 @@ int translateTableFromIdxToAddress(
   addressRoutingTable->nRows = idxRoutingTable->nRows;
   addressRoutingTable->routingTableRows =
       realloc(addressRoutingTable->routingTableRows,
-              addressRoutingTable->nRows * sizeof(struct RoutingTableRows));
+              addressRoutingTable->nRows * sizeof(struct RoutingTableRow));
   if (addressRoutingTable->routingTableRows == NULL) {
     perror("Failed to realloc addressRoutingTable.routingTableRows: ");
     return EXIT_FAILURE;

@@ -109,7 +109,7 @@ int allocateRoutingTable(struct RoutingTable *routingTable, const int nRows,
   // Zero allocate the routing table
   routingTable->nRows = nRows;
   routingTable->routingTableRows =
-      (struct RoutingTableRows *)calloc(nRows, sizeof(struct RoutingTableRows));
+      (struct RoutingTableRow *)calloc(nRows, sizeof(struct RoutingTableRow));
   if (routingTable->routingTableRows == NULL) {
     routingTable->nRows = -1;
     fprintf(stderr, "Memory allocation for %s failed: %s\n", name,
@@ -142,11 +142,11 @@ int allocateRoutingTableArray(struct RoutingTableArray *routingTableArray,
     return EXIT_FAILURE;
   }
 
-  // Allocate the RoutingTableArray
+  // Allocate the RoutingTableRows
   for (int i = 0; i < n; ++i) {
     // There will be at max one table for each node
     routingTableArray->routingTables[i].routingTableRows =
-        (struct RoutingTableRows *)malloc(n * sizeof(struct RoutingTableRows));
+        (struct RoutingTableRow *)malloc(n * sizeof(struct RoutingTableRow));
     routingTableArray->routingTables[i].nRows = 0;
     if (routingTableArray->routingTables[i].routingTableRows == NULL) {
       fprintf(

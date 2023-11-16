@@ -15,12 +15,13 @@ TESTS := run_test_adjacency_matrix_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
 		 run_test_node_communication_1 \
-		 run_test_node_communication_6 \
-		 run_test_node_communication_7 \
+		 run_test_node_communication_3 \
+		 run_test_node_communication_4 \
 		 run_test_node_parser_1 \
 		 run_test_route_1 \
 		 run_test_route_2 \
 		 run_test_routing_server_communication_1 \
+		 run_test_routing_server_communication_2 \
 		 run_test_validation_1 \
 		 run_test_validation_2 \
 		 run_test_validation_3 \
@@ -144,16 +145,19 @@ $(BUILD_TEST_DIR)/test_node_communication.o: test_node_communication.c
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -I$(ASSIGNMENT_FILES_SRC) -c $< -o $@
 
 # Tests
-run_test_node_communication_1 : $(TEST_EXEC_DIR)/test_node_communication
+run_test_node_communication_1: $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< getUDPSocket 2256)
 
 # NOTE: getTCPClientSocket is tested in test_communication_1
-# NOTE: sendEdgeInformation is tested in test_communication_2
+# NOTE: sendEdgeInformation and receiveRoutingTable are tested in test_communication_2
 
-run_test_node_communication_6 : $(TEST_EXEC_DIR)/test_node_communication
+# FIXME: Test receiveAndForwardPackets
+# FIXME: Test prepareAndSendPackets
+
+run_test_node_communication_3: $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< extractLengthDestinationAndMessage)
 
-run_test_node_communication_7 : $(TEST_EXEC_DIR)/test_node_communication
+run_test_node_communication_4: $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< createPacket)
 # ==============================================================================
 
@@ -171,7 +175,7 @@ $(BUILD_TEST_DIR)/test_node_parser.o: test_node_parser.c
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
 
 # Tests
-run_test_node_parser_1 : $(TEST_EXEC_DIR)/test_node_parser
+run_test_node_parser_1: $(TEST_EXEC_DIR)/test_node_parser
 	$(call run_test,$@,$< parseNodes)
 # ==============================================================================
 
@@ -204,7 +208,7 @@ run_test_route_2: $(TEST_EXEC_DIR)/test_route
 
 # ROUTING_SERVER_COMMUNICATION
 # ==============================================================================
-$(TEST_EXEC_DIR)/test_routing_server_communication: $(BUILD_TEST_DIR)/test_routing_server_communication.o $(BUILD_OBJ_DIR)/routing_server_communication.o $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o
+$(TEST_EXEC_DIR)/test_routing_server_communication: $(BUILD_TEST_DIR)/test_routing_server_communication.o $(BUILD_OBJ_DIR)/routing_server_communication.o $(LIB_DIR)/libprint.$(LIB_EXTENSION) $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o $(BUILD_OBJ_DIR)/test_tools.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@
@@ -216,13 +220,18 @@ $(BUILD_TEST_DIR)/test_routing_server_communication.o: test_routing_server_commu
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) -c $< -o $@
 
 # Tests
-run_test_routing_server_communication_1 : $(TEST_EXEC_DIR)/test_routing_server_communication
+run_test_routing_server_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication
 	$(call run_test,$@,$< getTCPServerSocket 1025)
+
+# NOTE: populateNodeArray and sendRoutingTables are tested in test_communication_2
+
+run_test_routing_server_communication_2: $(TEST_EXEC_DIR)/test_routing_server_communication
+	$(call run_test,$@,$< translateTableFromIdxToAddress)
 # ==============================================================================
 
 # VALIDATION
 # ==============================================================================
-$(TEST_EXEC_DIR)/test_validation: $(BUILD_TEST_DIR)/test_validation.o $(BUILD_OBJ_DIR)/validation.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o  $(BUILD_OBJ_DIR)/test_tools.o
+$(TEST_EXEC_DIR)/test_validation: $(BUILD_TEST_DIR)/test_validation.o $(BUILD_OBJ_DIR)/validation.o $(BUILD_OBJ_DIR)/common.o $(BUILD_OBJ_DIR)/dynamic_memory.o $(BUILD_OBJ_DIR)/test_tools.o
 	$(call explain_build,Making $(notdir $@))
 	mkdir -p $(TEST_EXEC_DIR)
 	$(CC) $(CFLAGS) $(C_LINT_FLAGS) $(C_SANITIZERS) $^ -o $@

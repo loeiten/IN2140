@@ -44,15 +44,22 @@ void testGetTCPClientSocket(const char* basePortStr) {
   close(clientSocket);
 }
 
-// FIXME: Can maybe make a simpler test first
-void testSendEdgeInformation(const char* basePortStr, const char* addressStr) {
-  // Wait until the server is set up
-  sleep(1);
+void testSendEdgeInformationAndReceiveRoutingTable(const char* basePortStr,
+                                                   const char* addressStr) {
+  // NOTE: We combine the test of sendEdgeInformation and receiveRoutingTable as
+  //       the new sockets created during accept in the populateNodeArray is
+  //       reused
 
   // We're working with the following graph:
   //    7   22
   //  o - o - o
   // 101  15 42
+
+  // Test sendEdgeInformation
+  // ===========================================================================
+  // Wait until the server is set up
+  sleep(1);
+
   int basePort = atoi(basePortStr);
   int address = atoi(addressStr);
 
@@ -89,7 +96,8 @@ void testSendEdgeInformation(const char* basePortStr, const char* addressStr) {
     node.neighborAddresses = neighborAddresses;
     node.edgeWeights = edgeWeights;
   } else {
-    fprintf(stderr, "address = %d was not expected", address);
+    fprintf(stderr, "address = %d was not expected\n", address);
+    close(clientSocket);
     return;
   }
   success = sendEdgeInformation(&node);
@@ -97,10 +105,43 @@ void testSendEdgeInformation(const char* basePortStr, const char* addressStr) {
     close(clientSocket);
   }
   assert(success == EXIT_SUCCESS);
-  close(node.tcpSocket);
-}
+  // ===========================================================================
 
-void testReceiveRoutingTable(void) { assert(1 == 0); }
+  // Test receiveRoutingTable
+  // ===========================================================================
+  struct RoutingTable routingTable;
+  struct RoutingTable* routingTablePtr = NULL;
+  routingTablePtr = &routingTable;
+  success = receiveRoutingTable(clientSocket, routingTablePtr);
+  if (success != EXIT_SUCCESS) {
+    close(clientSocket);
+  }
+  assert(success == EXIT_SUCCESS);
+
+  if (address == 101) {
+    assert(routingTable.nRows == 2);
+    assert(routingTable.routingTableRows[0].destination == 15);
+    assert(routingTable.routingTableRows[0].nextHop == 15);
+    assert(routingTable.routingTableRows[1].destination == 42);
+    assert(routingTable.routingTableRows[1].nextHop == 15);
+  } else if (address == 15) {
+    assert(routingTable.nRows == 2);
+    assert(routingTable.routingTableRows[0].destination == 101);
+    assert(routingTable.routingTableRows[0].nextHop == 101);
+    assert(routingTable.routingTableRows[1].destination == 42);
+    assert(routingTable.routingTableRows[1].nextHop == 42);
+  } else if (address == 42) {
+    assert(routingTable.nRows == 2);
+    assert(routingTable.routingTableRows[0].destination == 101);
+    assert(routingTable.routingTableRows[0].nextHop == 101);
+    assert(routingTable.routingTableRows[1].destination == 15);
+    assert(routingTable.routingTableRows[1].nextHop == 15);
+  } else {
+    fprintf(stderr, "address = %d was not expected\n", address);
+  }
+  // ===========================================================================
+  close(clientSocket);
+}
 
 void testReceiveAndForwardPackets(void) { assert(1 == 0); }
 
@@ -205,10 +246,9 @@ int main(int argc, char** argv) {
     testGetUDPSocket(argv[2]);
   } else if (strcmp(argv[1], "getTCPClientSocket") == 0) {
     testGetTCPClientSocket(argv[2]);
-  } else if (strcmp(argv[1], "sendEdgeInformation") == 0) {
-    testSendEdgeInformation(argv[2], argv[3]);
-  } else if (strcmp(argv[1], "receiveRoutingTable") == 0) {
-    testReceiveRoutingTable();
+  } else if (strcmp(argv[1], "sendEdgeInformationAndReceiveRoutingTable") ==
+             0) {
+    testSendEdgeInformationAndReceiveRoutingTable(argv[2], argv[3]);
   } else if (strcmp(argv[1], "receiveAndForwardPackets") == 0) {
     testReceiveAndForwardPackets();
   } else if (strcmp(argv[1], "prepareAndSendPackets") == 0) {
