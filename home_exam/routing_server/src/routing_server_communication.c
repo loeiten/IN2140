@@ -198,7 +198,10 @@ int sendRoutingTables(const struct Node* const nodeArray,
   //       This means that we need to translate the nextHop and destination to
   //       addresses before sending them
 
-  for (int i = 0; routingTableArray->n; ++i) {
+  // FIXME:
+  printf("routingTableArray->n=%d\n", routingTableArray->n);
+  for (int i = 0; i < routingTableArray->n; ++i) {
+    printf("i=%d\n", i);
     int success =
         translateTableFromIdxToAddress(&(routingTableArray->routingTables[i]),
                                        indexToAddress, &addressRoutingTable);
@@ -214,6 +217,9 @@ int sendRoutingTables(const struct Node* const nodeArray,
     }
 
     ssize_t nBytes = sizeof(int);
+    // FIXME:
+    printf("Sending %d to %d\n", addressRoutingTable.nRows,
+           nodeArray[i].tcpSocket);
     success = sendMessage(nodeArray[i].tcpSocket, &(addressRoutingTable.nRows),
                           nBytes, 0);
     if (success != EXIT_SUCCESS) {
@@ -223,9 +229,9 @@ int sendRoutingTables(const struct Node* const nodeArray,
       return EXIT_FAILURE;
     }
 
-    nBytes = addressRoutingTable.nRows * sizeof(int);
+    nBytes = addressRoutingTable.nRows * sizeof(struct RoutingTableRow);
     success = sendMessage(nodeArray[i].tcpSocket,
-                          &(addressRoutingTable.routingTableRows), nBytes, 0);
+                          addressRoutingTable.routingTableRows, nBytes, 0);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Sending addressRoutingTable.routingTableRows failed.\n");
       free(addressRoutingTable.routingTableRows);

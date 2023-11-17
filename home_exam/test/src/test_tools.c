@@ -87,34 +87,52 @@ int createInvertedAGraphNodeArray(struct Node** nodeArray) {
   return EXIT_SUCCESS;
 }
 
-// FIXME: YOU ARE HERE
-/*
-int createIGraphRoutingTableArray(struct RoutingTableArray routingTableArray){
-success = allocateRoutingTableArray(&routingTableArray, N,
-"testSendRoutingTables");
-
-  routingTableArray.n = N;
-  struct RoutingTable routingTables[N];
+int createIGraphRoutingTableArray(struct RoutingTableArray* routingTableArray,
+                                  const int* const addressMap,
+                                  const char* name) {
+  int success = allocateRoutingTableArray(routingTableArray, 3, name);
+  if (success != EXIT_SUCCESS) {
+    return EXIT_FAILURE;
+  }
 
   // Address 101
-  routingTables[indexMap[0]].nRows = 2;
-  struct RoutingTableRow routingTableRows101[2] = {
-      {.destination = indexMap[1], .nextHop = indexMap[1]},
-      {.destination = indexMap[2], .nextHop = indexMap[1]}};
-  routingTables[indexMap[0]].routingTableRows = routingTableRows101;
+  routingTableArray->routingTables[addressMap[0]].nRows = 2;
+  routingTableArray->routingTables[addressMap[0]]
+      .routingTableRows[0]
+      .destination = addressMap[1];
+  routingTableArray->routingTables[addressMap[0]].routingTableRows[0].nextHop =
+      addressMap[1];
+  routingTableArray->routingTables[addressMap[0]]
+      .routingTableRows[1]
+      .destination = addressMap[2];
+  routingTableArray->routingTables[addressMap[0]].routingTableRows[1].nextHop =
+      addressMap[1];
+
   // Address 15
-  routingTables[indexMap[1]].nRows = 2;
-  struct RoutingTableRow routingTableRows15[2] = {
-      {.destination = indexMap[0], .nextHop = indexMap[0]},
-      {.destination = indexMap[2], .nextHop = indexMap[2]}};
-  routingTables[indexMap[1]].routingTableRows = routingTableRows15;
+  routingTableArray->routingTables[addressMap[1]].nRows = 2;
+  routingTableArray->routingTables[addressMap[1]]
+      .routingTableRows[0]
+      .destination = addressMap[0];
+  routingTableArray->routingTables[addressMap[1]].routingTableRows[0].nextHop =
+      addressMap[0];
+  routingTableArray->routingTables[addressMap[1]]
+      .routingTableRows[1]
+      .destination = addressMap[2];
+  routingTableArray->routingTables[addressMap[1]].routingTableRows[1].nextHop =
+      addressMap[2];
+
   // Address 42
-  routingTables[indexMap[2]].nRows = 2;
-  struct RoutingTableRow routingTableRows42[2] = {
-      {.destination = indexMap[0], .nextHop = indexMap[1]},
-      {.destination = indexMap[1], .nextHop = indexMap[1]}};
-  routingTables[indexMap[2]].routingTableRows = routingTableRows42;
+  routingTableArray->routingTables[addressMap[2]].nRows = 2;
+  routingTableArray->routingTables[addressMap[2]]
+      .routingTableRows[0]
+      .destination = addressMap[0];
+  routingTableArray->routingTables[addressMap[2]].routingTableRows[0].nextHop =
+      addressMap[1];
+  routingTableArray->routingTables[addressMap[2]]
+      .routingTableRows[1]
+      .destination = addressMap[1];
+  routingTableArray->routingTables[addressMap[2]].routingTableRows[1].nextHop =
+      addressMap[1];
 
-
+  return EXIT_SUCCESS;
 }
-*/

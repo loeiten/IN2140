@@ -86,13 +86,17 @@ void testPopulateNodeArrayAndSendRoutingTables(const char* basePortStr) {
   // NOTE: We don't know what order the nodes are sent to us, therefore we make
   //       a map in order to tie the ordering Assert node 0
   int indexMap[N];
+  int addressMap[N];
   for (int i = 0; i < N; ++i) {
     if (nodeArray[i].address == 101) {
-      indexMap[0] = i;
+      addressMap[0] = i;
+      indexMap[addressMap[0]] = 101;
     } else if (nodeArray[i].address == 15) {
-      indexMap[1] = i;
+      addressMap[1] = i;
+      indexMap[addressMap[1]] = 15;
     } else if (nodeArray[i].address == 42) {
-      indexMap[2] = i;
+      addressMap[2] = i;
+      indexMap[addressMap[2]] = 42;
     } else {
       fprintf(stderr, "nodeArray[%d].address = %d was not expected", i,
               nodeArray[i].address);
@@ -102,25 +106,25 @@ void testPopulateNodeArrayAndSendRoutingTables(const char* basePortStr) {
     }
   }
   // Assert address 101
-  assert(nodeArray[indexMap[0]].tcpSocket != -1);
-  assert(nodeArray[indexMap[0]].address == 101);
-  assert(nodeArray[indexMap[0]].nNeighbors == 1);
-  assert(nodeArray[indexMap[0]].neighborAddresses[0] == 15);
-  assert(nodeArray[indexMap[0]].edgeWeights[0] == 7);
+  assert(nodeArray[addressMap[0]].tcpSocket != -1);
+  assert(nodeArray[addressMap[0]].address == 101);
+  assert(nodeArray[addressMap[0]].nNeighbors == 1);
+  assert(nodeArray[addressMap[0]].neighborAddresses[0] == 15);
+  assert(nodeArray[addressMap[0]].edgeWeights[0] == 7);
   // Assert address 15
-  assert(nodeArray[indexMap[1]].tcpSocket != -1);
-  assert(nodeArray[indexMap[1]].address == 15);
-  assert(nodeArray[indexMap[1]].nNeighbors == 2);
-  assert(nodeArray[indexMap[1]].neighborAddresses[0] == 101);
-  assert(nodeArray[indexMap[1]].neighborAddresses[1] == 42);
-  assert(nodeArray[indexMap[1]].edgeWeights[0] == 7);
-  assert(nodeArray[indexMap[1]].edgeWeights[1] == 22);
+  assert(nodeArray[addressMap[1]].tcpSocket != -1);
+  assert(nodeArray[addressMap[1]].address == 15);
+  assert(nodeArray[addressMap[1]].nNeighbors == 2);
+  assert(nodeArray[addressMap[1]].neighborAddresses[0] == 101);
+  assert(nodeArray[addressMap[1]].neighborAddresses[1] == 42);
+  assert(nodeArray[addressMap[1]].edgeWeights[0] == 7);
+  assert(nodeArray[addressMap[1]].edgeWeights[1] == 22);
   // Assert address 42
-  assert(nodeArray[indexMap[2]].tcpSocket != -1);
-  assert(nodeArray[indexMap[2]].address == 42);
-  assert(nodeArray[indexMap[2]].nNeighbors == 1);
-  assert(nodeArray[indexMap[2]].neighborAddresses[0] == 15);
-  assert(nodeArray[indexMap[2]].edgeWeights[0] == 22);
+  assert(nodeArray[addressMap[2]].tcpSocket != -1);
+  assert(nodeArray[addressMap[2]].address == 42);
+  assert(nodeArray[addressMap[2]].nNeighbors == 1);
+  assert(nodeArray[addressMap[2]].neighborAddresses[0] == 15);
+  assert(nodeArray[addressMap[2]].edgeWeights[0] == 22);
   printf("NodeArray received successfully!\n");
   // ===========================================================================
 
@@ -131,10 +135,29 @@ void testPopulateNodeArrayAndSendRoutingTables(const char* basePortStr) {
   indexToAddress.map = indexMap;
   // Manually create the routingTableArray
   struct RoutingTableArray routingTableArray;
+  success = createIGraphRoutingTableArray(
+      &routingTableArray, addressMap,
+      "testPopulateNodeArrayAndSendRoutingTables");
+  if (success != EXIT_SUCCESS) {
+    freeNodeArray(&nodeArray, N);
+    freeRoutingTableArray(&routingTableArray);
+    close(listenSocket);
+  }
+  assert(success == EXIT_SUCCESS);
 
+  // FIXME:
+  printf("Before sendRoutingTables\n");
   success = sendRoutingTables(nodeArray, &routingTableArray, &indexToAddress);
+  // FIXME:
+  printf("After sendRoutingTables\n");
+  if (success != EXIT_SUCCESS) {
+    freeNodeArray(&nodeArray, N);
+    freeRoutingTableArray(&routingTableArray);
+    close(listenSocket);
+  }
   assert(success == EXIT_SUCCESS);
   freeNodeArray(&nodeArray, N);
+  freeRoutingTableArray(&routingTableArray);
   printf("RoutingArray sent successfully!\n");
   close(listenSocket);
   // ===========================================================================
@@ -142,12 +165,59 @@ void testPopulateNodeArrayAndSendRoutingTables(const char* basePortStr) {
 }
 
 void testTranslateTableFromIdxToAddress(void) {
+  // We're working with the following graph:
+  //    7   22
+  //  o - o - o
+  // 101  15 42
+#define N (3)
+  struct RoutingTableArray routingTableArray;
+  const int addressMap[N] = {0, 1, 2};
+  int indexMap[N] = {101, 15, 42};
+  struct IndexToAddress indexToAddress;
+  indexToAddress.n = N;
+  indexToAddress.map = indexMap;
+  int success = createIGraphRoutingTableArray(
+      &routingTableArray, addressMap, "testTranslateTableFromIdxToAddress");
+  assert(success == EXIT_SUCCESS);
+
   struct RoutingTable addressRoutingTable;
   addressRoutingTable.routingTableRows = NULL;
-  /*
-  int success = translateTableFromIdxToAddress();
+
+  // Address 101
+  success =
+      translateTableFromIdxToAddress(&(routingTableArray.routingTables[0]),
+                                     &indexToAddress, &addressRoutingTable);
   assert(success == EXIT_SUCCESS);
-  */
+  assert(addressRoutingTable.nRows == 2);
+  assert(addressRoutingTable.routingTableRows[0].destination == 15);
+  assert(addressRoutingTable.routingTableRows[0].nextHop == 15);
+  assert(addressRoutingTable.routingTableRows[1].destination == 42);
+  assert(addressRoutingTable.routingTableRows[1].nextHop == 15);
+
+  // Address 15
+  success =
+      translateTableFromIdxToAddress(&(routingTableArray.routingTables[1]),
+                                     &indexToAddress, &addressRoutingTable);
+  assert(success == EXIT_SUCCESS);
+  assert(addressRoutingTable.nRows == 2);
+  assert(addressRoutingTable.routingTableRows[0].destination == 101);
+  assert(addressRoutingTable.routingTableRows[0].nextHop == 101);
+  assert(addressRoutingTable.routingTableRows[1].destination == 42);
+  assert(addressRoutingTable.routingTableRows[1].nextHop == 42);
+
+  // Address 42
+  success =
+      translateTableFromIdxToAddress(&(routingTableArray.routingTables[2]),
+                                     &indexToAddress, &addressRoutingTable);
+  assert(success == EXIT_SUCCESS);
+  assert(addressRoutingTable.nRows == 2);
+  assert(addressRoutingTable.routingTableRows[0].destination == 101);
+  assert(addressRoutingTable.routingTableRows[0].nextHop == 15);
+  assert(addressRoutingTable.routingTableRows[1].destination == 15);
+  assert(addressRoutingTable.routingTableRows[1].nextHop == 15);
+
+#undef N
+  freeRoutingTableArray(&routingTableArray);
 }
 
 int main(int argc, char** argv) {

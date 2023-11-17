@@ -72,6 +72,8 @@ void testSendEdgeInformationAndReceiveRoutingTable(const char* basePortStr,
   }
   assert(success == EXIT_SUCCESS);
   node.tcpSocket = clientSocket;
+  // FIXME:
+  printf("Client socket= %d\n", clientSocket);
   // Declare variable here so that they are in scope
   int neighborAddresses[2];
   int edgeWeights[2];
@@ -133,7 +135,7 @@ void testSendEdgeInformationAndReceiveRoutingTable(const char* basePortStr,
   } else if (address == 42) {
     assert(routingTable.nRows == 2);
     assert(routingTable.routingTableRows[0].destination == 101);
-    assert(routingTable.routingTableRows[0].nextHop == 101);
+    assert(routingTable.routingTableRows[0].nextHop == 15);
     assert(routingTable.routingTableRows[1].destination == 15);
     assert(routingTable.routingTableRows[1].nextHop == 15);
   } else {

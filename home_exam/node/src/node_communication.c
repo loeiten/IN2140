@@ -193,9 +193,9 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
 
   // Receive the table
   nBytes = nRows * sizeof(struct RoutingTableRow);
-  success = receiveNBytesMessage(tcpRoutingServerSocketFd,
-                                 &(routingTable->routingTableRows), nBytes,
-                                 MSG_WAITALL);
+  success =
+      receiveNBytesMessage(tcpRoutingServerSocketFd,
+                           routingTable->routingTableRows, nBytes, MSG_WAITALL);
   if (success == EXIT_FAILURE) {
     fprintf(stderr, "Receiving routingTable->table failed\n");
     return EXIT_FAILURE;

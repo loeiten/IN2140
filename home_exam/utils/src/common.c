@@ -24,6 +24,9 @@ int getIndexFromAddress(const int address,
 int receiveNBytesMessage(const int sockFd, void* buf, const ssize_t nBytes,
                          const int flag) {
   ssize_t bytesReceived = recv(sockFd, buf, nBytes, flag);
+  // FIXME:
+  printf("Received %zd bytes: buf=%d on sockFd %d\n", bytesReceived, *(int*)buf,
+         sockFd);
   if (bytesReceived == -1) {
     fprintf(stderr, "Receiving failed.\nError %d: %s\n", errno,
             strerror(errno));
@@ -48,6 +51,9 @@ int receiveMessage(const int sockFd, void* buf, const int flag) {
 int sendMessage(const int sockFd, void* buf, const ssize_t nBytes,
                 const int flag) {
   ssize_t bytesSent = send(sockFd, buf, nBytes, flag);
+  // FIXME:
+  printf("Sent %zd bytes: buf=%d on sockFd %d\n", bytesSent, *(int*)buf,
+         sockFd);
   if (bytesSent == -1) {
     fprintf(stderr, "Sending failed.\nError %d: %s\n", errno, strerror(errno));
     return EXIT_FAILURE;
