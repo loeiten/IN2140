@@ -5,7 +5,7 @@
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_FAILURE
 #include <string.h>  // for strcmp
 
-#include "../routing_server/include/route.h"  // for RoutingTableArray, crea...
+#include "../routing_server/include/route.h"  // for createRoutingTableArray
 #include "../utils/include/common.h"          // for RoutingTable, RoutingTa...
 #include "../utils/include/dynamic_memory.h"  // for freeRoutingTableArray
 // NOTE: We are not specifying the full path here

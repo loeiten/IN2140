@@ -6,7 +6,7 @@
 #include <string.h>  // for strerror
 #include <unistd.h>  // for close, NULL
 
-#include "../../routing_server/include/route.h"       // for RoutingTableArray
+#include "../../routing_server/include/route.h"       // for Route
 #include "../../routing_server/include/validation.h"  // for EdgeCounter
 #include "../include/common.h"                        // for Node, RoutingTable
 

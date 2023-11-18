@@ -145,11 +145,7 @@ void testPopulateNodeArrayAndSendRoutingTables(const char* basePortStr) {
   }
   assert(success == EXIT_SUCCESS);
 
-  // FIXME:
-  printf("Before sendRoutingTables\n");
   success = sendRoutingTables(nodeArray, &routingTableArray, &indexToAddress);
-  // FIXME:
-  printf("After sendRoutingTables\n");
   if (success != EXIT_SUCCESS) {
     freeNodeArray(&nodeArray, N);
     freeRoutingTableArray(&routingTableArray);

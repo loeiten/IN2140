@@ -1,14 +1,13 @@
 #include <arpa/inet.h>  // for ntohs
 #include <assert.h>     // for assert
 #include <libgen.h>     // for basename
-#include <stdio.h>      // for fprintf, stderr
+#include <stdio.h>      // for fprintf, NULL, stderr
 #include <stdlib.h>     // for free, EXIT_SUCCESS
 #include <string.h>     // for strcmp, memcpy, strndup
-#include <time.h>
-#include <unistd.h>  // for close, sleep
+#include <unistd.h>     // for close, sleep
 
 #include "../node/include/node_communication.h"  // for createPacket, extrac...
-#include "../utils/include/common.h"             // for sendMessage
+#include "../utils/include/common.h"             // for RoutingTableRow, Rou...
 
 void testGetUDPSocket(const char* basePortStr) {
   int connectSocket = -1;
@@ -72,8 +71,7 @@ void testSendEdgeInformationAndReceiveRoutingTable(const char* basePortStr,
   }
   assert(success == EXIT_SUCCESS);
   node.tcpSocket = clientSocket;
-  // FIXME:
-  printf("Client socket= %d\n", clientSocket);
+
   // Declare variable here so that they are in scope
   int neighborAddresses[2];
   int edgeWeights[2];

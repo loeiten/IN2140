@@ -26,4 +26,4 @@ COMMANDS+=("$TEST_EXEC_DIR/test_node_communication \
 # NOTE: Does not work if one use $()
 run_subprocesses "${COMMANDS[@]}"
 
-diff "$TEST_DATA_DIR"/test_communication_1_output.txt "$TEST_EXEC_DIR"/test_communication_1_output.txt
+diff "$TEST_DATA_DIR"/test_communication_2_output.txt "$TEST_EXEC_DIR"/test_communication_2_output.txt

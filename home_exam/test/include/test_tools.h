@@ -3,7 +3,6 @@
 
 struct Node;
 struct RoutingTableArray;
-struct RoutingTableArray;
 
 /**
  * @brief Create an Inverted "A" Graph

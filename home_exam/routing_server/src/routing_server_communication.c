@@ -4,14 +4,13 @@
 #include <errno.h>       // for errno
 #include <netinet/in.h>  // for sockaddr_in, INADDR_...
 #include <stdio.h>       // for fprintf, stderr, NULL
-#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
+#include <stdlib.h>      // for EXIT_SUCCESS, EXIT_F...
 #include <string.h>      // for strerror
 #include <strings.h>     // for bzero
 #include <sys/socket.h>  // for MSG_WAITALL, accept
 
 #include "../../utils/include/common.h"          // for RoutingTable, Node
 #include "../../utils/include/dynamic_memory.h"  // for freeNeighborAddresse...
-#include "../include/route.h"                    // for RoutingTableArray
 
 int getTCPServerSocket(int* const listenSocket, const int basePort) {
   if ((basePort < MIN_PORT) || (basePort > MAX_PORT)) {
@@ -198,10 +197,7 @@ int sendRoutingTables(const struct Node* const nodeArray,
   //       This means that we need to translate the nextHop and destination to
   //       addresses before sending them
 
-  // FIXME:
-  printf("routingTableArray->n=%d\n", routingTableArray->n);
   for (int i = 0; i < routingTableArray->n; ++i) {
-    printf("i=%d\n", i);
     int success =
         translateTableFromIdxToAddress(&(routingTableArray->routingTables[i]),
                                        indexToAddress, &addressRoutingTable);
@@ -217,9 +213,6 @@ int sendRoutingTables(const struct Node* const nodeArray,
     }
 
     ssize_t nBytes = sizeof(int);
-    // FIXME:
-    printf("Sending %d to %d\n", addressRoutingTable.nRows,
-           nodeArray[i].tcpSocket);
     success = sendMessage(nodeArray[i].tcpSocket, &(addressRoutingTable.nRows),
                           nBytes, 0);
     if (success != EXIT_SUCCESS) {
