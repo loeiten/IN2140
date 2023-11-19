@@ -1,0 +1,5 @@
+42 Foo
+15 Bar Baz
+42 QUIT
+15 QUIT
+101 QUIT

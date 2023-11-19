@@ -90,8 +90,8 @@ int main(int argc, char **argv) {
 
   if (ownAddress == 1) {
     // Send packages to the other nodes
-    success = prepareAndSendPackets(udpSocketFd, ownAddress, basePort,
-                                    routingTablePtr);
+    success = prepareAndSendPackets("data.txt", udpSocketFd, ownAddress,
+                                    basePort, routingTablePtr);
     if (success != EXIT_SUCCESS) {
       cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,
                   &udpSocketFd, "Failed to prepare and send packets\n");

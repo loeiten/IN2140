@@ -143,9 +143,81 @@ void testSendEdgeInformationAndReceiveRoutingTable(const char* basePortStr,
   close(clientSocket);
 }
 
-void testReceiveAndForwardPackets(void) { assert(1 == 0); }
+void testReceiveAndForwardPackets(const char* addressStr,
+                                  const char* basePortStr) {
+  // We're working with the following graph:
+  //    7   22
+  //  o - o - o
+  // 101  15 42
 
-void testPrepareAndSendPackets(void) { assert(1 == 0); }
+  int basePort = atoi(basePortStr);
+  int address = atoi(addressStr);
+  int udpSocketFd;
+  int success;
+
+  // Manually create the routing table
+  struct RoutingTable addressRoutingTable;
+  addressRoutingTable.nRows = 2;
+  struct RoutingTableRow routingTableRows[2];
+  routingTableRows[0].destination = -1;
+  routingTableRows[0].nextHop = -1;
+  routingTableRows[1].destination = -1;
+  routingTableRows[1].nextHop = -1;
+
+  if (address == 15) {
+    success = getUDPSocket(&udpSocketFd, basePort);
+    assert(success == EXIT_SUCCESS);
+    routingTableRows[0].destination = 101;
+    routingTableRows[0].nextHop = 101;
+    routingTableRows[1].destination = 42;
+    routingTableRows[1].nextHop = 42;
+  } else if (address == 42) {
+    success = getUDPSocket(&udpSocketFd, basePort);
+    assert(success == EXIT_SUCCESS);
+    routingTableRows[0].destination = 101;
+    routingTableRows[0].nextHop = 15;
+    routingTableRows[1].destination = 15;
+    routingTableRows[1].nextHop = 15;
+  } else {
+    fprintf(stderr, "address = %d was not expected\n", address);
+    return;
+  }
+
+  addressRoutingTable.routingTableRows = routingTableRows;
+
+  success = receiveAndForwardPackets(udpSocketFd, address, basePort,
+                                     &addressRoutingTable);
+  assert(success == EXIT_SUCCESS);
+}
+
+void testPrepareAndSendPackets(const char* filepath, const char* addressStr,
+                               const char* basePortStr) {
+  // We're working with the following graph:
+  //    7   22
+  //  o - o - o
+  // 101  15 42
+
+  int basePort = atoi(basePortStr);
+  int address = atoi(addressStr);
+
+  int udpSocketFd;
+  int success = getUDPSocket(&udpSocketFd, basePort);
+  assert(success == EXIT_SUCCESS);
+
+  // Manually create the routing table
+  struct RoutingTable addressRoutingTable;
+  addressRoutingTable.nRows = 2;
+  struct RoutingTableRow routingTableRows[2];
+  routingTableRows[0].destination = 15;
+  routingTableRows[0].nextHop = 15;
+  routingTableRows[1].destination = 42;
+  routingTableRows[1].nextHop = 15;
+  addressRoutingTable.routingTableRows = routingTableRows;
+
+  success = prepareAndSendPackets(filepath, udpSocketFd, address, basePort,
+                                  &addressRoutingTable);
+  assert(success == EXIT_SUCCESS);
+}
 
 void testExtractLengthDestinationAndMessage(void) {
   const char* line1 = "814 Good luck with the home exam\n";
@@ -250,9 +322,9 @@ int main(int argc, char** argv) {
              0) {
     testSendEdgeInformationAndReceiveRoutingTable(argv[2], argv[3]);
   } else if (strcmp(argv[1], "receiveAndForwardPackets") == 0) {
-    testReceiveAndForwardPackets();
+    testReceiveAndForwardPackets(argv[2], argv[3]);
   } else if (strcmp(argv[1], "prepareAndSendPackets") == 0) {
-    testPrepareAndSendPackets();
+    testPrepareAndSendPackets(argv[2], argv[3], argv[4]);
   } else if (strcmp(argv[1], "extractLengthDestinationAndMessage") == 0) {
     testExtractLengthDestinationAndMessage();
   } else if (strcmp(argv[1], "createPacket") == 0) {

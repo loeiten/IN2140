@@ -11,6 +11,7 @@ include ../common.mk
 TESTS := run_test_adjacency_matrix_1 \
 		 run_test_communication_1 \
 		 run_test_communication_2 \
+		 run_test_communication_3 \
 		 run_test_dijkstra_1 \
 		 run_test_dijkstra_2 \
 		 run_test_dijkstra_3 \
@@ -93,6 +94,7 @@ run_test_adjacency_matrix_1: $(TEST_EXEC_DIR)/test_adjacency_matrix
 
 PORT_1 := 1028
 PORT_2 := 1029
+PORT_3 := 1030
 
 # Test
 run_test_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
@@ -100,6 +102,9 @@ run_test_communication_1: $(TEST_EXEC_DIR)/test_routing_server_communication $(T
 
 run_test_communication_2: $(TEST_EXEC_DIR)/test_routing_server_communication $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@, bash $(TEST_DATA_DIR)/../test_communication_2.sh $(PORT_2) $(TEST_EXEC_DIR) $(TEST_DATA_DIR))
+
+run_test_communication_3: $(TEST_EXEC_DIR)/test_node_communication
+	$(call run_test,$@, bash $(TEST_DATA_DIR)/../test_communication_3.sh $(PORT_3) $(TEST_EXEC_DIR) $(TEST_DATA_DIR))
 # ==============================================================================
 
 # DIJKSTRA
@@ -150,9 +155,7 @@ run_test_node_communication_1: $(TEST_EXEC_DIR)/test_node_communication
 
 # NOTE: getTCPClientSocket is tested in test_communication_1
 # NOTE: sendEdgeInformation and receiveRoutingTable are tested in test_communication_2
-
-# FIXME: Test receiveAndForwardPackets
-# FIXME: Test prepareAndSendPackets
+# NOTE: prepareAndSendPackets and receiveAndForwardPackets are tested in test_communication_3
 
 run_test_node_communication_3: $(TEST_EXEC_DIR)/test_node_communication
 	$(call run_test,$@,$< extractLengthDestinationAndMessage)

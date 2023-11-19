@@ -3,14 +3,14 @@
 
 #include <stdio.h>  // for FILE
 
-// FIXME: These functions are untested
 struct Node;
 struct RoutingTable;
 
 /**
  * @brief Assign a UDP socket to connectSocket for sending and receiving
  *
- * @param connectSocket The socket descriptor which can send and receive
+ * @param connectSocket Integer to be filled with the socket descriptor that
+ *                      can send and receive
  * @param basePort The port to bind the socket to
  * @return 0 on success, 1 on error
  */
@@ -64,6 +64,7 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
 /**
  * @brief Prepare the packets and send them
  *
+ * @param filepath Filepath to the text file to open
  * @param udpSocketFd The socket to use for communication
  * @param ownAddress The address of this node
  * @param basePort The port number of the server
@@ -71,8 +72,8 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
  * @param routingTable The routing table
  * @return 0 on success, 1 on error
  */
-int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
-                          const int basePort,
+int prepareAndSendPackets(const char* filepath, const int udpSocketFd,
+                          const int ownAddress, const int basePort,
                           const struct RoutingTable* const routingTable);
 
 /**

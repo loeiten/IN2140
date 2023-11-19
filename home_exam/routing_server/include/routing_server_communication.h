@@ -1,8 +1,6 @@
 #ifndef HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTING_SERVER_COMMUNICATION_H_
 #define HOME_EXAM_ROUTING_SERVER_INCLUDE_ROUTING_SERVER_COMMUNICATION_H_
 
-// FIXME: These functions are untested
-
 struct Node;
 struct IndexToAddress;
 struct RoutingTable;

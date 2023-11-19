@@ -270,16 +270,16 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
   return EXIT_SUCCESS;
 }
 
-int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
-                          const int basePort,
+int prepareAndSendPackets(const char* filepath, const int udpSocketFd,
+                          const int ownAddress, const int basePort,
                           const struct RoutingTable* const routingTable) {
   // Wait for all connections to open
   sleep(1);
 
   // Open data.txt
-  FILE* fp = fopen("data.txt", "r");
+  FILE* fp = fopen(filepath, "r");
   if (fp == NULL) {
-    perror("Failed to open data.txt:");
+    fprintf(stderr, "Failed to open %s: %s\n", filepath, strerror(errno));
     return EXIT_FAILURE;
   }
 
@@ -295,7 +295,7 @@ int prepareAndSendPackets(const int udpSocketFd, const int ownAddress,
   while (nBytes != EOF) {
     nBytes = getline(line, &len, fp);
     if (ferror(fp)) {
-      perror("Failed to read data.txt");
+      fprintf(stderr, "Failed to read %s: %s\n", filepath, strerror(errno));
       fclose(fp);
       return EXIT_FAILURE;
     } else if (feof(fp)) {
