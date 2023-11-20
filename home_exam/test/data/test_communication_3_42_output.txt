@@ -1,0 +1,1 @@
+[42] RCV PKT len 10 src 15 dst 42 FLG 0 msg Foo

@@ -11,10 +11,10 @@ struct RoutingTable;
  *
  * @param connectSocket Integer to be filled with the socket descriptor that
  *                      can send and receive
- * @param basePort The port to bind the socket to
+ * @param port The port to bind the socket to
  * @return 0 on success, 1 on error
  */
-int getUDPSocket(int* const connectSocket, const int basePort);
+int getUDPSocket(int* const connectSocket, const int port);
 
 /**
  * @brief Assign a connected TCP socket to connectSocket
@@ -113,10 +113,12 @@ int extractLengthDestinationAndMessage(const char* const line,
  * @param line The line
  * @param msg The message
  * @param packet The packet
+ * @param quitMsg The message which triggers an exit
  * @param errorMsg The error message
  */
 void cleanUpPrepareAndSendPackets(FILE* fp, char** line, char** msg,
-                                  char** packet, const char* errorMsg);
+                                  char** packet, char** quitMsg,
+                                  const char* errorMsg);
 
 /**
  * @brief Create a packet

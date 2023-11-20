@@ -14,8 +14,8 @@
 
 int getTCPServerSocket(int* const listenSocket, const int basePort) {
   if ((basePort < MIN_PORT) || (basePort > MAX_PORT)) {
-    fprintf(stderr, "basePort must be in the range [%d, %d]", MIN_PORT,
-            MAX_PORT);
+    fprintf(stderr, "basePort must be in the range [%d, %d], got %d\n",
+            MIN_PORT, MAX_PORT, basePort);
   }
   // Abbreviations:
   // ARPA - Address and Routing Parameter Area
@@ -69,8 +69,8 @@ int getTCPServerSocket(int* const listenSocket, const int basePort) {
   int success =
       bind((*listenSocket), (struct sockaddr*)&serverAddr, sizeof(serverAddr));
   if (success != 0) {
-    fprintf(stderr, "Binding server socket to address failed.\nError %d: %s\n",
-            errno, strerror(errno));
+    fprintf(stderr, "Binding server socket to port %d failed.\nError %d: %s\n",
+            basePort, errno, strerror(errno));
     return EXIT_FAILURE;
   }
 

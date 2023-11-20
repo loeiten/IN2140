@@ -98,15 +98,12 @@ int main(int argc, char **argv) {
     }
   } else {
     // Await packet from the other nodes
-    const char *msg = "";
-    while (strcmp(msg, "QUIT") != 0) {
-      success = receiveAndForwardPackets(udpSocketFd, ownAddress, basePort,
-                                         routingTablePtr);
-      if (success != EXIT_SUCCESS) {
-        cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,
-                    &udpSocketFd, "Failed to receive and forward packets\n");
-        return EXIT_FAILURE;
-      }
+    success = receiveAndForwardPackets(udpSocketFd, ownAddress, basePort,
+                                       routingTablePtr);
+    if (success != EXIT_SUCCESS) {
+      cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd,
+                  &udpSocketFd, "Failed to receive and forward packets\n");
+      return EXIT_FAILURE;
     }
   }
 

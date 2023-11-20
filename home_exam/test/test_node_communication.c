@@ -9,6 +9,16 @@
 #include "../node/include/node_communication.h"  // for createPacket, extrac...
 #include "../utils/include/common.h"             // for RoutingTableRow, Rou...
 
+// NOTE: We are not specifying the full path here
+//       As a consequence we have to do the following
+//       1. Use -I in the compilation to expand the include path of the compiler
+//       2. If you use compile_commands.json for code completion,
+//          compile errors, go-to definition etc. you need to create compile
+//          command
+//          You can do this with for example
+//          bear --output ../build/compile_commands.json --append -- make -B
+#include "print_lib/include/print_lib.h"  // for print_forwarded_pkt
+
 void testGetUDPSocket(const char* basePortStr) {
   int connectSocket = -1;
   int basePort = atoi(basePortStr);
@@ -143,8 +153,8 @@ void testSendEdgeInformationAndReceiveRoutingTable(const char* basePortStr,
   close(clientSocket);
 }
 
-void testReceiveAndForwardPackets(const char* addressStr,
-                                  const char* basePortStr) {
+void testReceiveAndForwardPackets(const char* basePortStr,
+                                  const char* addressStr) {
   // We're working with the following graph:
   //    7   22
   //  o - o - o
@@ -152,7 +162,8 @@ void testReceiveAndForwardPackets(const char* addressStr,
 
   int basePort = atoi(basePortStr);
   int address = atoi(addressStr);
-  int udpSocketFd;
+  int port = basePort + address;
+  int udpSocketFd = -1;
   int success;
 
   // Manually create the routing table
@@ -164,16 +175,25 @@ void testReceiveAndForwardPackets(const char* addressStr,
   routingTableRows[1].destination = -1;
   routingTableRows[1].nextHop = -1;
 
+  // Reset the logfile
+  print_clear_logfile();
+
   if (address == 15) {
-    success = getUDPSocket(&udpSocketFd, basePort);
+    success = getUDPSocket(&udpSocketFd, port);
     assert(success == EXIT_SUCCESS);
+    if ((success != EXIT_SUCCESS) && (udpSocketFd != -1)) {
+      close(udpSocketFd);
+    }
     routingTableRows[0].destination = 101;
     routingTableRows[0].nextHop = 101;
     routingTableRows[1].destination = 42;
     routingTableRows[1].nextHop = 42;
   } else if (address == 42) {
-    success = getUDPSocket(&udpSocketFd, basePort);
+    success = getUDPSocket(&udpSocketFd, port);
     assert(success == EXIT_SUCCESS);
+    if ((success != EXIT_SUCCESS) && (udpSocketFd != -1)) {
+      close(udpSocketFd);
+    }
     routingTableRows[0].destination = 101;
     routingTableRows[0].nextHop = 15;
     routingTableRows[1].destination = 15;
@@ -185,13 +205,19 @@ void testReceiveAndForwardPackets(const char* addressStr,
 
   addressRoutingTable.routingTableRows = routingTableRows;
 
+  // FIXME:
+  printf("Using udpSocketFd=%d\n", udpSocketFd);
   success = receiveAndForwardPackets(udpSocketFd, address, basePort,
                                      &addressRoutingTable);
+  if ((success != EXIT_SUCCESS) && (udpSocketFd != -1)) {
+    close(udpSocketFd);
+  }
   assert(success == EXIT_SUCCESS);
+  close(udpSocketFd);
 }
 
-void testPrepareAndSendPackets(const char* filepath, const char* addressStr,
-                               const char* basePortStr) {
+void testPrepareAndSendPackets(const char* filepath, const char* basePortStr,
+                               const char* addressStr) {
   // We're working with the following graph:
   //    7   22
   //  o - o - o
@@ -199,9 +225,13 @@ void testPrepareAndSendPackets(const char* filepath, const char* addressStr,
 
   int basePort = atoi(basePortStr);
   int address = atoi(addressStr);
+  int port = basePort + address;
 
-  int udpSocketFd;
-  int success = getUDPSocket(&udpSocketFd, basePort);
+  int udpSocketFd = -1;
+  int success = getUDPSocket(&udpSocketFd, port);
+  if ((success != EXIT_SUCCESS) && (udpSocketFd != -1)) {
+    close(udpSocketFd);
+  }
   assert(success == EXIT_SUCCESS);
 
   // Manually create the routing table
@@ -216,6 +246,9 @@ void testPrepareAndSendPackets(const char* filepath, const char* addressStr,
 
   success = prepareAndSendPackets(filepath, udpSocketFd, address, basePort,
                                   &addressRoutingTable);
+  if ((success != EXIT_SUCCESS) && (udpSocketFd != -1)) {
+    close(udpSocketFd);
+  }
   assert(success == EXIT_SUCCESS);
 }
 

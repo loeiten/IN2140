@@ -30,7 +30,7 @@ static unsigned int validate_packet(unsigned char* packet) {
   /* Unused variables
   unsigned short source = ntohs( *(short*)&packet[2] );
   unsigned short dest   = ntohs( *(short*)&packet[4] );*/
-  char* msg = (char*)&packet[6];
+  const char* msg = (char*)&packet[6];
 
   if (length > 1500) {
     if (ntohs(length) > 1500) {
@@ -95,7 +95,7 @@ static void print_msg(FILE* logfile, unsigned int chk, short ownAddress,
         msg = strdup("<empty>");
     }
 
-    fprintf(logfile, "[%d] %s PKT len %d src %d dst %d FLG %x msg %s \n",
+    fprintf(logfile, "[%d] %s PKT len %d src %d dst %d FLG %x msg %s\n",
             ownAddress, operation, length, source, dest, chk, msg);
 
     if ((chk & STRING_TERM_BUG) && msgMalloc) {
@@ -182,6 +182,8 @@ FILE* get_logfile(const char* mode) {
     }
   }
 
+  // FIXME:
+  printf("path=%s\n", path);
   FILE* logfile = fopen(path, mode);
   free(path);
   return logfile;
