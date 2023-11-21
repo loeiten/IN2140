@@ -29,6 +29,7 @@ TESTS := run_test_adjacency_matrix_1 \
 		 run_test_validation_4 \
 		 run_test_validation_5 \
 		 run_test_validation_6 \
+		 run_test_integration_1 \
 
 BINARIES := $(TEST_EXEC_DIR)/test_adjacency_matrix \
 	 		$(TEST_EXEC_DIR)/test_dijkstra \
@@ -266,6 +267,14 @@ run_test_validation_5: $(TEST_EXEC_DIR)/test_validation
 run_test_validation_6: $(TEST_EXEC_DIR)/test_validation
 	$(call run_test,$@,$< checkAllNodesReceived 2>&1 | tee $(TEST_EXEC_DIR)/test_validation_6_output.txt && \
 	  diff $(TEST_DATA_DIR)/test_validation_6_output.txt $(TEST_EXEC_DIR)/test_validation_6_output.txt)
+# ==============================================================================
+
+
+# INTEGRATION
+# ==============================================================================
+PORT_4 := 1031
+run_test_integration_1: $(EXEC_DIR)/routing_server $(EXEC_DIR)/node
+	$(call run_test,$@, bash $(TEST_DATA_DIR)/../test_integration_1.sh $(PORT_4) $(EXEC_DIR) $(TEST_EXEC_DIR) $(TEST_DATA_DIR))
 # ==============================================================================
 
 clean:

@@ -182,8 +182,6 @@ FILE* get_logfile(const char* mode) {
     }
   }
 
-  // FIXME:
-  printf("path=%s\n", path);
   FILE* logfile = fopen(path, mode);
   free(path);
   return logfile;

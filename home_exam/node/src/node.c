@@ -71,6 +71,14 @@ int main(int argc, char **argv) {
 
   // Send the edge information
   node.tcpSocket = tcpRoutingServerSocketFd;
+  // FIXME:
+  printf("node.tcpSocket=%d\n", node.tcpSocket);
+  printf("node.address=%d\n", node.address);
+  printf("node.nNeighbors=%d\n", node.nNeighbors);
+  for (int i = 0; i < node.nNeighbors; ++i) {
+    printf("node.neighborAddresses[%d]=%d\n", i, node.neighborAddresses[i]);
+    printf("node.edgeWeights[%d]=%d\n", i, node.edgeWeights[i]);
+  }
   success = sendEdgeInformation(&node);
   if (success != EXIT_SUCCESS) {
     cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,

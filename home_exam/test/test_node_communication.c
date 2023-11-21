@@ -205,8 +205,6 @@ void testReceiveAndForwardPackets(const char* basePortStr,
 
   addressRoutingTable.routingTableRows = routingTableRows;
 
-  // FIXME:
-  printf("Using udpSocketFd=%d\n", udpSocketFd);
   success = receiveAndForwardPackets(udpSocketFd, address, basePort,
                                      &addressRoutingTable);
   if ((success != EXIT_SUCCESS) && (udpSocketFd != -1)) {

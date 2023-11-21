@@ -83,8 +83,6 @@ int getUDPSocket(int* const connectSocket, const int port) {
             *connectSocket, port, errno, strerror(errno));
     return EXIT_FAILURE;
   }
-  // FIXME:
-  printf("Bound client socket=%d to port=%d.\n", *connectSocket, port);
 
   // NOTE: We are not listening as UDP is connectionless
   return EXIT_SUCCESS;
@@ -194,6 +192,13 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
     return EXIT_FAILURE;
   }
 
+  // Special case if the node is an leaf node
+  if (nRows == 0) {
+    // FIXME:
+    printf("nRows was 0\n");
+    return EXIT_SUCCESS;
+  }
+
   // Receive the table
   nBytes = nRows * sizeof(struct RoutingTableRow);
   success =
@@ -213,8 +218,6 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
   unsigned char packet[MAX_MSG_LENGTH];
 
   while (1) {
-    // FIXME:
-    printf("udpSocketFd=%d\n", udpSocketFd);
     int success = receiveMessage(udpSocketFd, packet, 0);
     if (success != EXIT_SUCCESS) {
       fprintf(stderr, "Error when receiving packet\n");
@@ -227,15 +230,10 @@ int receiveAndForwardPackets(const int udpSocketFd, const int ownAddress,
     memcpy(&tmp, &packet[2], sizeof(tmp));
     destination = ntohs(tmp);
     const char* msg = (char*)(&packet[6]);
-    // FIXME:
-    printf("msg=%s\n", msg);
-    printf("destination=%d\n", destination);
     if ((destination == ownAddress) && (strcmp(msg, "QUIT") == 0)) {
       return EXIT_SUCCESS;
     }
 
-    // FIXME:
-    printf("ownAddress=%d, destination=%d\n", ownAddress, destination);
     if (destination == ownAddress) {
       print_received_pkt(ownAddress, packet);
     } else {
@@ -350,13 +348,7 @@ int prepareAndSendPackets(const char* filepath, const int udpSocketFd,
           "Failed to extract length, destination and message\n");
       return EXIT_FAILURE;
     }
-    // FIXME:
-    printf("\nmsg=%s\n", msg);
-    printf("line=%s\n", line);
-    printf("quitMsg=%s\n", quitMsg);
-    printf("strcmp(line, quitMsg)=%d\n", strcmp(line, quitMsg));
     if (strcmp(line, quitMsg) == 0) {
-      printf("I do quit\n");
       cleanUpPrepareAndSendPackets(fp, &line, &msg, &packet, &quitMsg, "");
       return EXIT_SUCCESS;
     }
@@ -537,11 +529,6 @@ int sendUDPPacket(const char* const packet, const int length,
       htonl(INADDR_LOOPBACK);                     // The destination is local
   destAddr.sin_port = htons(basePort + nextHop);  // This is the port
 
-  // FIXME:
-  printf(
-      "Sending from ownAddress=%d to destination=%d. Because basePort=%d + "
-      "nextHop=%d = sin_port=%d\n.",
-      ownAddress, destination, basePort, nextHop, basePort + nextHop);
   ssize_t bytesSent = sendto(udpSocketFd, packet, length, 0,
                              (struct sockaddr*)&destAddr, sizeof(destAddr));
   if (bytesSent == -1) {

@@ -108,6 +108,11 @@ int allocateRoutingTable(struct RoutingTable *routingTable, const int nRows,
                          const char *name) {
   // Zero allocate the routing table
   routingTable->nRows = nRows;
+  // Special case if the node is an leaf node
+  if (routingTable->nRows == 0) {
+    routingTable->routingTableRows = NULL;
+    return EXIT_SUCCESS;
+  }
   routingTable->routingTableRows =
       (struct RoutingTableRow *)calloc(nRows, sizeof(struct RoutingTableRow));
   if (routingTable->routingTableRows == NULL) {
@@ -120,6 +125,9 @@ int allocateRoutingTable(struct RoutingTable *routingTable, const int nRows,
 }
 
 void freeRoutingTable(struct RoutingTable *routingTable) {
+  if (routingTable == NULL) {
+    return;
+  }
   routingTable->nRows = -1;
   if (routingTable->routingTableRows == NULL) {
     return;
@@ -163,6 +171,9 @@ int allocateRoutingTableArray(struct RoutingTableArray *routingTableArray,
 }
 
 void freeRoutingTableArray(struct RoutingTableArray *routingTableArray) {
+  if (routingTableArray == NULL) {
+    return;
+  }
   if (routingTableArray->routingTables == NULL) {
     routingTableArray->n = -1;
     return;
@@ -196,6 +207,9 @@ int allocateEdgeArray(struct EdgeArray *edgeArray, int maxEdges,
 }
 
 void freeEdgeArray(struct EdgeArray *edgeArray) {
+  if (edgeArray == NULL) {
+    return;
+  }
   if (edgeArray->array != NULL) {
     free(edgeArray->array);
     edgeArray->array = NULL;
@@ -285,6 +299,9 @@ int allocateIndexToAddress(struct IndexToAddress *indexToAddress, int n,
 }
 
 void freeIndexToAddress(struct IndexToAddress *indexToAddress) {
+  if (indexToAddress == NULL) {
+    return;
+  }
   if (indexToAddress->map != NULL) {
     free(indexToAddress->map);
     indexToAddress->map = NULL;
@@ -310,6 +327,9 @@ int allocateNeighborAddressesAndEdgeWeights(struct Node *node,
 }
 
 void freeNeighborAddressesAndEdgeWeights(struct Node *node) {
+  if (node == NULL) {
+    return;
+  }
   if (node->neighborAddresses != NULL) {
     free(node->neighborAddresses);
     node->neighborAddresses = NULL;
