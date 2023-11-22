@@ -198,22 +198,6 @@ int sendRoutingTables(const struct Node* const nodeArray,
   //       addresses before sending them
 
   for (int i = 0; i < routingTableArray->n; ++i) {
-    // FIXME:
-    printf("i=%d\n", i);
-    printf("routingTableArray->routingTables[%d].nRows=%d\n", i,
-           routingTableArray->routingTables[i].nRows);
-    for (int j = 0; j < routingTableArray->routingTables[i].nRows; ++j) {
-      printf(
-          " routingTableArray->routingTables[%d].routingTableRows[%d]."
-          "destination=%d\n",
-          i, j,
-          routingTableArray->routingTables[i].routingTableRows[j].destination);
-      printf(
-          " routingTableArray->routingTables[%d].routingTableRows[%d].nextHop=%"
-          "d\n",
-          i, j,
-          routingTableArray->routingTables[i].routingTableRows[j].nextHop);
-    }
     int success =
         translateTableFromIdxToAddress(&(routingTableArray->routingTables[i]),
                                        indexToAddress, &addressRoutingTable);
@@ -241,8 +225,6 @@ int sendRoutingTables(const struct Node* const nodeArray,
 
     // Special case if node is a leaf node
     if (addressRoutingTable.nRows == 0) {
-      // FIXME:
-      printf("Nothing to send...continue\n");
       continue;
     }
 
@@ -269,13 +251,9 @@ int translateTableFromIdxToAddress(
   addressRoutingTable->nRows = idxRoutingTable->nRows;
   // Special case if the node is an leaf node
   if (addressRoutingTable->nRows == 0) {
-    // FIXME:
-    printf("addressRoutingTable->nRows==0 was true\n");
     addressRoutingTable->routingTableRows = NULL;
     return EXIT_SUCCESS;
   }
-  // FIXME:
-  printf("addressRoutingTable->nRows=%d\n", addressRoutingTable->nRows);
   addressRoutingTable->routingTableRows =
       realloc(addressRoutingTable->routingTableRows,
               addressRoutingTable->nRows * sizeof(struct RoutingTableRow));

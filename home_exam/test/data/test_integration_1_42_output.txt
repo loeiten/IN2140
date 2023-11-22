@@ -1,0 +1,2 @@
+[42] RCV PKT len 18 src 15 dst 42 FLG 0 msg Hello there
+[42] RCV PKT len 16 src 15 dst 42 FLG 0 msg How wild!

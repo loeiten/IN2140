@@ -2,7 +2,7 @@
 
 #include <errno.h>   // for errno
 #include <stdio.h>   // for fprintf, NULL
-#include <stdlib.h>  // for free, EXIT_FAILURE
+#include <stdlib.h>  // for free, EXIT_SUCCESS
 #include <string.h>  // for strerror
 #include <unistd.h>  // for close, NULL
 

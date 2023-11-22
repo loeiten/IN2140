@@ -4,7 +4,7 @@
 #include <errno.h>       // for errno
 #include <netinet/in.h>  // for sockaddr_in, in_addr
 #include <stdio.h>       // for fprintf, stderr, NULL
-#include <stdlib.h>      // for EXIT_FAILURE, EXIT_S...
+#include <stdlib.h>      // for EXIT_FAILURE, free
 #include <string.h>      // for strerror, strlen
 #include <strings.h>     // for bzero
 #include <sys/socket.h>  // for AF_INET, sendto, socket
@@ -194,8 +194,6 @@ int receiveRoutingTable(const int tcpRoutingServerSocketFd,
 
   // Special case if the node is an leaf node
   if (nRows == 0) {
-    // FIXME:
-    printf("nRows was 0\n");
     return EXIT_SUCCESS;
   }
 

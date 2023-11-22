@@ -2,13 +2,12 @@
 #include <assert.h>     // for assert
 #include <libgen.h>     // for basename
 #include <stdio.h>      // for fprintf, NULL, stderr
-#include <stdlib.h>     // for free, EXIT_SUCCESS
+#include <stdlib.h>     // for EXIT_SUCCESS, atoi
 #include <string.h>     // for strcmp, memcpy, strndup
 #include <unistd.h>     // for close, sleep
 
-#include "../node/include/node_communication.h"  // for createPacket, extrac...
+#include "../node/include/node_communication.h"  // for getUDPSocket, create...
 #include "../utils/include/common.h"             // for RoutingTableRow, Rou...
-
 // NOTE: We are not specifying the full path here
 //       As a consequence we have to do the following
 //       1. Use -I in the compilation to expand the include path of the compiler
@@ -17,7 +16,7 @@
 //          command
 //          You can do this with for example
 //          bear --output ../build/compile_commands.json --append -- make -B
-#include "print_lib/include/print_lib.h"  // for print_forwarded_pkt
+#include "print_lib/include/print_lib.h"  // for print_clear_logfile
 
 void testGetUDPSocket(const char* basePortStr) {
   int connectSocket = -1;

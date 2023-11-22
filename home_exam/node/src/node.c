@@ -3,7 +3,6 @@
 #include <libgen.h>  // for basename
 #include <stdio.h>   // for fprintf, stderr, NULL
 #include <stdlib.h>  // for EXIT_SUCCESS, EXIT_F...
-#include <string.h>  // for strcmp
 #include <unistd.h>  // for close
 
 #include "../../utils/include/common.h"          // for Node, RoutingTable
@@ -71,14 +70,6 @@ int main(int argc, char **argv) {
 
   // Send the edge information
   node.tcpSocket = tcpRoutingServerSocketFd;
-  // FIXME:
-  printf("node.tcpSocket=%d\n", node.tcpSocket);
-  printf("node.address=%d\n", node.address);
-  printf("node.nNeighbors=%d\n", node.nNeighbors);
-  for (int i = 0; i < node.nNeighbors; ++i) {
-    printf("node.neighborAddresses[%d]=%d\n", i, node.neighborAddresses[i]);
-    printf("node.edgeWeights[%d]=%d\n", i, node.edgeWeights[i]);
-  }
   success = sendEdgeInformation(&node);
   if (success != EXIT_SUCCESS) {
     cleanUpNode(&node, routingTablePtr, &tcpRoutingServerSocketFd, &udpSocketFd,

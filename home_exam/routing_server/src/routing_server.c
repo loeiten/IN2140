@@ -74,19 +74,6 @@ int main(int argc, char** argv) {
     indexToAddress.map[i] = nodeArray[i].address;
   }
 
-  // FIXME:
-  for (int j = 0; j < n; ++j) {
-    printf("nodeArray[%d].tcpSocket=%d\n", j, nodeArray[j].tcpSocket);
-    printf("nodeArray[%d].address=%d\n", j, nodeArray[j].address);
-    printf("nodeArray[%d].nNeighbors=%d\n", j, nodeArray[j].nNeighbors);
-    for (int i = 0; i < nodeArray[j].nNeighbors; ++i) {
-      printf("  nodeArray[%d].neighborAddresses[%d]=%d\n", j, i,
-             nodeArray[j].neighborAddresses[i]);
-      printf("  nodeArray[%d].edgeWeights[%d]=%d\n", j, i,
-             nodeArray[j].edgeWeights[i]);
-    }
-  }
-
   // Test if edge has been reported twice
   success = checkAllNodesReceived(nodeArray, &invalidEdgesArray, n);
   if (success != EXIT_SUCCESS) {
@@ -109,12 +96,6 @@ int main(int argc, char** argv) {
     close(listenSocket);
     return EXIT_FAILURE;
   }
-
-  // FIXME:
-  printf("[[%d, %d, %d]\n[%d, %d, %d]\n[%d, %d, %d]]\n", adjacencyMatrix[0][0],
-         adjacencyMatrix[0][1], adjacencyMatrix[0][2], adjacencyMatrix[1][0],
-         adjacencyMatrix[1][1], adjacencyMatrix[1][2], adjacencyMatrix[2][0],
-         adjacencyMatrix[2][1], adjacencyMatrix[2][2]);
 
   // Compute shortest path using Dijkstra
   // We overcome the problem with discarding qualifiers with a cast
@@ -141,18 +122,6 @@ int main(int argc, char** argv) {
                       &routingTableArray, n);
     close(listenSocket);
     return EXIT_FAILURE;
-  }
-
-  // FIXME:
-  for (int i = 0; i < n; ++i) {
-    printf("routeArray[%d].nHops=%d\n", i, routeArray[i].nHops);
-    for (int j = 0; j < routeArray[i].nHops; ++j) {
-      printf("routeArray[%d].route[%d]=%d\n", i, j, routeArray[i].route[j]);
-    }
-  }
-  printf("\n");
-  for (int i = 0; i < n; ++i) {
-    printf("indexToAddress.map[%d]=%d\n", i, indexToAddress.map[i]);
   }
 
   // Print the edges
