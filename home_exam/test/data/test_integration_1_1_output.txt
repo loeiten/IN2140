@@ -1,0 +1,6 @@
+[1] CREATE PKT len 18 src 1 dst 42 FLG 0 msg Hello there
+[1] CREATE PKT len 26 src 1 dst 15 FLG 0 msg This is interesting
+[1] CREATE PKT len 39 src 1 dst 15 FLG 0 msg We are actually sending messages
+[1] CREATE PKT len 16 src 1 dst 42 FLG 0 msg How wild!
+[1] CREATE PKT len 11 src 1 dst 42 FLG 0 msg QUIT
+[1] CREATE PKT len 11 src 1 dst 15 FLG 0 msg QUIT

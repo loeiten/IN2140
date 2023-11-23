@@ -356,6 +356,7 @@ int prepareAndSendPackets(const char* filepath, const int udpSocketFd,
                                    "Failed to create the packet\n");
       return EXIT_FAILURE;
     }
+    print_pkt((unsigned char*)packet);
 
     success = sendUDPPacket(packet, length, udpSocketFd, ownAddress,
                             destination, basePort, routingTable);

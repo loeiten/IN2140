@@ -1,0 +1,4 @@
+[1] CREATE PKT len 10 src 1 dst 42 FLG 0 msg Foo
+[1] CREATE PKT len 14 src 1 dst 15 FLG 0 msg Bar Baz
+[1] CREATE PKT len 11 src 1 dst 42 FLG 0 msg QUIT
+[1] CREATE PKT len 11 src 1 dst 15 FLG 0 msg QUIT

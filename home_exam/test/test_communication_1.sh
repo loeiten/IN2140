@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source test_multiple_processes.sh
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}")")
+source "$SCRIPT_DIR"/test_multiple_processes.sh
 
 PORT=$1
 TEST_EXEC_DIR=$2
@@ -21,4 +22,6 @@ COMMANDS+=("$TEST_EXEC_DIR/test_node_communication getTCPClientSocket $PORT")
 # NOTE: Does not work if one use $()
 run_subprocesses "${COMMANDS[@]}"
 
-diff "$TEST_DATA_DIR"/test_communication_1_output.txt "$TEST_EXEC_DIR"/test_communication_1_output.txt
+COMMAND="diff $TEST_DATA_DIR/test_communication_1_output.txt $TEST_EXEC_DIR/test_communication_1_output.txt"
+echo "$COMMAND"
+echo "$COMMAND" | bash

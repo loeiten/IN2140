@@ -15,7 +15,7 @@ source "$SCRIPT_DIR"/test_multiple_processes.sh
 #  o - o - o
 #  1  15   42
 
-rm -rf "$TEST_EXEC_DIR"/data.txt "$TEST_EXEC_DIR"/test_integration_1_routing_server "$TEST_EXEC_DIR"/test_integration_1_15 "$TEST_EXEC_DIR"/test_integration_1_42
+rm -rf "$TEST_EXEC_DIR"/data.txt "$TEST_EXEC_DIR"/test_integration_1_routing_server "$TEST_EXEC_DIR"/test_integration_1_1 "$TEST_EXEC_DIR"/test_integration_1_15 "$TEST_EXEC_DIR"/test_integration_1_42
 cp "$TEST_DATA_DIR"/test_messages.txt "$TEST_EXEC_DIR"/data.txt
 
 # Change directory so that data.txt can be read
@@ -29,7 +29,7 @@ echo "$COMMAND" | bash
 
 # Start the nodes
 COMMANDS=()
-COMMANDS+=("$EXEC_DIR/node $PORT 1 15:7")
+COMMANDS+=("LOG_DIR=$TEST_EXEC_DIR/test_integration_1_1 $EXEC_DIR/node $PORT 1 15:7")
 COMMANDS+=("LOG_DIR=$TEST_EXEC_DIR/test_integration_1_15 $EXEC_DIR/node \
             $PORT 15 1:7 42:22")
 COMMANDS+=("LOG_DIR=$TEST_EXEC_DIR/test_integration_1_42 $EXEC_DIR/node \
@@ -39,6 +39,9 @@ COMMANDS+=("LOG_DIR=$TEST_EXEC_DIR/test_integration_1_42 $EXEC_DIR/node \
 # NOTE: Does not work if one use $()
 run_subprocesses "${COMMANDS[@]}"
 
+COMMAND="diff $TEST_DATA_DIR/test_integration_1_1_output.txt $TEST_EXEC_DIR/test_integration_1_1/logfile.txt"
+echo "$COMMAND"
+echo "$COMMAND" | bash
 COMMAND="diff $TEST_DATA_DIR/test_integration_1_15_output.txt $TEST_EXEC_DIR/test_integration_1_15/logfile.txt"
 echo "$COMMAND"
 echo "$COMMAND" | bash
