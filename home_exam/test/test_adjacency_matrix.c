@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
     // for specification and
     // https://github.com/coreutils/coreutils/blob/master/src/basename.c
     // for possible implementation
-    fprintf(stderr, "Usage: ./%s test args\n1", basename(argv[0]));
+    fprintf(stderr, "Usage: ./%s test args\n", basename(argv[0]));
     return EXIT_FAILURE;
   }
 
